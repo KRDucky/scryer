@@ -62,6 +62,7 @@ mod media_requests;
 mod media_server_signals;
 mod metadata_search;
 mod multilingual_title_matching;
+mod processed_folders;
 mod queueing;
 mod recycle_bin_roots;
 mod release_anchor_prefetch;

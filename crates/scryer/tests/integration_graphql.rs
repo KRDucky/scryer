@@ -40,6 +40,8 @@ mod metadata_search;
 mod misc_smoke;
 #[path = "integration_graphql/private_list_accounts.rs"]
 mod private_list_accounts;
+#[path = "integration_graphql/processed_folders.rs"]
+mod processed_folders;
 #[path = "integration_graphql/quality_routing_settings.rs"]
 mod quality_routing_settings;
 #[path = "integration_graphql/rule_tester.rs"]
