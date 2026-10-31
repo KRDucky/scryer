@@ -528,7 +528,7 @@ function ImportAsDialog({ entry, libraryName, importing, onSearchTitles, onImpor
         </p>
       </div>
       <CommandInput
-        id="settings-processed-folder-import-as-search"
+        wrapperId="settings-processed-folder-import-as-search"
         value={query}
         onValueChange={setQuery}
         placeholder={t("settings.processedFolders.importAsPlaceholder")}
@@ -671,7 +671,7 @@ function EntryActions({ entry, folderEnabled, busy, onImportAs, onRetry, onIgnor
   const t = useTranslate();
   const disabledReason = t("settings.processedFolders.actionNeedsEnabled");
   return (
-    <div className="flex items-center justify-end gap-1">
+    <div className="flex flex-wrap items-center justify-end gap-1">
       {entry.allowedActions.map((action) => {
         const needsEnabled = action === "IMPORT_AS" || action === "RETRY";
         const blocked = needsEnabled && !folderEnabled;
@@ -680,11 +680,15 @@ function EntryActions({ entry, folderEnabled, busy, onImportAs, onRetry, onIgnor
           : t(PROCESSED_FOLDER_ACTION_KEYS[action]);
         const Icon = action === "IMPORT_AS" ? FolderInput : action === "RETRY" ? RotateCcw : Ban;
         return (
-          <IconButton
+          <Button
             key={action}
             id={selectorId("settings-processed-folder-entry", action.toLowerCase(), entry.id)}
-            label={label}
-            tone={action === "IGNORE" ? "neutral" : "edit"}
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-7 gap-1 px-2 text-xs"
+            aria-label={label}
+            title={label}
             disabled={busy || blocked}
             onClick={() => {
               if (action === "IMPORT_AS") onImportAs(entry);
@@ -692,8 +696,9 @@ function EntryActions({ entry, folderEnabled, busy, onImportAs, onRetry, onIgnor
               else onIgnore(entry);
             }}
           >
-            <Icon className="h-4 w-4" />
-          </IconButton>
+            <Icon className="h-3.5 w-3.5" />
+            {t(PROCESSED_FOLDER_ACTION_KEYS[action])}
+          </Button>
         );
       })}
     </div>
