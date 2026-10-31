@@ -1680,6 +1680,15 @@ pub(super) mod fixtures {
         user
     }
 
+    /// A title alias fixture. `country` stays unset (contract V0.1.3).
+    pub(crate) fn tagged_alias(name: &str, language: &str) -> scryer_domain::TaggedAlias {
+        scryer_domain::TaggedAlias {
+            name: name.to_string(),
+            language: language.to_string(),
+            country: None,
+        }
+    }
+
     /// Reads a source file under this crate, for hygiene checks.
     pub(crate) fn crate_source(relative: &str) -> Option<String> {
         std::fs::read_to_string(Path::new(env!("CARGO_MANIFEST_DIR")).join(relative)).ok()
@@ -2387,6 +2396,14 @@ mod fixture_self_tests {
     }
 
     #[test]
+    fn tagged_alias_fixtures_leave_country_unset() {
+        let alias = tagged_alias("Synthetic Alias", "ja");
+        assert_eq!(alias.name, "Synthetic Alias");
+        assert_eq!(alias.language, "ja");
+        assert_eq!(alias.country, None);
+    }
+
+    #[test]
     fn the_result_mapping_covers_every_import_decision_and_skip_reason() {
         use scryer_domain::{ImportDecision, ImportSkipReason};
 
@@ -2643,7 +2660,7 @@ mod copy_only {
             "Use bootstrap_with_cleanup_tracking or a file-backed sqlite path so two AppUseCase \
              values share one DB. SETUP + RUN on app1 until imported. Build app2 on the same DB, \
              scan twice. Assert: importer double on app2 has imports() == 0; entry still imported; \
-             one media file; scan payload importsQueued == 0 and recovered == 0."
+             one media file; scan payload importsQueued == 0, superseded == 0, and recovered == 0."
         )
     }
 
@@ -2657,6 +2674,44 @@ mod copy_only {
              a stable row to importing with attempts 1 through the repository (no in_flight entry), \
              no imports row. scan_processed_folder. Assert status stable, reason interrupted, \
              payload recovered == 1, then the same scan or the next queues it and it imports."
+        )
+    }
+
+    /// V6.1.1: a dead process's `processing` import row is reset when the
+    /// same fingerprint is run again.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: import re-run over a stale processing row"]
+    async fn v6_1_1_a_stale_processing_import_row_is_reset_on_rerun() {
+        todo!(
+            "Seed an imports row for this fingerprint with status processing, as a dead process \
+             would leave it (import_request_upsert_sql). Re-scan or retry the entry. The re-run \
+             must reset that row instead of leaving it processing. The source is untouched until \
+             the new attempt places a copy. Record the status the upsert writes."
+        )
+    }
+
+    /// U8 at app level: a transient copy error is retried, the placed file is
+    /// a copy, and the source is untouched.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: copy-only retry of a transient copy error"]
+    async fn u8_a_transient_copy_error_is_retried_and_the_source_stays() {
+        todo!(
+            "Copy-only placement hits one transient copy error (force_copy_attempt_error), then \
+             succeeds. The library file is a copy (different inode, equal bytes), the source \
+             snapshot is unchanged, and no *.tmp_import remains. attempts or the copy-attempt \
+             count shows the retry."
+        )
+    }
+
+    /// U9 at app level: cancellation removes the temp file and leaves no
+    /// destination.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: copy-only cancellation"]
+    async fn u9_cancellation_removes_the_temp_import_and_leaves_no_destination() {
+        todo!(
+            "Cancel a copy-only import after it has created dest.tmp_import. The temp file is \
+             removed, the destination does not exist, the entry ends failed or stable/cancelled \
+             per RESULT_MAPPINGS (ErrCanceled, cap 3), and the source snapshot is unchanged."
         )
     }
 
@@ -2720,11 +2775,11 @@ mod copy_only {
     async fn q4d_an_empty_reserved_destination_is_not_deleted_and_the_entry_fails() {
         todo!(
             "SETUP(HardlinkOrCopy, real-like double that returns ManualReconciliationRequired when \
-             dest exists and is empty, as FsFileImporter does). Pre-create the resolved destination \
-             path under library_root as a zero-byte file with no media-file row. RUN. Assert entry \
-             failed, last_error mentions ManualReconciliationRequired; the zero-byte destination \
-             still exists with len 0 (NOT auto-deleted); before.assert_unchanged(&tree.snapshot()); \
-             no media file row."
+             dest exists and is empty). Pre-create the resolved destination under library_root as a \
+             zero-byte file with no media-file row. RUN. Assert entry failed with \
+             ManualReconciliationRequired; the zero-byte destination still exists with len 0 and is \
+             not auto-deleted; before.assert_unchanged(&tree.snapshot()); no media file row. The \
+             real-importer case is q4d in the GraphQL file."
         )
     }
 }
@@ -3821,8 +3876,10 @@ mod delete_folder {
             "Materialize every ALL_LAYOUTS plus build_symlink_layout into one tree; import one \
              file; let before = tree.snapshot() and let lib_before = TreeSnapshot::capture(library \
              root). delete_processed_folder. Assert before.assert_unchanged(&tree.snapshot()) and \
-             lib_before unchanged; get_processed_folder -> None; its entries are gone (cascade, \
-             risk 15); the media file and the import row remain."
+             lib_before unchanged; get_processed_folder -> None; its entries are gone because \
+             delete runs DELETE FROM processed_folder_entries WHERE folder_id = ? before the \
+             folder delete (V6.1.2, both engines, even if SQLite foreign_keys is off). The media \
+             file and the import row remain."
         )
     }
 
@@ -3843,35 +3900,29 @@ mod delete_folder {
 mod risks {
     // Add `use super::*;` when the first body here stops being a todo.
 
-    /// Risk 13: a `Rejected` result with a blocklist disposition must not
-    /// blocklist a processed-folder file stem or reopen search.
+    /// Risk 13: a rejected processed file leaves no misleading blocklist row.
     #[tokio::test]
     #[ignore = "pending pf/pr1-core: importer (risk 13 disposition for processed_folder)"]
     async fn a_rejected_processed_file_adds_no_blocklist_entry_and_reopens_no_search() {
         todo!(
             "Monitored title; probe override that makes post_download_gate reject the file with \
-             a blocklist disposition (post_download_gate.rs:2190, 2222). RUN. Entry skipped/rejected. \
-             Assert: no blocklist row whose release name equals the file stem; no failed release \
-             attempt recorded for the title; no search reopened (no wanted/search queue item \
-             added); tree snapshot unchanged. If any appear, core must skip the disposition for \
-             processed_folder sources."
+             a blocklist disposition (reject_source_file_before_import / finalize_import_rejection). \
+             RUN. Entry skipped/rejected. Assert no blocklist row for the processed-file stem, no \
+             failed release attempt for the title, and no reopened search. The source snapshot is \
+             unchanged."
         )
     }
 
-    /// Risk 14: copy-only needs the full source size free on the library
-    /// side. Evidence from reading `import/checks.rs:81-103` at baddf1f:
-    /// `disk_space_verdict` requires `source_size + 500 MiB` whatever the mode
-    /// (it never assumed a free hard link), and an unmeasurable volume is
-    /// accepted. `disk_space_verdict` is private, so this test goes through
-    /// the pipeline.
+    /// Risk 14 is accepted for PR1: no free-space pre-check. A full disk
+    /// surfaces as failed/disk_full.
     #[tokio::test]
-    #[ignore = "pending pf/pr1-core: importer (needs a free-space seam to fake available bytes)"]
-    async fn the_free_space_check_requires_a_full_copy_for_processed_files() {
+    #[ignore = "pending pf/pr1-core: copy failure on a full disk"]
+    async fn a_full_disk_ends_failed_disk_full_without_a_free_space_precheck() {
         todo!(
-            "Fake available bytes on the library volume to source_size + 500 MiB - 1 (seam on \
-             the free-space measurement). RUN. Entry failed (Skipped+DiskFull maps to failed, \
-             2.2 row 14) with InsufficientDiskSpace in last_error; no library file. Raise to \
-             source_size + 500 MiB: imports."
+            "Do not accept a free-space pre-check. Cause the copy to fail with AppError::reason() \
+             equal to error_reasons::import::DISK_FULL (IMPORT_DISK_FULL), not by matching the \
+             message. The entry ends failed with reason_code disk_full. The source is untouched. \
+             No destination remains unless it is the empty crash leftover Q4d already covers."
         )
     }
 }

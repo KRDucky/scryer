@@ -382,6 +382,59 @@ async fn sqlite_defaults_uniqueness_and_cascade_follow_the_contract() {
 }
 
 #[tokio::test]
+#[ignore = "pending pf/pr1-base: migration 0318 (SQLite) and manifest version 318"]
+async fn sqlite_explicit_folder_delete_removes_entries_without_relying_on_foreign_keys() {
+    let pool = upgraded_pool().await;
+    sqlx::query(
+        "INSERT INTO libraries (id, facet, name, slug, created_at, updated_at)
+         VALUES ('lib-pf', 'movie', 'PF', 'pf', '2026-10-01T00:00:00Z', '2026-10-01T00:00:00Z')",
+    )
+    .execute(&pool)
+    .await
+    .expect("seed library");
+    sqlx::query(
+        "INSERT INTO processed_folders
+                 (id, name, root_path, normalized_root_path, library_id, created_at, updated_at)
+         VALUES ('pf-1', 'Synthetic', '/synthetic/root', '/synthetic/root', 'lib-pf',
+                 '2026-10-01T00:00:00Z', '2026-10-01T00:00:00Z')",
+    )
+    .execute(&pool)
+    .await
+    .expect("insert folder");
+    sqlx::query(
+        "INSERT INTO processed_folder_entries
+             (id, folder_id, relative_path, size_bytes, mtime_ns, fingerprint, status,
+              first_seen_at, last_seen_at, created_at, updated_at)
+         VALUES ('e-1', 'pf-1', 'a/Synthetic.mkv', 10, 1, 'pf1:aa', 'observing',
+                 '2026-10-01T00:00:00Z', '2026-10-01T00:00:00Z',
+                 '2026-10-01T00:00:00Z', '2026-10-01T00:00:00Z')",
+    )
+    .execute(&pool)
+    .await
+    .expect("insert entry");
+    let foreign_keys: i64 = sqlx::query_scalar("PRAGMA foreign_keys")
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
+    sqlx::query("DELETE FROM processed_folder_entries WHERE folder_id = 'pf-1'")
+        .execute(&pool)
+        .await
+        .expect("explicit entry delete");
+    sqlx::query("DELETE FROM processed_folders WHERE id = 'pf-1'")
+        .execute(&pool)
+        .await
+        .expect("delete folder");
+    let left: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM processed_folder_entries")
+        .fetch_one(&pool)
+        .await
+        .expect("count entries");
+    assert_eq!(
+        left, 0,
+        "entries are gone after explicit folder delete (PRAGMA foreign_keys = {foreign_keys})"
+    );
+}
+
+#[tokio::test]
 #[ignore = "pending pf/pr1-base: migration 0318 (Postgres)"]
 async fn postgres_0318_matches_the_sqlite_schema() {
     let Ok(url) = std::env::var("SCRYER_TEST_POSTGRES_URL") else {
@@ -522,5 +575,29 @@ async fn postgres_0318_matches_the_sqlite_schema() {
         defaults,
         ("library".to_string(), false, 2, 300, "none".to_string())
     );
+    sqlx::query(
+        "INSERT INTO processed_folder_entries
+             (id, folder_id, relative_path, size_bytes, mtime_ns, fingerprint, status,
+              first_seen_at, last_seen_at, created_at, updated_at)
+         VALUES ('e-1', 'pf-1', 'a/Synthetic.mkv', 10, 1, 'pf1:aa', 'observing',
+                 '2026-10-01T00:00:00Z', '2026-10-01T00:00:00Z',
+                 '2026-10-01T00:00:00Z', '2026-10-01T00:00:00Z')",
+    )
+    .execute(&mut *tx)
+    .await
+    .expect("insert entry");
+    sqlx::query("DELETE FROM processed_folder_entries WHERE folder_id = 'pf-1'")
+        .execute(&mut *tx)
+        .await
+        .expect("explicit entry delete");
+    sqlx::query("DELETE FROM processed_folders WHERE id = 'pf-1'")
+        .execute(&mut *tx)
+        .await
+        .expect("delete folder");
+    let left: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM processed_folder_entries")
+        .fetch_one(&mut *tx)
+        .await
+        .expect("count entries");
+    assert_eq!(left, 0, "entries are gone after explicit folder delete");
     tx.rollback().await.expect("roll back synthetic fixture");
 }

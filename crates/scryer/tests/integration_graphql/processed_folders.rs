@@ -665,17 +665,17 @@ async fn q4c_failed_copy_leaves_source_and_no_partial_destination() {
     )
 }
 
-/// Q4d (Ian's decision): an empty reserved destination after a crash is not
-/// auto-deleted; recovery ends the entry failed with
-/// ManualReconciliationRequired.
+/// Q4d: an empty reserved destination left by a crash is not auto-deleted.
+/// The entry ends failed with ManualReconciliationRequired and the source
+/// is untouched.
 #[tokio::test]
 #[ignore = "pending pf/pr1-core: section 2.4 recovery"]
 async fn q4d_empty_reserved_destination_after_crash_needs_manual_reconciliation() {
     todo!(
-        "seed an importing entry with claimed_at older than the claim timeout and an import row whose reserved \
-         destination exists as an empty file; scanProcessedFolder -> recovered == 1; entry status failed, \
-         reason_code/last_error names ManualReconciliationRequired; the empty destination still exists; \
-         assert_unchanged on the source"
+        "Seed an importing entry whose reserved destination exists as an empty file after a crash \
+         between reservation and rename. scanProcessedFolder must not delete that file. The entry \
+         ends failed with ManualReconciliationRequired (reason_code manual_reconciliation_required). \
+         The empty destination still has length 0. The source snapshot is unchanged."
     )
 }
 
