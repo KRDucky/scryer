@@ -153,6 +153,7 @@ pub struct AppConfigServices {
     pub(crate) settings: Arc<dyn SettingsRepository>,
     pub(crate) quality_profiles: Arc<dyn QualityProfileRepository>,
     pub(crate) delay_profiles: Arc<dyn crate::ports::DelayProfileRepository>,
+    pub(crate) processed_folders: Arc<dyn crate::ports::ProcessedFolderRepository>,
     pub(crate) system_info: Arc<dyn SystemInfoProvider>,
     pub(crate) plugin_http_trust_runtime: RuntimeFeature<Arc<dyn PluginHttpTrustConfigRuntime>>,
     pub(crate) logical_backup_exporter: Arc<dyn LogicalBackupExporter>,
@@ -464,6 +465,9 @@ impl AppServices {
                 quality_profiles,
                 delay_profiles: Arc::new(
                     null_repositories::InMemoryDelayProfileRepository::default(),
+                ),
+                processed_folders: Arc::new(
+                    null_repositories::InMemoryProcessedFolderRepository::default(),
                 ),
                 system_info: Arc::new(NullSystemInfoProvider),
                 plugin_http_trust_runtime: RuntimeFeature::Disabled,

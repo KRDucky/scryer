@@ -1,6 +1,7 @@
 pub mod delay_profile_store;
 pub mod downloads;
 pub mod indexers;
+pub mod processed_folder_store;
 pub mod proxy_config_store;
 pub mod upstream_scheduler;
 

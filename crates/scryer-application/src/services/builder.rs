@@ -653,6 +653,11 @@ impl AppServicesBuilder {
         Arc<dyn crate::ports::DelayProfileRepository>
     );
     app_services_builder_setter!(
+        with_processed_folders,
+        config.processed_folders,
+        Arc<dyn crate::ports::ProcessedFolderRepository>
+    );
+    app_services_builder_setter!(
         with_seeding_profiles,
         integrations.seeding_profiles,
         Arc<dyn SeedingProfileRepository>

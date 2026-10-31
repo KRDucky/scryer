@@ -2292,6 +2292,7 @@ pub struct AppRuntimeImportState {
     pub external_import_apply_lock: Arc<tokio::sync::Mutex<()>>,
     pub external_import_source_chunk_cleanup_done: Arc<tokio::sync::Mutex<bool>>,
     pub(crate) same_path_upgrade_guard_lock: Arc<tokio::sync::Mutex<()>>,
+    pub(crate) processed_folders: crate::import::processed_folders::ProcessedFolderRuntime,
 }
 
 #[derive(Clone)]
@@ -2685,6 +2686,7 @@ impl AppRuntimeState {
                 external_import_apply_lock: Arc::new(tokio::sync::Mutex::new(())),
                 external_import_source_chunk_cleanup_done: Arc::new(tokio::sync::Mutex::new(false)),
                 same_path_upgrade_guard_lock: Arc::new(tokio::sync::Mutex::new(())),
+                processed_folders: crate::import::processed_folders::ProcessedFolderRuntime::new(),
             },
             library: AppRuntimeLibraryState {
                 library_scan_tracker: LibraryScanTracker::new(),

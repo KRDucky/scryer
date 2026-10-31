@@ -1430,6 +1430,14 @@ impl DatastoreAssembly {
         Arc::new(crate::DelayProfileStore::new(self.datastore()))
     }
 
+    pub fn processed_folders(&self) -> Arc<dyn scryer_application::ProcessedFolderRepository> {
+        Arc::new(
+            scryer_infrastructure_acquisition::processed_folder_store::ProcessedFolderStore::new(
+                self.datastore(),
+            ),
+        )
+    }
+
     pub fn seeding_profiles(&self) -> Arc<dyn scryer_application::SeedingProfileRepository> {
         match &self.stores {
             DatastoreStores::Sqlite {
@@ -1706,6 +1714,7 @@ impl DatastoreAssembly {
                 .with_proxy_config_store(self.proxy_configs())
                 .with_seeding_profiles(self.seeding_profiles())
                 .with_delay_profiles(self.delay_profiles())
+                .with_processed_folders(self.processed_folders())
                 .with_external_identity_verifier(Arc::new(HttpExternalIdentityVerifier::new()))
                 .with_media_server_connection_store(media_server_connection_store.clone())
                 // Maintenance safety: live playback observation (RFC 137 §9.10, WP-G).
@@ -1840,6 +1849,7 @@ impl DatastoreAssembly {
                 .with_proxy_config_store(self.proxy_configs())
                 .with_seeding_profiles(self.seeding_profiles())
                 .with_delay_profiles(self.delay_profiles())
+                .with_processed_folders(self.processed_folders())
                 .with_external_identity_verifier(Arc::new(HttpExternalIdentityVerifier::new()))
                 .with_media_server_connection_store(media_server_connection_store.clone())
                 // Maintenance safety: live playback observation (RFC 137 §9.10, WP-G).

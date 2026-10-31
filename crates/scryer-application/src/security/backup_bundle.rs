@@ -809,6 +809,16 @@ pub const BACKUP_TABLE_CATALOG: &[BackupTableCatalogEntry] = &[
         classification: BackupTableClassification::Export,
     },
     BackupTableCatalogEntry {
+        table: "processed_folders",
+        classification: BackupTableClassification::Export,
+    },
+    // The ledger is rebuilt by the next scan. Restoring it would revive claims
+    // whose import tasks no longer exist.
+    BackupTableCatalogEntry {
+        table: "processed_folder_entries",
+        classification: BackupTableClassification::ResetOnRestore,
+    },
+    BackupTableCatalogEntry {
         table: "indexer_api_clients",
         classification: BackupTableClassification::Export,
     },

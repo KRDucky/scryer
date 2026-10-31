@@ -119,6 +119,260 @@ impl crate::ports::DelayProfileRepository for InMemoryDelayProfileRepository {
     }
 }
 
+/// Processed folders held in memory for assemblies that do not wire a datastore.
+#[derive(Default)]
+pub struct InMemoryProcessedFolderRepository {
+    folders: tokio::sync::Mutex<Vec<scryer_domain::processed_folder::ProcessedFolder>>,
+    entries: tokio::sync::Mutex<Vec<scryer_domain::processed_folder::ProcessedFolderEntry>>,
+}
+
+#[async_trait]
+impl crate::ports::ProcessedFolderRepository for InMemoryProcessedFolderRepository {
+    async fn list_folders(
+        &self,
+    ) -> AppResult<Vec<scryer_domain::processed_folder::ProcessedFolder>> {
+        let mut folders = self.folders.lock().await.clone();
+        folders.sort_by(|left, right| left.name.cmp(&right.name).then(left.id.cmp(&right.id)));
+        Ok(folders)
+    }
+
+    async fn get_folder(
+        &self,
+        id: &str,
+    ) -> AppResult<Option<scryer_domain::processed_folder::ProcessedFolder>> {
+        Ok(self
+            .folders
+            .lock()
+            .await
+            .iter()
+            .find(|folder| folder.id == id)
+            .cloned())
+    }
+
+    async fn insert_folder(
+        &self,
+        folder: scryer_domain::processed_folder::ProcessedFolder,
+    ) -> AppResult<scryer_domain::processed_folder::ProcessedFolder> {
+        self.refuse_folder_conflict(&folder, None).await?;
+        self.folders.lock().await.push(folder.clone());
+        Ok(folder)
+    }
+
+    async fn update_folder(
+        &self,
+        folder: scryer_domain::processed_folder::ProcessedFolder,
+    ) -> AppResult<bool> {
+        self.refuse_folder_conflict(&folder, Some(folder.id.as_str()))
+            .await?;
+        let mut folders = self.folders.lock().await;
+        let Some(existing) = folders.iter_mut().find(|existing| existing.id == folder.id) else {
+            return Ok(false);
+        };
+        *existing = folder;
+        Ok(true)
+    }
+
+    async fn set_folder_enabled(
+        &self,
+        id: &str,
+        enabled: bool,
+        updated_at: chrono::DateTime<chrono::Utc>,
+    ) -> AppResult<bool> {
+        let mut folders = self.folders.lock().await;
+        let Some(folder) = folders.iter_mut().find(|folder| folder.id == id) else {
+            return Ok(false);
+        };
+        folder.enabled = enabled;
+        folder.updated_at = updated_at;
+        Ok(true)
+    }
+
+    async fn delete_folder(&self, id: &str) -> AppResult<bool> {
+        self.entries
+            .lock()
+            .await
+            .retain(|entry| entry.folder_id != id);
+        let mut folders = self.folders.lock().await;
+        let before = folders.len();
+        folders.retain(|folder| folder.id != id);
+        Ok(folders.len() != before)
+    }
+
+    async fn record_scan_timestamps(
+        &self,
+        id: &str,
+        started_at: Option<chrono::DateTime<chrono::Utc>>,
+        finished_at: Option<chrono::DateTime<chrono::Utc>>,
+        updated_at: chrono::DateTime<chrono::Utc>,
+    ) -> AppResult<bool> {
+        let mut folders = self.folders.lock().await;
+        let Some(folder) = folders.iter_mut().find(|folder| folder.id == id) else {
+            return Ok(false);
+        };
+        folder.last_scan_started_at = started_at;
+        folder.last_scan_finished_at = finished_at;
+        folder.updated_at = updated_at;
+        Ok(true)
+    }
+
+    async fn list_entries(
+        &self,
+        query: scryer_domain::processed_folder::ProcessedFolderEntryQuery,
+    ) -> AppResult<scryer_domain::processed_folder::ProcessedFolderEntryPage> {
+        let mut items = self
+            .matching_entries(&query.folder_id, query.statuses.as_deref())
+            .await;
+        let total_count = i64::try_from(items.len()).unwrap_or(i64::MAX);
+        let offset = usize::try_from(query.offset.max(0)).unwrap_or(usize::MAX);
+        let limit = usize::try_from(query.limit.max(0)).unwrap_or(usize::MAX);
+        items = items.into_iter().skip(offset).take(limit).collect();
+        Ok(scryer_domain::processed_folder::ProcessedFolderEntryPage { items, total_count })
+    }
+
+    async fn list_all_entries(
+        &self,
+        folder_id: &str,
+    ) -> AppResult<Vec<scryer_domain::processed_folder::ProcessedFolderEntry>> {
+        Ok(self.matching_entries(folder_id, None).await)
+    }
+
+    async fn get_entry(
+        &self,
+        id: &str,
+    ) -> AppResult<Option<scryer_domain::processed_folder::ProcessedFolderEntry>> {
+        Ok(self
+            .entries
+            .lock()
+            .await
+            .iter()
+            .find(|entry| entry.id == id)
+            .cloned())
+    }
+
+    async fn entry_counts(
+        &self,
+        folder_id: &str,
+    ) -> AppResult<scryer_domain::processed_folder::ProcessedFolderEntryCounts> {
+        let mut counts = scryer_domain::processed_folder::ProcessedFolderEntryCounts::default();
+        for entry in self.entries.lock().await.iter() {
+            if entry.folder_id == folder_id {
+                counts.add(entry.status, 1);
+            }
+        }
+        Ok(counts)
+    }
+
+    async fn count_importing_entries(&self, folder_id: &str) -> AppResult<i64> {
+        Ok(self.entry_counts(folder_id).await?.importing)
+    }
+
+    async fn insert_entry(
+        &self,
+        entry: scryer_domain::processed_folder::ProcessedFolderEntry,
+    ) -> AppResult<scryer_domain::processed_folder::ProcessedFolderEntry> {
+        self.entries.lock().await.push(entry.clone());
+        Ok(entry)
+    }
+
+    async fn claim_stable_entry(
+        &self,
+        entry_id: &str,
+        now: chrono::DateTime<chrono::Utc>,
+    ) -> AppResult<bool> {
+        let mut entries = self.entries.lock().await;
+        let Some(entry) = entries.iter_mut().find(|entry| entry.id == entry_id) else {
+            return Ok(false);
+        };
+        if entry.status != scryer_domain::processed_folder::ProcessedFolderEntryStatus::Stable {
+            return Ok(false);
+        }
+        let folder_id = entry.folder_id.clone();
+        let enabled = self
+            .folders
+            .lock()
+            .await
+            .iter()
+            .any(|folder| folder.id == folder_id && folder.enabled);
+        if !enabled {
+            return Ok(false);
+        }
+        entry.status = scryer_domain::processed_folder::ProcessedFolderEntryStatus::Importing;
+        entry.claimed_at = Some(now);
+        entry.attempts = entry.attempts.saturating_add(1);
+        entry.updated_at = now;
+        Ok(true)
+    }
+
+    async fn force_entry_state_for_tests(
+        &self,
+        entry_id: &str,
+        status: scryer_domain::processed_folder::ProcessedFolderEntryStatus,
+        attempts: i64,
+        claimed_at: Option<chrono::DateTime<chrono::Utc>>,
+        updated_at: chrono::DateTime<chrono::Utc>,
+    ) -> AppResult<bool> {
+        let mut entries = self.entries.lock().await;
+        let Some(entry) = entries.iter_mut().find(|entry| entry.id == entry_id) else {
+            return Ok(false);
+        };
+        entry.status = status;
+        entry.attempts = attempts;
+        entry.claimed_at = claimed_at;
+        entry.updated_at = updated_at;
+        Ok(true)
+    }
+}
+
+impl InMemoryProcessedFolderRepository {
+    async fn refuse_folder_conflict(
+        &self,
+        folder: &scryer_domain::processed_folder::ProcessedFolder,
+        exclude_id: Option<&str>,
+    ) -> AppResult<()> {
+        let folders = self.folders.lock().await;
+        if folders.iter().any(|existing| {
+            existing.id.as_str() != exclude_id.unwrap_or("") && existing.name == folder.name
+        }) {
+            return Err(AppError::validation_refused(
+                crate::processed_folder_refusal::NAME_TAKEN,
+                "a processed folder with this name already exists",
+            ));
+        }
+        if folders.iter().any(|existing| {
+            existing.id.as_str() != exclude_id.unwrap_or("")
+                && existing.normalized_root_path == folder.normalized_root_path
+        }) {
+            return Err(AppError::validation_refused(
+                crate::processed_folder_refusal::OVERLAPS_OTHER_FOLDER,
+                "processed folder path overlaps another processed folder",
+            ));
+        }
+        Ok(())
+    }
+
+    async fn matching_entries(
+        &self,
+        folder_id: &str,
+        statuses: Option<&[scryer_domain::processed_folder::ProcessedFolderEntryStatus]>,
+    ) -> Vec<scryer_domain::processed_folder::ProcessedFolderEntry> {
+        let mut items: Vec<_> = self
+            .entries
+            .lock()
+            .await
+            .iter()
+            .filter(|entry| entry.folder_id == folder_id)
+            .filter(|entry| statuses.is_none_or(|statuses| statuses.contains(&entry.status)))
+            .cloned()
+            .collect();
+        items.sort_by(|left, right| {
+            left.relative_path
+                .cmp(&right.relative_path)
+                .then(left.id.cmp(&right.id))
+        });
+        items
+    }
+}
+
 #[async_trait]
 impl SeedingProfileRepository for NullSeedingProfileRepository {
     async fn list(&self) -> AppResult<Vec<scryer_domain::SeedingProfile>> {

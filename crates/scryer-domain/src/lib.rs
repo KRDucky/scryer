@@ -13,6 +13,7 @@ pub mod title_normalization;
 pub use lists::*;
 mod season_numbering;
 pub use season_numbering::season_ordinal_from_title;
+pub mod processed_folder;
 mod title_sort;
 pub mod title_spelling;
 pub use title_sort::{

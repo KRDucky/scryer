@@ -23,7 +23,7 @@ use scryer_interface_security::UserMutations;
 use scryer_interface_system::{BackupMutations, PluginMutations};
 
 use async_graphql::MergedObject;
-use scryer_interface_settings::SettingsMutations;
+use scryer_interface_settings::{ProcessedFolderMutations, SettingsMutations};
 
 #[derive(MergedObject, Default)]
 pub struct MutationRoot(
@@ -53,4 +53,5 @@ pub struct MutationRoot(
     interactive_search::InteractiveSearchMutations,
     scryer_interface_settings::IndexerClientMutations,
     lists::ListMutations,
+    ProcessedFolderMutations,
 );

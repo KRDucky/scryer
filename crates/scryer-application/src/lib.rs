@@ -11,6 +11,12 @@ mod download_client_config;
 mod download_client_path_mappings;
 mod download_identity;
 pub mod http_release_refusal;
+pub mod processed_folder_refusal;
+pub use import::processed_folders::{
+    CreateProcessedFolder, MarkerValueUpdate, ProcessedFolderEntryConnection,
+    ProcessedFolderEntryView, ProcessedFolderPreview, ProcessedFolderScanReport,
+    ProcessedFolderView, UpdateProcessedFolder,
+};
 pub mod indexer_clients;
 pub mod initial_auth;
 pub mod login_challenge_refusal;
@@ -677,12 +683,13 @@ pub use ports::{
     OAuthRepository, PendingReleaseRepository, PlexServerDiscovery, PlexServerUser,
     PluginDescriptorLoader, PluginDynamicConfigFields, PluginHttpTrustConfigRuntime,
     PluginInstallationRepository, PostProcessingScriptRepository, PrefetchedCompletedDownloads,
-    ProxyConfigRepository, QualityProfileRepository, ReleaseAttemptRepository,
-    RequestRuleDecisionRepository, RequestRuleSetRepository, ReusableIndexerSearchCandidate,
-    ReusableIndexerSearchCandidatePage, ReusableIndexerSearchStrategy, RuleSetRepository,
-    RuntimePluginLoad, SEARCH_STRATEGY_CONTAINED, SEARCH_STRATEGY_CONVERGED, SEARCH_STRATEGY_OPEN,
-    ScopeCoverageRow, ScopeIndexerCoverageRepository, SeedingProfileRepository, SettingsRepository,
-    ShowRepository, SrrdbFilenameLookup, SrrdbOutage, StagedNzbStore, SubtitleDownloadRepository,
+    ProcessedFolderRepository, ProxyConfigRepository, QualityProfileRepository,
+    ReleaseAttemptRepository, RequestRuleDecisionRepository, RequestRuleSetRepository,
+    ReusableIndexerSearchCandidate, ReusableIndexerSearchCandidatePage,
+    ReusableIndexerSearchStrategy, RuleSetRepository, RuntimePluginLoad, SEARCH_STRATEGY_CONTAINED,
+    SEARCH_STRATEGY_CONVERGED, SEARCH_STRATEGY_OPEN, ScopeCoverageRow,
+    ScopeIndexerCoverageRepository, SeedingProfileRepository, SettingsRepository, ShowRepository,
+    SrrdbFilenameLookup, SrrdbOutage, StagedNzbStore, SubtitleDownloadRepository,
     SubtitlePluginProvider, SubtitleProviderClient, SubtitleProviderConfigRepository,
     SystemInfoProvider, TitleImageProcessor, TitleImageRepository, TitleListProjection,
     TitleNameBucketQuery, TitleNameCandidate, TitleRepository, TotpRepository,

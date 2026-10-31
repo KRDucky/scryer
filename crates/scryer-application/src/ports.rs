@@ -19,6 +19,10 @@ use crate::types::{
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use scryer_domain::download_identity::DownloadId;
+use scryer_domain::processed_folder::{
+    ProcessedFolder, ProcessedFolderEntry, ProcessedFolderEntryCounts, ProcessedFolderEntryPage,
+    ProcessedFolderEntryQuery, ProcessedFolderEntryStatus,
+};
 use scryer_domain::{
     AnimeNumberingBridge, CanonicalMediaTag, ImportTransferPhase, ImportType, IndexerCapsSnapshot,
     MaintenanceRuleRevision, MaintenanceRuleSet, MonitorSelection, PersistedPluginWasmPayload,
@@ -4948,6 +4952,56 @@ pub trait DelayProfileRepository: Send + Sync {
 }
 
 #[async_trait]
+pub trait ProcessedFolderRepository: Send + Sync {
+    async fn list_folders(&self) -> AppResult<Vec<ProcessedFolder>>;
+    async fn get_folder(&self, id: &str) -> AppResult<Option<ProcessedFolder>>;
+    /// Insert one folder. A unique name becomes `PROCESSED_FOLDER_NAME_TAKEN`.
+    /// A unique normalized root becomes `PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER`.
+    /// A missing library becomes `PROCESSED_FOLDER_LIBRARY_NOT_FOUND`.
+    async fn insert_folder(&self, folder: ProcessedFolder) -> AppResult<ProcessedFolder>;
+    /// Replace the mutable columns of an existing folder. `Ok(false)` when the
+    /// id is gone. Unique violations use the same mapping as [`Self::insert_folder`].
+    async fn update_folder(&self, folder: ProcessedFolder) -> AppResult<bool>;
+    async fn set_folder_enabled(
+        &self,
+        id: &str,
+        enabled: bool,
+        updated_at: DateTime<Utc>,
+    ) -> AppResult<bool>;
+    /// Delete the folder's entries, then the folder, in one transaction.
+    /// `Ok(false)` when the folder was already gone. Nothing on disk is touched.
+    async fn delete_folder(&self, id: &str) -> AppResult<bool>;
+    async fn record_scan_timestamps(
+        &self,
+        id: &str,
+        started_at: Option<DateTime<Utc>>,
+        finished_at: Option<DateTime<Utc>>,
+        updated_at: DateTime<Utc>,
+    ) -> AppResult<bool>;
+    async fn list_entries(
+        &self,
+        query: ProcessedFolderEntryQuery,
+    ) -> AppResult<ProcessedFolderEntryPage>;
+    async fn list_all_entries(&self, folder_id: &str) -> AppResult<Vec<ProcessedFolderEntry>>;
+    async fn get_entry(&self, id: &str) -> AppResult<Option<ProcessedFolderEntry>>;
+    async fn entry_counts(&self, folder_id: &str) -> AppResult<ProcessedFolderEntryCounts>;
+    async fn count_importing_entries(&self, folder_id: &str) -> AppResult<i64>;
+    async fn insert_entry(&self, entry: ProcessedFolderEntry) -> AppResult<ProcessedFolderEntry>;
+    /// Claim a stable entry of an enabled folder in one statement.
+    /// `Ok(false)` is a lost race or a disabled folder.
+    async fn claim_stable_entry(&self, entry_id: &str, now: DateTime<Utc>) -> AppResult<bool>;
+    /// Test support for restart recovery. Not reachable from GraphQL.
+    async fn force_entry_state_for_tests(
+        &self,
+        entry_id: &str,
+        status: ProcessedFolderEntryStatus,
+        attempts: i64,
+        claimed_at: Option<DateTime<Utc>>,
+        updated_at: DateTime<Utc>,
+    ) -> AppResult<bool>;
+}
+
+#[async_trait]
 pub trait SubtitleProviderConfigRepository: Send + Sync {
     async fn list(&self, provider_type: Option<String>) -> AppResult<Vec<SubtitleProviderConfig>>;
     async fn get_by_id(&self, id: &str) -> AppResult<Option<SubtitleProviderConfig>>;
@@ -7942,6 +7996,7 @@ pub struct ImportFileExecutionContext {
     client_lane_key: String,
     active_import_stream: Option<crate::ActiveImportStreamHandle>,
     archive_workspace_source: bool,
+    copy_only: bool,
 }
 
 impl ImportFileExecutionContext {
@@ -7956,6 +8011,7 @@ impl ImportFileExecutionContext {
             client_lane_key,
             active_import_stream: None,
             archive_workspace_source: false,
+            copy_only: false,
         }
     }
 
@@ -7973,6 +8029,17 @@ impl ImportFileExecutionContext {
 
     pub fn archive_workspace_source(&self) -> bool {
         self.archive_workspace_source
+    }
+
+    /// The source belongs to someone else (a processed folder): place by verified copy only.
+    /// Never hard link, symlink or rename it, and never build a source-cleanup guard.
+    pub fn with_copy_only(mut self, copy_only: bool) -> Self {
+        self.copy_only = copy_only;
+        self
+    }
+
+    pub fn copy_only(&self) -> bool {
+        self.copy_only
     }
 
     pub fn with_active_import_stream(
@@ -8026,6 +8093,13 @@ mod import_file_execution_context_tests {
             ImportFileExecutionContext::new(" ", " ").client_lane_key(),
             "unknown-client"
         );
+    }
+
+    #[test]
+    fn copy_only_defaults_off_until_the_caller_sets_it() {
+        let context = ImportFileExecutionContext::new("folder", "processed_folder");
+        assert!(!context.copy_only());
+        assert!(context.with_copy_only(true).copy_only());
     }
 }
 

@@ -18,7 +18,7 @@ use scryer_application::{
 };
 use scryer_domain::{AppPermission, RulePackInstallation, RuleSet, TitleHistoryEventType};
 use scryer_interface_metadata::MetadataQueries;
-use scryer_interface_settings::SettingsQueries;
+use scryer_interface_settings::{ProcessedFolderQueries, SettingsQueries};
 use std::{collections::HashMap, fs, io, path::Path};
 
 mod lists;
@@ -887,6 +887,7 @@ pub struct QueryRoot(
     AccountQueries,
     IndexerErrorQueries,
     lists::ListQueries,
+    ProcessedFolderQueries,
 );
 
 fn indexer_error_operation_value(

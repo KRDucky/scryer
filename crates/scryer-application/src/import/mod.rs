@@ -15,6 +15,7 @@ pub mod failed_download;
 pub(crate) mod parameters;
 pub(crate) mod post_download_gate;
 pub mod post_processing;
+pub(crate) mod processed_folders;
 pub(crate) mod seeding_gate;
 pub(crate) mod srrdb;
 pub(crate) mod title_resolution;
