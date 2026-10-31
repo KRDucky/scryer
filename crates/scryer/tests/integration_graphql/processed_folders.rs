@@ -625,11 +625,8 @@ async fn validation_refusals_surface_as_extensions_reason() {
     .await;
     assert_eq!(error_code(&body), Some("VALIDATION_ERROR"), "{body}");
     let reason = refusal_reason(&body).unwrap_or_default();
-    assert!(
-        matches!(
-            reason,
-            "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE" | "PROCESSED_FOLDER_LIBRARY_NOT_FOUND"
-        ),
-        "section 7 does not fix the check order; either refusal is acceptable: {body}"
+    assert_eq!(
+        reason, "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE",
+        "V4 check order reaches path before library: {body}"
     );
 }

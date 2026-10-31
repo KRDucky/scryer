@@ -1,8 +1,9 @@
 //! Processed-media folder importer (PR1, copy-only): application-level tests.
 //!
-//! The PR1 contract v2 is the source of truth: section 1.4 (Q1 to Q7), section 2
-//! (state machine, action matrix, restart recovery), section 7 (validation) and
-//! section 8 (other cases). The contract lives outside the repository.
+//! The PR1 contract v2.2 is the source of truth (V0-V7 override the v2.1 body):
+//! section 1.4 (Q1 to Q7), section 2 (state machine, action matrix, restart
+//! recovery), section 7 (validation) and section 8 (other cases). The contract
+//! lives outside the repository.
 //!
 //! Layout of this file:
 //! - `fixtures`: helpers that do not depend on PR1 types. They compile today and
@@ -58,13 +59,15 @@ pub(super) mod fixtures {
     /// Contract section 7.5: name prefixes a scan ignores.
     pub(crate) const IGNORED_PREFIXES: &[&str] = &[".", "~$"];
 
-    /// Contract section 4: every refusal code. The base branch's
-    /// `processed_folder_refusal::ALL` must equal this set.
+    /// Contract V4: every refusal code, in table order. The base branch's
+    /// `processed_folder_refusal::ALL` must equal this set (26 codes).
     pub(crate) const EXPECTED_REFUSAL_CODES: &[&str] = &[
         "PROCESSED_FOLDER_NOT_FOUND",
         "PROCESSED_FOLDER_ENTRY_NOT_FOUND",
         "PROCESSED_FOLDER_NAME_REQUIRED",
+        "PROCESSED_FOLDER_NAME_TOO_LONG",
         "PROCESSED_FOLDER_NAME_TAKEN",
+        "PROCESSED_FOLDER_FIELD_NOT_TRIMMED",
         "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE",
         "PROCESSED_FOLDER_PATH_MISSING",
         "PROCESSED_FOLDER_PATH_NOT_DIRECTORY",
@@ -74,14 +77,159 @@ pub(super) mod fixtures {
         "PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH",
         "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
         "PROCESSED_FOLDER_LIBRARY_NOT_FOUND",
+        "PROCESSED_FOLDER_SCOPE_KIND_INVALID",
         "PROCESSED_FOLDER_INVALID_STABILITY",
         "PROCESSED_FOLDER_INVALID_MARKER",
+        "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED",
         "PROCESSED_FOLDER_DISABLED",
         "PROCESSED_FOLDER_SCAN_IN_PROGRESS",
         "PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE",
         "PROCESSED_FOLDER_ENTRY_CHANGED",
         "PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY",
+        "PROCESSED_FOLDER_TITLE_NOT_FOUND",
         "PROCESSED_FOLDER_IMPORTS_IN_FLIGHT",
+    ];
+
+    /// Exact V4 trigger for each code, same order as `EXPECTED_REFUSAL_CODES`.
+    pub(crate) const REFUSAL_TRIGGERS: &[(&str, &str)] = &[
+        (
+            "PROCESSED_FOLDER_NOT_FOUND",
+            "folder id does not exist, on every folder query and mutation",
+        ),
+        (
+            "PROCESSED_FOLDER_ENTRY_NOT_FOUND",
+            "entry id does not exist, on entry actions",
+        ),
+        (
+            "PROCESSED_FOLDER_NAME_REQUIRED",
+            "create and update with name empty (after the trim check; whitespace is FIELD_NOT_TRIMMED, never trimmed)",
+        ),
+        (
+            "PROCESSED_FOLDER_NAME_TOO_LONG",
+            "create and update: name of 101 Unicode scalar values is refused; a name of 100 scalar values is accepted",
+        ),
+        (
+            "PROCESSED_FOLDER_NAME_TAKEN",
+            "create and update: the store reports RepositoryErrorKind::UniqueViolation on idx_processed_folders_name",
+        ),
+        (
+            "PROCESSED_FOLDER_FIELD_NOT_TRIMMED",
+            "create and update: name, rootPath, or markerValue has leading or trailing whitespace; refuse, never trim",
+        ),
+        (
+            "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE",
+            "create, update, and scan start: rootPath is not absolute",
+        ),
+        (
+            "PROCESSED_FOLDER_PATH_MISSING",
+            "create, update, and scan start: rootPath does not exist",
+        ),
+        (
+            "PROCESSED_FOLDER_PATH_NOT_DIRECTORY",
+            "create, update, and scan start: rootPath is not a directory",
+        ),
+        (
+            "PROCESSED_FOLDER_PATH_UNRESOLVABLE",
+            "create, update, and scan start: canonicalize or resolve_existing_component fails",
+        ),
+        (
+            "PROCESSED_FOLDER_OVERLAPS_LIBRARY_ROOT",
+            "create, update, and scan start: root is equal to, an ancestor of, or a descendant of any library root, lexically or canonically; also the reverse library-root change",
+        ),
+        (
+            "PROCESSED_FOLDER_OVERLAPS_RECYCLE_BIN",
+            "create, update, and scan start: root overlaps the enabled custom recycle bin; also the reverse recycle-bin change",
+        ),
+        (
+            "PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH",
+            "create, update, and scan start: root overlaps BACKUP_PATH_KEY",
+        ),
+        (
+            "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
+            "create and update: root overlaps another processed folder, or the store reports UniqueViolation on idx_processed_folders_normalized_root",
+        ),
+        (
+            "PROCESSED_FOLDER_LIBRARY_NOT_FOUND",
+            "create and update: libraryId does not exist",
+        ),
+        (
+            "PROCESSED_FOLDER_SCOPE_KIND_INVALID",
+            "store read, create, and update: scope_kind is not library",
+        ),
+        (
+            "PROCESSED_FOLDER_INVALID_STABILITY",
+            "create and update: minStableScans is outside 2..=10 or minAgeSeconds is outside 60..=86400",
+        ),
+        (
+            "PROCESSED_FOLDER_INVALID_MARKER",
+            "create and update: mode SIBLING_SUFFIX or DIRECTORY_FILE with a missing or malformed marker value (V1.2)",
+        ),
+        (
+            "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED",
+            "create and update: markerValue is set while the resulting mode is NONE",
+        ),
+        (
+            "PROCESSED_FOLDER_DISABLED",
+            "scan, import-as, or retry on a disabled folder, and a claim refused because the folder is disabled (V2.1)",
+        ),
+        (
+            "PROCESSED_FOLDER_SCAN_IN_PROGRESS",
+            "scan: another scan of the same folder holds the scan lock",
+        ),
+        (
+            "PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE",
+            "entry action not allowed in the row state, or the transition UPDATE changed 0 rows",
+        ),
+        (
+            "PROCESSED_FOLDER_ENTRY_CHANGED",
+            "import-as: import-time re-stat or re-canonicalize differs, and the row becomes superseded",
+        ),
+        (
+            "PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY",
+            "import-as: titleId belongs to another library",
+        ),
+        (
+            "PROCESSED_FOLDER_TITLE_NOT_FOUND",
+            "import-as: titleId does not exist",
+        ),
+        (
+            "PROCESSED_FOLDER_IMPORTS_IN_FLIGHT",
+            "delete: an entry is still importing after orphan recovery (V2.3)",
+        ),
+    ];
+
+    /// V4 create/update check order. Later phases run only after earlier ones
+    /// pass. `OVERLAPS_OTHER_FOLDER` is both the overlap phase and the
+    /// normalized-root unique violation at store write.
+    pub(crate) const CREATE_UPDATE_CHECK_ORDER: &[&[&str]] = &[
+        &["PROCESSED_FOLDER_FIELD_NOT_TRIMMED"],
+        &[
+            "PROCESSED_FOLDER_NAME_REQUIRED",
+            "PROCESSED_FOLDER_NAME_TOO_LONG",
+        ],
+        &[
+            "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE",
+            "PROCESSED_FOLDER_PATH_MISSING",
+            "PROCESSED_FOLDER_PATH_NOT_DIRECTORY",
+            "PROCESSED_FOLDER_PATH_UNRESOLVABLE",
+        ],
+        &["PROCESSED_FOLDER_LIBRARY_NOT_FOUND"],
+        &["PROCESSED_FOLDER_SCOPE_KIND_INVALID"],
+        &["PROCESSED_FOLDER_INVALID_STABILITY"],
+        &[
+            "PROCESSED_FOLDER_INVALID_MARKER",
+            "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED",
+        ],
+        &[
+            "PROCESSED_FOLDER_OVERLAPS_LIBRARY_ROOT",
+            "PROCESSED_FOLDER_OVERLAPS_RECYCLE_BIN",
+            "PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH",
+            "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
+        ],
+        &[
+            "PROCESSED_FOLDER_NAME_TAKEN",
+            "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
+        ],
     ];
 
     /// Contract section 2.1: ledger states, in SDL order.
@@ -1732,16 +1880,76 @@ mod fixture_self_tests {
 
     #[test]
     fn the_refusal_code_list_is_distinct_and_area_prefixed() {
-        assert_eq!(EXPECTED_REFUSAL_CODES.len(), 21);
+        assert_eq!(EXPECTED_REFUSAL_CODES.len(), 26);
+        assert_eq!(REFUSAL_TRIGGERS.len(), EXPECTED_REFUSAL_CODES.len());
         let distinct: HashSet<_> = EXPECTED_REFUSAL_CODES.iter().collect();
         assert_eq!(distinct.len(), EXPECTED_REFUSAL_CODES.len());
-        for code in EXPECTED_REFUSAL_CODES {
+        for (code, (trigger_code, trigger)) in EXPECTED_REFUSAL_CODES.iter().zip(REFUSAL_TRIGGERS) {
+            assert_eq!(code, trigger_code);
+            assert!(!trigger.is_empty(), "{code}");
             assert!(code.starts_with("PROCESSED_FOLDER_"), "{code}");
             assert!(
                 code.chars().all(|c| c.is_ascii_uppercase() || c == '_'),
                 "{code}"
             );
         }
+        for code in [
+            "PROCESSED_FOLDER_NAME_TOO_LONG",
+            "PROCESSED_FOLDER_FIELD_NOT_TRIMMED",
+            "PROCESSED_FOLDER_SCOPE_KIND_INVALID",
+            "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED",
+            "PROCESSED_FOLDER_TITLE_NOT_FOUND",
+        ] {
+            assert!(EXPECTED_REFUSAL_CODES.contains(&code), "{code}");
+        }
+
+        let flat: Vec<&str> = CREATE_UPDATE_CHECK_ORDER
+            .iter()
+            .copied()
+            .flatten()
+            .copied()
+            .collect();
+        assert_eq!(
+            flat,
+            vec![
+                "PROCESSED_FOLDER_FIELD_NOT_TRIMMED",
+                "PROCESSED_FOLDER_NAME_REQUIRED",
+                "PROCESSED_FOLDER_NAME_TOO_LONG",
+                "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE",
+                "PROCESSED_FOLDER_PATH_MISSING",
+                "PROCESSED_FOLDER_PATH_NOT_DIRECTORY",
+                "PROCESSED_FOLDER_PATH_UNRESOLVABLE",
+                "PROCESSED_FOLDER_LIBRARY_NOT_FOUND",
+                "PROCESSED_FOLDER_SCOPE_KIND_INVALID",
+                "PROCESSED_FOLDER_INVALID_STABILITY",
+                "PROCESSED_FOLDER_INVALID_MARKER",
+                "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED",
+                "PROCESSED_FOLDER_OVERLAPS_LIBRARY_ROOT",
+                "PROCESSED_FOLDER_OVERLAPS_RECYCLE_BIN",
+                "PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH",
+                "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
+                "PROCESSED_FOLDER_NAME_TAKEN",
+                "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
+            ]
+        );
+        assert!(
+            flat.iter()
+                .all(|code| EXPECTED_REFUSAL_CODES.contains(code))
+        );
+    }
+
+    #[test]
+    fn name_length_counts_unicode_scalar_values() {
+        let accepted = "a".repeat(100);
+        let refused = "a".repeat(101);
+        assert_eq!(accepted.chars().count(), 100);
+        assert_eq!(refused.chars().count(), 101);
+        let accented = "é".repeat(100);
+        assert_eq!(accented.chars().count(), 100);
+        assert!(
+            accented.len() > 100,
+            "the boundary is scalar values, not bytes"
+        );
     }
 
     #[cfg(unix)]
@@ -2731,13 +2939,13 @@ mod validation {
         empty_name_is_required,
         "pending pf/pr1-base: validation.rs",
         "PROCESSED_FOLDER_NAME_REQUIRED",
-        "create with name '' and with name '   '"
+        "create and update with name '' only; a whitespace name is FIELD_NOT_TRIMMED, checked first, and is never trimmed into empty"
     );
     refusal!(
         duplicate_name_is_taken,
         "pending pf/pr1-base: validation.rs",
         "PROCESSED_FOLDER_NAME_TAKEN",
-        "create 'A' on tree1, then 'A' on tree2; also update B's name to 'A'"
+        "create 'A' on tree1, then 'A' on tree2; update B's name to 'A'. The store must surface RepositoryErrorKind::UniqueViolation on idx_processed_folders_name (AppError::repository_kind); map that kind to this code. Never match the driver message"
     );
     refusal!(
         relative_path_is_not_absolute,
@@ -2809,7 +3017,7 @@ mod validation {
         another_processed_folder_overlaps,
         "pending pf/pr1-base: validation.rs",
         "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
-        "create A at tree; create B at tree, tree/sub, the parent of tree, and a symlinked alias of tree; update A onto B's path is refused too, updating A onto its own path is allowed"
+        "create A at tree; create B at tree, tree/sub, the parent of tree, and a symlinked alias of tree; update A onto B's path is refused too, updating A onto its own path is allowed. A same normalized root with a different name is UniqueViolation on idx_processed_folders_normalized_root, mapped to this code"
     );
     refusal!(
         an_unknown_library_is_not_found,
@@ -2833,7 +3041,7 @@ mod validation {
         bad_markers_are_invalid,
         "pending pf/pr1-base: validation.rs",
         "PROCESSED_FOLDER_INVALID_MARKER",
-        "marker_value '', 'a/b', 'a\\\\b', '..', and SIBLING_SUFFIX 'done' (no leading dot) refused; SIBLING_SUFFIX '.done' and DIRECTORY_FILE '_DONE' accepted. Contract gap: no rule for a marker_value with marker_mode NONE"
+        "marker_value '', 'a/b', 'a\\\\b', '..', and SIBLING_SUFFIX 'done' (no leading dot) refused; SIBLING_SUFFIX '.done' and DIRECTORY_FILE '_DONE' accepted. A value while the mode is NONE is MARKER_VALUE_NOT_ALLOWED, not this code"
     );
     refusal!(
         updating_an_unknown_folder_is_not_found,
@@ -2843,11 +3051,155 @@ mod validation {
     );
 
     #[tokio::test]
-    #[ignore = "pending pf/pr1-base: validation.rs (contract gap: no code named)"]
+    #[ignore = "pending pf/pr1-base: validation.rs"]
     async fn untrimmed_long_names_and_untrimmed_paths_are_refused() {
         todo!(
-            "Section 7.1 and 7.8 rules with no code in section 4: root_path ' /abs ' (untrimmed), \
-             name of 101 chars. Record the code api returns; the lead must name one."
+            "Combined case of the named code skeletons: FIELD_NOT_TRIMMED for name, rootPath and \
+             markerValue (leading or trailing whitespace, never trimmed) and NAME_TOO_LONG at 101 \
+             Unicode scalar values, with 100 scalar values accepted. Run it after the single-code \
+             cases, on both create and update."
+        )
+    }
+
+    macro_rules! refusal_by_code {
+        ($name:ident, $code:literal) => {
+            #[tokio::test]
+            #[ignore = "pending pf/pr1-base: processed_folder_refusal and validation.rs"]
+            async fn $name() {
+                let trigger = REFUSAL_TRIGGERS
+                    .iter()
+                    .find(|(code, _)| *code == $code)
+                    .map(|(_, trigger)| *trigger)
+                    .expect($code);
+                drive_refusal($code, trigger).await;
+            }
+        };
+    }
+
+    refusal_by_code!(processed_folder_not_found, "PROCESSED_FOLDER_NOT_FOUND");
+    refusal_by_code!(
+        processed_folder_entry_not_found,
+        "PROCESSED_FOLDER_ENTRY_NOT_FOUND"
+    );
+    refusal_by_code!(
+        processed_folder_name_required,
+        "PROCESSED_FOLDER_NAME_REQUIRED"
+    );
+    refusal_by_code!(
+        processed_folder_name_too_long,
+        "PROCESSED_FOLDER_NAME_TOO_LONG"
+    );
+    refusal_by_code!(processed_folder_name_taken, "PROCESSED_FOLDER_NAME_TAKEN");
+    refusal_by_code!(
+        processed_folder_field_not_trimmed,
+        "PROCESSED_FOLDER_FIELD_NOT_TRIMMED"
+    );
+    refusal_by_code!(
+        processed_folder_path_not_absolute,
+        "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE"
+    );
+    refusal_by_code!(
+        processed_folder_path_missing,
+        "PROCESSED_FOLDER_PATH_MISSING"
+    );
+    refusal_by_code!(
+        processed_folder_path_not_directory,
+        "PROCESSED_FOLDER_PATH_NOT_DIRECTORY"
+    );
+    refusal_by_code!(
+        processed_folder_path_unresolvable,
+        "PROCESSED_FOLDER_PATH_UNRESOLVABLE"
+    );
+    refusal_by_code!(
+        processed_folder_overlaps_library_root,
+        "PROCESSED_FOLDER_OVERLAPS_LIBRARY_ROOT"
+    );
+    refusal_by_code!(
+        processed_folder_overlaps_recycle_bin,
+        "PROCESSED_FOLDER_OVERLAPS_RECYCLE_BIN"
+    );
+    refusal_by_code!(
+        processed_folder_overlaps_backup_path,
+        "PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH"
+    );
+    refusal_by_code!(
+        processed_folder_overlaps_other_folder,
+        "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER"
+    );
+    refusal_by_code!(
+        processed_folder_library_not_found,
+        "PROCESSED_FOLDER_LIBRARY_NOT_FOUND"
+    );
+    refusal_by_code!(
+        processed_folder_scope_kind_invalid,
+        "PROCESSED_FOLDER_SCOPE_KIND_INVALID"
+    );
+    refusal_by_code!(
+        processed_folder_invalid_stability,
+        "PROCESSED_FOLDER_INVALID_STABILITY"
+    );
+    refusal_by_code!(
+        processed_folder_invalid_marker,
+        "PROCESSED_FOLDER_INVALID_MARKER"
+    );
+    refusal_by_code!(
+        processed_folder_marker_value_not_allowed,
+        "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED"
+    );
+    refusal_by_code!(processed_folder_disabled, "PROCESSED_FOLDER_DISABLED");
+    refusal_by_code!(
+        processed_folder_scan_in_progress,
+        "PROCESSED_FOLDER_SCAN_IN_PROGRESS"
+    );
+    refusal_by_code!(
+        processed_folder_entry_not_actionable,
+        "PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE"
+    );
+    refusal_by_code!(
+        processed_folder_entry_changed,
+        "PROCESSED_FOLDER_ENTRY_CHANGED"
+    );
+    refusal_by_code!(
+        processed_folder_title_outside_library,
+        "PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY"
+    );
+    refusal_by_code!(
+        processed_folder_title_not_found,
+        "PROCESSED_FOLDER_TITLE_NOT_FOUND"
+    );
+    refusal_by_code!(
+        processed_folder_imports_in_flight,
+        "PROCESSED_FOLDER_IMPORTS_IN_FLIGHT"
+    );
+
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-base: validation.rs check order"]
+    async fn create_and_update_follow_the_v4_check_order() {
+        let order = CREATE_UPDATE_CHECK_ORDER
+            .iter()
+            .map(|phase| phase.join(", "))
+            .collect::<Vec<_>>()
+            .join(" -> ");
+        todo!(
+            "On create, then on update, feed one input that is also wrong in every later phase. \
+             The first refusal is the earliest phase, and repairing that phase reveals the next: \
+             {order}. Trim is FIELD_NOT_TRIMMED and must not trim. Store write maps \
+             UniqueViolation on idx_processed_folders_name to NAME_TAKEN and on \
+             idx_processed_folders_normalized_root to OVERLAPS_OTHER_FOLDER. Never match error text."
+        )
+    }
+
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-base: store unique indexes"]
+    async fn unique_violation_forces_both_unique_indexes() {
+        todo!(
+            "On SQLite and, when SCRYER_TEST_POSTGRES_URL is set, on Postgres: two folders that \
+             share a name and differ in normalized_root_path. The insert or update fails as \
+             RepositoryErrorKind::UniqueViolation on idx_processed_folders_name, and the use case \
+             raises PROCESSED_FOLDER_NAME_TAKEN. Two folders that share normalized_root_path and \
+             differ in name: UniqueViolation on idx_processed_folders_normalized_root maps to \
+             PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER. Read the kind with AppError::repository_kind \
+             before the mapping, or validation_reason after it. Never match the driver message."
         )
     }
 
@@ -3108,9 +3460,9 @@ mod contract_and_hygiene {
     #[ignore = "pending pf/pr1-base: processed_folder_refusal::ALL"]
     fn the_refusal_codes_match_the_contract_exactly() {
         todo!(
-            "let actual: HashSet<&str> = crate::processed_folder_refusal::ALL.iter().copied().collect(); \
-             assert_eq!(actual, EXPECTED_REFUSAL_CODES.iter().copied().collect()); also assert \
-             ALL.len() == EXPECTED_REFUSAL_CODES.len() (no duplicates)."
+            "let actual: Vec<&str> = crate::processed_folder_refusal::ALL.to_vec(); \
+             assert_eq!(actual, EXPECTED_REFUSAL_CODES); 26 codes, V4 order, no duplicates. \
+             Each REFUSAL_TRIGGERS row has a skeleton named by that code."
         )
     }
 
