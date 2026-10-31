@@ -15,6 +15,7 @@ import { SystemLogsView, SystemView } from "@/components/views/system-view";
 import { SystemAuditContainer } from "@/components/containers/system-audit-container";
 import { SystemJobsContainer } from "@/components/containers/system-jobs-container";
 import { SettingsRecycleBinContainer } from "@/components/containers/settings/settings-recycle-bin-container";
+import { SettingsProcessedFoldersContainer } from "@/components/containers/settings/settings-processed-folders-container";
 import { systemHealthQuery } from "@/lib/graphql/queries";
 import type { SystemHealth } from "@/components/root/types";
 import { useTranslate } from "@/lib/context/translate-context";
@@ -152,6 +153,9 @@ export const SystemContainer = memo(function SystemContainer({
         title={t("settings.recycleBin")}
       >
         <SettingsRecycleBinContainer />
+        <div className="mt-10 border-t border-border pt-8">
+          <SettingsProcessedFoldersContainer />
+        </div>
       </SystemPageFrame>
     );
   }
