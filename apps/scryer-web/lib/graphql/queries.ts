@@ -5882,3 +5882,78 @@ export const listRouteOptionsQuery = `query ListRouteOptions {
     }
   }
 }`;
+
+/** A processed-media import folder with its ledger counts. */
+export const PROCESSED_FOLDER_FIELDS = `
+    id
+    name
+    rootPath
+    libraryId
+    libraryName
+    enabled
+    minStableScans
+    minAgeSeconds
+    markerMode
+    markerValue
+    lastScanStartedAt
+    lastScanFinishedAt
+    counts {
+      observing
+      stable
+      importing
+      imported
+      skipped
+      failed
+      needsReview
+      ignored
+      rejected
+    }`;
+
+/** One observed file version in a processed folder's ledger. */
+export const PROCESSED_FOLDER_ENTRY_FIELDS = `
+    id
+    folderId
+    relativePath
+    sizeBytes
+    modifiedAt
+    status
+    reasonCode
+    stableScanCount
+    firstSeenAt
+    lastSeenAt
+    markerSeen
+    titleId
+    importId
+    attempts
+    lastError
+    eligibleAt
+    allowedActions`;
+
+export const processedFoldersQuery = `query ProcessedFolders {
+  processedFolders {
+${PROCESSED_FOLDER_FIELDS}
+  }
+}`;
+
+export const processedFolderEntriesQuery = `query ProcessedFolderEntries($folderId: ID!, $statuses: [ProcessedFolderEntryStatus!], $limit: Int!, $offset: Int!) {
+  processedFolderEntries(folderId: $folderId, statuses: $statuses, limit: $limit, offset: $offset) {
+    items {
+${PROCESSED_FOLDER_ENTRY_FIELDS}
+    }
+    totalCount
+  }
+}`;
+
+export const previewProcessedFolderScanQuery = `query PreviewProcessedFolderScan($id: ID!, $limit: Int!) {
+  previewProcessedFolderScan(id: $id, limit: $limit) {
+    entries {
+      relativePath
+      sizeBytes
+      modifiedAt
+      wouldBe
+      reasonCode
+      matchedTitleId
+    }
+    truncated
+  }
+}`;

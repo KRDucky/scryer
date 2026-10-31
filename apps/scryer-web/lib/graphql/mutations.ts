@@ -7,6 +7,8 @@ import {
   MAINTENANCE_RULE_SET_FIELDS,
   MEDIA_SERVER_CONNECTION_FIELDS,
   POST_PROCESSING_SCRIPT_FIELDS,
+  PROCESSED_FOLDER_ENTRY_FIELDS,
+  PROCESSED_FOLDER_FIELDS,
   PROVIDER_CONFIG_VALUE_FIELDS,
   RELEASE_SEARCH_RESULT_FIELDS,
   REQUEST_RULE_DECISION_FIELDS,
@@ -3393,5 +3395,75 @@ export const setMemberListPolicyMutation = `mutation SetMemberListPolicy($userId
     }
     policy
     listRequestsLast30d
+  }
+}`;
+
+export const createProcessedFolderMutation = `mutation CreateProcessedFolder($input: CreateProcessedFolderInput!) {
+  createProcessedFolder(input: $input) {
+    folder {
+${PROCESSED_FOLDER_FIELDS}
+    }
+  }
+}`;
+
+export const updateProcessedFolderMutation = `mutation UpdateProcessedFolder($input: UpdateProcessedFolderInput!) {
+  updateProcessedFolder(input: $input) {
+    folder {
+${PROCESSED_FOLDER_FIELDS}
+    }
+  }
+}`;
+
+export const deleteProcessedFolderMutation = `mutation DeleteProcessedFolder($id: ID!) {
+  deleteProcessedFolder(id: $id) {
+    id
+  }
+}`;
+
+export const setProcessedFolderEnabledMutation = `mutation SetProcessedFolderEnabled($id: ID!, $enabled: Boolean!) {
+  setProcessedFolderEnabled(id: $id, enabled: $enabled) {
+    folder {
+${PROCESSED_FOLDER_FIELDS}
+    }
+  }
+}`;
+
+export const scanProcessedFolderMutation = `mutation ScanProcessedFolder($id: ID!) {
+  scanProcessedFolder(id: $id) {
+    folder {
+${PROCESSED_FOLDER_FIELDS}
+    }
+    discovered
+    becameStable
+    importsQueued
+    needsReview
+    rejected
+    gone
+    recovered
+    nextEligibleAt
+  }
+}`;
+
+export const importProcessedFolderEntryMutation = `mutation ImportProcessedFolderEntry($entryId: ID!, $titleId: ID!) {
+  importProcessedFolderEntry(entryId: $entryId, titleId: $titleId) {
+    entry {
+${PROCESSED_FOLDER_ENTRY_FIELDS}
+    }
+  }
+}`;
+
+export const retryProcessedFolderEntryMutation = `mutation RetryProcessedFolderEntry($entryId: ID!) {
+  retryProcessedFolderEntry(entryId: $entryId) {
+    entry {
+${PROCESSED_FOLDER_ENTRY_FIELDS}
+    }
+  }
+}`;
+
+export const ignoreProcessedFolderEntryMutation = `mutation IgnoreProcessedFolderEntry($entryId: ID!) {
+  ignoreProcessedFolderEntry(entryId: $entryId) {
+    entry {
+${PROCESSED_FOLDER_ENTRY_FIELDS}
+    }
   }
 }`;
