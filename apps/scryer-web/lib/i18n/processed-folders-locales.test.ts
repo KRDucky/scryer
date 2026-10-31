@@ -28,7 +28,7 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
 };
 
 const isProcessedFolderKey = (key: string) => PREFIXES.some((prefix) => key.startsWith(prefix));
-const placeholders = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();
+const placeholders = (text: string) => [...text.matchAll(/\{\{(\w+)\}\}/g)].map((match) => match[1]).sort();
 const englishKeys = Object.keys(en).filter(isProcessedFolderKey);
 
 test("English carries the processed-folder copy, including the copy-only notice", () => {
@@ -37,6 +37,15 @@ test("English carries the processed-folder copy, including the copy-only notice"
     en["settings.processedFolders.copyOnlyNotice"],
     "Files are always copied. Scryer never moves, links or deletes anything in this folder.",
   );
+});
+
+test("processed-folder copy uses the {{name}} placeholders that interpolate() fills", () => {
+  for (const [locale, dictionary] of Object.entries({ en, ...TRANSLATIONS })) {
+    const single = Object.entries(dictionary).filter(
+      ([key, text]) => isProcessedFolderKey(key) && /(?<!\{)\{\w+\}(?!\})/.test(text),
+    );
+    assert.deepEqual(single.map(([key]) => key), [], `${locale} has single-brace placeholders`);
+  }
 });
 
 for (const [locale, dictionary] of Object.entries(TRANSLATIONS)) {
