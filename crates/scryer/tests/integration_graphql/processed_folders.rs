@@ -679,6 +679,21 @@ async fn q4d_empty_reserved_destination_after_crash_needs_manual_reconciliation(
     )
 }
 
+/// Errata E3 at the real importer, including the worker path when the test
+/// host can start it. Copy-only never follows or overwrites a symlink
+/// destination.
+#[tokio::test]
+#[ignore = "pending pf/pr1-core: copy-only symlink destination, in-process and worker"]
+async fn e3_copy_only_never_follows_or_overwrites_a_symlink_destination() {
+    todo!(
+        "With app_with_real_fs, run each case twice when the worker can be enabled: in-process \
+         and through the import-file worker. Destinations: symlink to the source, symlink to a \
+         different file with the same bytes, dangling symlink, symlink to a directory. Each \
+         import ends failed with ManualReconciliationRequired. The symlink path, target, and \
+         metadata are unchanged. The source snapshot is unchanged. No media-file row is written."
+    )
+}
+
 /// Q5 third case (section 1.4), real importer: a destination already present
 /// with the same bytes ends imported (AlreadyPresent) with no second media
 /// file.

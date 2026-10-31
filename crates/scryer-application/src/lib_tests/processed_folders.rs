@@ -2646,8 +2646,9 @@ mod copy_only {
         todo!(
             "SETUP(HardlinkOrCopy, ScriptedImporter::new([SourceChangedMidCopy])); RUN. Assert entry \
              failed (contract Q4e) with last_error naming the source; no media file; no library \
-             file. Next scan, V0.2.3: the failed row becomes superseded and a new observing row \
-             exists for the grown version, in one transaction. Source bytes stay the grown file."
+             file. Next scan: this failed row has decision origin auto, so it becomes superseded and a \
+             new observing row exists for the grown version, in one transaction. Source bytes stay \
+             the grown file. An operator-set row would not become eligible (errata E2)."
         )
     }
 
@@ -2847,10 +2848,10 @@ mod state_machine {
         row_05_a_changed_version_supersedes_and_inserts_a_new_observing_row,
         5,
         "pending pf/pr1-core: scan",
-        "from observing, stable, failed, skipped, needs_review, ignored, and rejected: \
-         tree.grow(rel); scan; old row superseded, new observing row count 1 with the new size \
-         and mtime, both visible in one transaction. The four non-observing/stable sources are \
-         the V0.2.3 [X] rows"
+        "from observing and stable, and from failed, skipped, needs_review, and rejected only when \
+         decision_origin is auto: tree.grow(rel); scan; old row superseded, new observing row \
+         count 1. Errata E2: an operator ignore or operator reject stays ineligible on the same \
+         change. decision_origin is auto or operator"
     );
     row_test!(
         row_06_an_absent_path_goes_gone_from_every_listed_state,
@@ -2937,8 +2938,11 @@ mod state_machine {
         row_17_retry_moves_failed_and_ignored_to_stable,
         17,
         "pending pf/pr1-core: actions",
-        "for failed and ignored: retry; status stable, reason_code None, last_error None, and \
-         attempts reset to 0 (V0.2.8 [X]). With the folder enabled the mutation queues the import"
+        "Errata E1: for failed and ignored, operator retry sets status stable, clears reason_code \
+         and last_error, and may reset attempts to 0. It must keep history: operator_retries \
+         increments, the prior attempt count is still readable, and an append-only audit row \
+         records actor, time, prior state, and prior attempts. The automatic cap of 3 still \
+         applies after that reset. With the folder enabled the mutation queues the import"
     );
     row_test!(
         row_18_ignore_moves_the_listed_states_to_ignored,
@@ -3063,15 +3067,17 @@ mod state_machine {
         )
     }
 
-    /// V0.2.3 [X]: the same size or mtime change supersedes terminal rows too.
+    /// V0.2.3 as narrowed by errata E2: only automation-set rows supersede.
     #[tokio::test]
     #[ignore = "pending pf/pr1-core: scan version rows"]
     async fn v0_2_3_terminal_rows_supersede_when_size_or_mtime_changes() {
         todo!(
-            "For each of failed, skipped, needs_review, ignored, and rejected: seed that status \
-             at rel, change size or mtime, scan. Old row superseded, new observing row for the \
-             new version, same transaction. imported and superseded and gone do not follow this \
-             rule (row 6 controls which statuses can go gone)."
+            "Errata E2 overrides the blanket V0.2.3 rule. Seed decision_origin auto for failed, \
+             skipped, needs_review, and rejected. Change size or mtime and scan: the old row is \
+             superseded and a new observing row exists in the same transaction. Seed \
+             decision_origin operator for ignore and for reject, change size or mtime, and scan: \
+             the old row stays as it is, or the new fingerprint gets its own non-eligible row. \
+             Neither becomes eligible. Only a later explicit operator action re-enables it."
         )
     }
 
@@ -3087,16 +3093,52 @@ mod state_machine {
         )
     }
 
-    /// V0.2.10 [X]: copy-only refuses a symlink at the destination.
+    /// V0.2.10 confirmed by errata E3: copy-only never follows or overwrites a
+    /// symlink destination. The in-process cases live here; the worker path is
+    /// `e3_copy_only_never_follows_or_overwrites_a_symlink_destination`.
     #[cfg(unix)]
     #[tokio::test]
     #[ignore = "pending pf/pr1-core: C3 existing-destination rule"]
     async fn v0_2_10_copy_only_refuses_a_symlink_destination() {
         todo!(
-            "Copy-only import whose destination is an existing symlink to a regular file, and a \
-             second case whose destination is the same inode as the source. Both refuse with \
-             ManualReconciliationRequired. The symlink is not replaced, the source is untouched, \
-             and no media-file row is written."
+            "Errata E3, in-process FsFileImporter. For each destination: a symlink to the source, \
+             a symlink to a different file with identical bytes, a dangling symlink, and a symlink \
+             to a directory. Copy-only refuses with ManualReconciliationRequired. The symlink is \
+             not followed and not overwritten (same path, same target, same metadata). The source \
+             is untouched and no media-file row is written. A same-inode regular file is still \
+             refused on top of this."
+        )
+    }
+
+    /// Errata E1: operator retry may reset automatic attempts and must keep history.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-base: operator retry history"]
+    async fn e1_operator_retry_resets_attempts_but_keeps_history() {
+        todo!(
+            "Seed a failed auto row with attempts 3. Operator retry: status stable, attempts 0, \
+             operator_retries 1, and the prior attempt count 3 is still stored. An append-only \
+             audit or event row records the actor, the time, prior state failed, and prior \
+             attempts 3. Then, with no further operator action, deliver a capped automatic result \
+             (SourceChanged, SourceUnavailable, DownloadInProgress, or ErrCanceled) three times. \
+             The first two return to stable with attempts 1 then 2. The third ends failed again \
+             with the same reason, because the cap of 3 is enforced after the reset. \
+             operator_retries stays 1 and the first audit row is still present. A second operator \
+             retry appends a second audit row and increments operator_retries to 2."
+        )
+    }
+
+    /// Errata E2: operator-set rows do not become eligible when the file changes.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: decision origin on scan"]
+    async fn e2_operator_rows_stay_ineligible_when_the_file_changes() {
+        todo!(
+            "Each ledger row stores decision_origin auto or operator. Automation writes auto for \
+             skipped, needs_review, and rejected. Operator ignore and operator reject write \
+             operator. Change size or mtime. Scan. Auto rows are superseded and the new version \
+             is observing and eligible. Operator rows stay ignored or rejected, or the new \
+             fingerprint is inserted already non-eligible, and no import is queued. A later \
+             explicit operator retry or import-as is the only way back to eligible. The source \
+             file is not modified by the scan."
         )
     }
 
