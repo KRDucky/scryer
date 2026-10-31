@@ -867,7 +867,7 @@ function StatusCounts({
               id={selectorId("settings-processed-folder-count", status)}
               type="button"
               size="sm"
-              variant={active ? "secondary" : "outline"}
+              variant={active ? "default" : "outline"}
               className="h-7 gap-1.5 px-2 text-xs"
               aria-pressed={active}
               onClick={() =>
@@ -875,7 +875,13 @@ function StatusCounts({
               }
             >
               {t(PROCESSED_FOLDER_STATUS_KEYS[status])}
-              <span className="font-[var(--font-code)] text-muted-foreground">
+              <span
+                className={
+                  active
+                    ? "font-[var(--font-code)] opacity-80"
+                    : "font-[var(--font-code)] text-muted-foreground"
+                }
+              >
                 {counts[COUNT_FIELDS[status]]}
               </span>
             </Button>
@@ -968,7 +974,10 @@ function PreviewResults({
           {t("settings.processedFolders.previewEmpty")}
         </p>
       ) : (
-        <Table wrapperClassName="rounded-[14px] border border-[var(--scry-border2)] bg-[var(--scry-surfC)]">
+        <Table
+          className="min-w-[44rem]"
+          wrapperClassName="rounded-[14px] border border-[var(--scry-border2)] bg-[var(--scry-surfC)]"
+        >
           <TableHeader>
             <TableRow>
               <TableHead>{t("settings.processedFolders.file")}</TableHead>
@@ -1218,6 +1227,7 @@ export function SettingsProcessedFoldersSection({
       ) : (
         <Table
           id="settings-processed-folders-table"
+          className="min-w-[56rem]"
           wrapperClassName="rounded-[14px] border border-[var(--scry-border2)] bg-[var(--scry-surfC)]"
         >
           <TableHeader>
@@ -1492,6 +1502,7 @@ export function SettingsProcessedFoldersSection({
             ) : (
               <Table
                 id="settings-processed-folder-entries"
+                className="min-w-[60rem]"
                 wrapperClassName="rounded-[14px] border border-[var(--scry-border2)] bg-[var(--scry-surfC)]"
               >
                 <TableHeader>
