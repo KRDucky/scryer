@@ -231,11 +231,17 @@ impl ImportPlacementCoordinator {
         &self,
         prepared: &mut PreparedImportPlacement,
         archive_workspace_source: bool,
+        copy_only: bool,
     ) {
         prepared.archive_workspace_source = archive_workspace_source;
         prepared.hard_link_identity_unverifiable = self
             .unverifiable_hard_link_volumes
             .contains(&prepared.volume_key);
+        prepared.copy_only = copy_only;
+        if copy_only {
+            prepared.source_cleanup_required = false;
+            prepared.archive_workspace_source = false;
+        }
     }
 
     fn record_hard_link_identity_mismatch(
@@ -802,6 +808,11 @@ struct ImportFileOptions {
     force_hard_link_identity_mismatch: bool,
     #[cfg(test)]
     rename_fault: RenameFault,
+    /// After the copy temp exists, fail as a cancellation so the retry loop
+    /// removes that temp. Production cancellation is a token; this hook makes
+    /// the same cleanup deterministic.
+    #[cfg(test)]
+    force_cancel_during_copy: bool,
 }
 
 /// A fault the archive-output rename lane is made to hit.
@@ -987,6 +998,16 @@ fn force_copy_attempt_error(
     _attempt: usize,
 ) -> std::io::Result<()> {
     Ok(())
+}
+
+#[cfg(test)]
+fn force_cancel_during_copy(options: &ImportFileOptions) -> bool {
+    options.force_cancel_during_copy
+}
+
+#[cfg(not(test))]
+fn force_cancel_during_copy(_: &ImportFileOptions) -> bool {
+    false
 }
 
 #[cfg(all(test, unix))]
@@ -1644,6 +1665,15 @@ fn copy_regular_source_to_destination_once(
 
     let mut temp_file = std::fs::File::create(temp_dest)
         .map_err(|error| ImportCopyAttemptError::new("temp create", error))?;
+    if force_cancel_during_copy(&options) {
+        temp_file
+            .write_all(b"cancelled partial")
+            .map_err(|error| ImportCopyAttemptError::new("copy", error))?;
+        return Err(ImportCopyAttemptError::new(
+            "copy cancelled",
+            io_other("import copy was cancelled"),
+        ));
+    }
     force_copy_attempt_error(&mut temp_file, &options, attempt)
         .map_err(|error| ImportCopyAttemptError::new("copy", error))?;
     report_import_transfer_progress(progress, ImportTransferPhase::Copying, 0, size);
@@ -1956,6 +1986,10 @@ struct PreparedImportPlacement {
     /// this process, so the fast lane hands straight to the copy lane.
     #[serde(default)]
     hard_link_identity_unverifiable: bool,
+    /// The source belongs to someone else. Place it by a verified copy only:
+    /// never hard link, symlink, rename, or build a source-cleanup guard.
+    #[serde(default)]
+    copy_only: bool,
 }
 
 enum FastPlacementResult {
@@ -1999,6 +2033,7 @@ fn prepare_import_placement_blocking(
         volume_key,
         archive_workspace_source: false,
         hard_link_identity_unverifiable: false,
+        copy_only: false,
     })
 }
 
@@ -2060,11 +2095,87 @@ fn finish_renamed_archive_output(prepared: PreparedImportPlacement) -> ImportFil
     }
 }
 
+/// A processed-folder source is copied. An existing destination is accepted
+/// only when it is already a separate regular file with the same bytes.
+fn try_copy_only_fast_placement(
+    mut prepared: PreparedImportPlacement,
+) -> AppResult<FastPlacementResult> {
+    prepared.source_cleanup_required = false;
+    prepared.archive_workspace_source = false;
+
+    match std::fs::symlink_metadata(&prepared.dest) {
+        Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+        Err(error) => {
+            return Err(import_io_error(
+                &error,
+                format!(
+                    "failed to inspect existing import destination {}: {error}",
+                    prepared.dest.display()
+                ),
+            ));
+        }
+        Ok(metadata) => {
+            if copy_only_destination_conflicts(&prepared.source_fingerprint, &metadata) {
+                return Err(AppError::ManualReconciliationRequired(format!(
+                    "processed-folder import destination {} must be a separate regular file; source {} was left untouched",
+                    prepared.dest.display(),
+                    prepared.source.display()
+                )));
+            }
+            if let Some(existing) = reconcile_existing_destination(
+                &prepared.source,
+                &prepared.dest,
+                &prepared.source_fingerprint,
+                prepared.size,
+                &prepared.destination_guard,
+                false,
+            )? {
+                return Ok(FastPlacementResult::Finished(existing));
+            }
+        }
+    }
+
+    if matches!(
+        prepared.source_fingerprint.kind,
+        ImportSourceKind::Symlink { .. }
+    ) {
+        return Err(AppError::ManualReconciliationRequired(format!(
+            "processed-folder imports never place symlinks: {}",
+            prepared.source.display()
+        )));
+    }
+
+    ensure_import_destination_absent(&prepared.dest)?;
+    Ok(FastPlacementResult::CopyRequired {
+        prepared,
+        hard_link_identity_mismatch: None,
+    })
+}
+
+/// True when a copy-only import must not treat the destination as already
+/// present: it is not a regular file, or it is the source inode.
+fn copy_only_destination_conflicts(
+    source_fingerprint: &ImportSourceFingerprint,
+    metadata: &std::fs::Metadata,
+) -> bool {
+    let file_type = metadata.file_type();
+    if file_type.is_symlink() || !file_type.is_file() {
+        return true;
+    }
+    match fingerprint_from_metadata(metadata) {
+        Ok(dest_file) => same_file_identity(&dest_file, &source_fingerprint.file),
+        Err(_) => true,
+    }
+}
+
 fn try_fast_import_placement_blocking(
     prepared: PreparedImportPlacement,
 ) -> AppResult<FastPlacementResult> {
     ensure_same_source(&prepared.source, &prepared.source_fingerprint)?;
     validate_import_destination_parent(&prepared.destination_guard, &prepared.dest)?;
+    if prepared.copy_only {
+        return try_copy_only_fast_placement(prepared);
+    }
     if let Some(existing) = reconcile_existing_destination(
         &prepared.source,
         &prepared.dest,
@@ -2646,7 +2757,19 @@ fn import_file_blocking_at_depth(
     }
 }
 
-const IMPORT_FILE_WORKER_PROTOCOL_VERSION: u16 = 2;
+const IMPORT_FILE_WORKER_PROTOCOL_VERSION: u16 = 3;
+
+/// A worker that does not know `copy_only` must refuse the request. A missing
+/// field would otherwise deserialize as `false` and hard link the source.
+fn unsupported_import_worker_protocol_message(version: u16) -> Option<String> {
+    if version == IMPORT_FILE_WORKER_PROTOCOL_VERSION {
+        None
+    } else {
+        Some(format!(
+            "unsupported import worker protocol version {version}"
+        ))
+    }
+}
 static IMPORT_FILE_WORKER_NONCE: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -2883,13 +3006,13 @@ pub fn run_import_file_worker() -> i32 {
         }
     };
     let (version, nonce) = import_worker_request_nonce(&request);
-    if version != IMPORT_FILE_WORKER_PROTOCOL_VERSION {
+    if let Some(message) = unsupported_import_worker_protocol_message(version) {
         let _ = write_import_worker_event(
             &output,
             &ImportFileWorkerEvent::Error {
                 nonce,
                 error: ImportFileWorkerError::Repository {
-                    message: format!("unsupported import worker protocol version {version}"),
+                    message,
                     reason: None,
                 },
             },
@@ -3646,8 +3769,11 @@ impl FsFileImporter {
                 }
             };
             drop(preparation_permit);
-            self.placement
-                .ready_fast_placement(&mut prepared, context.archive_workspace_source());
+            self.placement.ready_fast_placement(
+                &mut prepared,
+                context.archive_workspace_source(),
+                context.copy_only(),
+            );
 
             let client_key = context.client_lane_key().to_string();
             let mut fast_permit = Some(
@@ -3799,8 +3925,11 @@ impl FsFileImporter {
         .await?;
         context.mark_active_import_placing().await;
         prepared.cancellation = cancellation.clone();
-        self.placement
-            .ready_fast_placement(&mut prepared, context.archive_workspace_source());
+        self.placement.ready_fast_placement(
+            &mut prepared,
+            context.archive_workspace_source(),
+            context.copy_only(),
+        );
         let fast_result =
             tokio::task::spawn_blocking(move || try_fast_import_placement_blocking(prepared))
                 .await
@@ -4260,7 +4389,7 @@ mod tests {
         mut prepared: PreparedImportPlacement,
         archive_workspace_source: bool,
     ) -> (ImportFileResult, Option<HardLinkIdentityMismatch>) {
-        coordinator.ready_fast_placement(&mut prepared, archive_workspace_source);
+        coordinator.ready_fast_placement(&mut prepared, archive_workspace_source, false);
         match try_fast_import_placement_blocking(prepared).expect("fast placement") {
             FastPlacementResult::Finished(result) => (result, None),
             FastPlacementResult::CopyRequired {
@@ -4586,7 +4715,7 @@ mod tests {
             ..Default::default()
         };
         let mut prepared = prepare_in_process(source, dest, options, true);
-        coordinator.ready_fast_placement(&mut prepared, true);
+        coordinator.ready_fast_placement(&mut prepared, true, false);
         match try_fast_import_placement_blocking(prepared) {
             Ok(_) => panic!("the rename lane must stop the import"),
             Err(error) => error,
@@ -6324,5 +6453,347 @@ mod tests {
                 .to_string()
                 .contains("import symlink target not found")
         );
+    }
+
+    fn place_copy_only(
+        mut prepared: PreparedImportPlacement,
+        archive_workspace_source: bool,
+    ) -> AppResult<ImportFileResult> {
+        let coordinator = ImportPlacementCoordinator::new(1, 2);
+        coordinator.ready_fast_placement(&mut prepared, archive_workspace_source, true);
+        match try_fast_import_placement_blocking(prepared)? {
+            FastPlacementResult::Finished(result) => Ok(result),
+            FastPlacementResult::CopyRequired {
+                prepared,
+                hard_link_identity_mismatch,
+            } => {
+                assert!(
+                    hard_link_identity_mismatch.is_none(),
+                    "copy-only never reports a hard link"
+                );
+                copy_prepared_import_blocking(prepared)
+            }
+        }
+    }
+
+    fn pin_mtime(path: &Path) -> std::time::SystemTime {
+        let past =
+            std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_700_000_000);
+        let file = std::fs::OpenOptions::new()
+            .write(true)
+            .open(path)
+            .expect("open source to pin mtime");
+        file.set_modified(past).expect("pin source mtime");
+        past
+    }
+
+    fn assert_source_untouched(source: &Path, bytes: &[u8], mtime: std::time::SystemTime) {
+        assert_eq!(std::fs::read(source).expect("read source"), bytes);
+        assert_eq!(
+            std::fs::metadata(source)
+                .expect("source metadata")
+                .modified()
+                .expect("source mtime"),
+            mtime
+        );
+    }
+
+    #[cfg(unix)]
+    fn assert_distinct_copy(source: &Path, dest: &Path) {
+        let source_meta = std::fs::metadata(source).expect("source metadata");
+        let dest_meta = std::fs::metadata(dest).expect("dest metadata");
+        assert_eq!(source_meta.nlink(), 1);
+        assert_ne!(
+            (source_meta.dev(), source_meta.ino()),
+            (dest_meta.dev(), dest_meta.ino())
+        );
+    }
+
+    #[test]
+    fn copy_only_on_one_filesystem_copies() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        let mtime = pin_mtime(&source);
+        let attempts = hard_link_attempts();
+
+        let result = place_copy_only(
+            prepare_in_process(&source, &dest, ImportFileOptions::default(), false),
+            false,
+        )
+        .expect("copy-only import");
+
+        assert_eq!(result.strategy, ImportStrategy::Copy);
+        assert!(result.source_cleanup.is_none());
+        assert_eq!(hard_link_attempts(), attempts);
+        assert_eq!(std::fs::read(&dest).expect("read dest"), SYNTHETIC_PAYLOAD);
+        assert_source_untouched(&source, SYNTHETIC_PAYLOAD, mtime);
+        #[cfg(unix)]
+        assert_distinct_copy(&source, &dest);
+    }
+
+    #[test]
+    fn copy_only_with_forced_cross_device_still_copies() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        let mtime = pin_mtime(&source);
+        let options = ImportFileOptions {
+            force_cross_device_move: true,
+            ..Default::default()
+        };
+        let attempts = hard_link_attempts();
+
+        let result = place_copy_only(prepare_in_process(&source, &dest, options, false), false)
+            .expect("copy-only import");
+
+        assert_eq!(result.strategy, ImportStrategy::Copy);
+        assert!(result.source_cleanup.is_none());
+        assert_eq!(hard_link_attempts(), attempts);
+        assert_eq!(std::fs::read(&dest).expect("read dest"), SYNTHETIC_PAYLOAD);
+        assert_source_untouched(&source, SYNTHETIC_PAYLOAD, mtime);
+        #[cfg(unix)]
+        assert_distinct_copy(&source, &dest);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn copy_only_refuses_a_symlink_source() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let target = temp.path().join("target.mkv");
+        let source = temp.path().join("source-link.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&target, SYNTHETIC_PAYLOAD).expect("write target");
+        std::os::unix::fs::symlink(&target, &source).expect("symlink source");
+
+        let error = place_copy_only(
+            prepare_in_process(&source, &dest, ImportFileOptions::default(), false),
+            false,
+        )
+        .expect_err("symlink source is refused");
+
+        assert!(matches!(error, AppError::ManualReconciliationRequired(_)));
+        assert!(!dest.exists());
+        assert!(source.exists());
+        assert_eq!(
+            std::fs::read(&target).expect("read target"),
+            SYNTHETIC_PAYLOAD
+        );
+    }
+
+    #[test]
+    fn copy_only_refuses_a_hard_linked_destination() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        if !hard_links_supported(temp.path()) {
+            return;
+        }
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        std::fs::create_dir_all(dest.parent().expect("dest parent")).expect("dest dir");
+        std::fs::hard_link(&source, &dest).expect("hard link destination");
+        let mtime = pin_mtime(&source);
+
+        let error = place_copy_only(
+            prepare_in_process(&source, &dest, ImportFileOptions::default(), false),
+            false,
+        )
+        .expect_err("hard linked destination is refused");
+
+        assert!(matches!(error, AppError::ManualReconciliationRequired(_)));
+        assert_eq!(
+            std::fs::read(&source).expect("read source"),
+            SYNTHETIC_PAYLOAD
+        );
+        assert_eq!(std::fs::read(&dest).expect("read dest"), SYNTHETIC_PAYLOAD);
+        assert_eq!(
+            std::fs::metadata(&source)
+                .expect("source metadata")
+                .modified()
+                .expect("mtime"),
+            mtime
+        );
+        #[cfg(unix)]
+        {
+            let source_meta = std::fs::metadata(&source).expect("source metadata");
+            let dest_meta = std::fs::metadata(&dest).expect("dest metadata");
+            assert_eq!(
+                (source_meta.dev(), source_meta.ino()),
+                (dest_meta.dev(), dest_meta.ino())
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn copy_only_refuses_a_symlinked_destination() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        std::fs::create_dir_all(dest.parent().expect("dest parent")).expect("dest dir");
+        std::os::unix::fs::symlink(&source, &dest).expect("symlink destination");
+        let mtime = pin_mtime(&source);
+
+        let error = place_copy_only(
+            prepare_in_process(&source, &dest, ImportFileOptions::default(), false),
+            false,
+        )
+        .expect_err("symlinked destination is refused");
+
+        assert!(matches!(error, AppError::ManualReconciliationRequired(_)));
+        assert!(
+            dest.symlink_metadata()
+                .expect("dest link")
+                .file_type()
+                .is_symlink()
+        );
+        assert_source_untouched(&source, SYNTHETIC_PAYLOAD, mtime);
+    }
+
+    #[test]
+    fn copy_only_does_not_rename_archive_workspace_output() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let (source, dest) = archive_workspace_fixture(temp.path());
+        let mut prepared = prepare_in_process(&source, &dest, ImportFileOptions::default(), true);
+        let coordinator = ImportPlacementCoordinator::new(1, 2);
+        coordinator.ready_fast_placement(&mut prepared, true, true);
+        assert!(!prepared.archive_workspace_source);
+        assert!(!prepared.source_cleanup_required);
+        prepared.archive_workspace_source = true;
+        let attempts = hard_link_attempts();
+
+        let result = match try_fast_import_placement_blocking(prepared).expect("fast placement") {
+            FastPlacementResult::CopyRequired {
+                prepared,
+                hard_link_identity_mismatch,
+            } => {
+                assert!(hard_link_identity_mismatch.is_none());
+                copy_prepared_import_blocking(prepared).expect("copy")
+            }
+            FastPlacementResult::Finished(result) => result,
+        };
+
+        assert_eq!(result.strategy, ImportStrategy::Copy);
+        assert!(result.source_cleanup.is_none());
+        assert_eq!(hard_link_attempts(), attempts);
+        assert!(source.exists(), "archive output is copied, not renamed");
+        assert_eq!(
+            std::fs::read(&source).expect("read source"),
+            SYNTHETIC_PAYLOAD
+        );
+        assert_eq!(std::fs::read(&dest).expect("read dest"), SYNTHETIC_PAYLOAD);
+    }
+
+    #[test]
+    fn copy_only_survives_the_worker_serde_round_trip() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        let mut prepared = prepare_in_process(&source, &dest, ImportFileOptions::default(), false);
+        prepared.copy_only = true;
+
+        let json = serde_json::to_string(&prepared).expect("serialize placement");
+        let restored: PreparedImportPlacement =
+            serde_json::from_str(&json).expect("deserialize placement");
+        assert!(restored.copy_only);
+        assert_eq!(restored.source, prepared.source);
+        assert_eq!(restored.dest, prepared.dest);
+
+        let mut value = serde_json::to_value(&prepared).expect("placement value");
+        value.as_object_mut().expect("object").remove("copy_only");
+        let without_field: PreparedImportPlacement =
+            serde_json::from_value(value).expect("missing copy_only defaults");
+        assert!(!without_field.copy_only);
+
+        let request = serde_json::json!({
+            "command": "snapshot",
+            "version": 2,
+            "nonce": 1,
+            "source": "/synthetic/source.mkv",
+        });
+        let parsed = serde_json::from_value::<ImportFileWorkerRequest>(request)
+            .expect("protocol 2 request still parses");
+        let (version, _) = import_worker_request_nonce(&parsed);
+        assert_eq!(version, 2);
+        assert_eq!(
+            unsupported_import_worker_protocol_message(version).as_deref(),
+            Some("unsupported import worker protocol version 2")
+        );
+        assert!(
+            unsupported_import_worker_protocol_message(IMPORT_FILE_WORKER_PROTOCOL_VERSION)
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn copy_only_move_mode_builds_no_source_cleanup_guard() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        let mut prepared = prepare_in_process(&source, &dest, ImportFileOptions::default(), true);
+        assert!(prepared.source_cleanup_required);
+        let coordinator = ImportPlacementCoordinator::new(1, 2);
+        coordinator.ready_fast_placement(&mut prepared, false, true);
+        assert!(prepared.copy_only);
+        assert!(!prepared.source_cleanup_required);
+
+        let result = match try_fast_import_placement_blocking(prepared).expect("fast placement") {
+            FastPlacementResult::CopyRequired { prepared, .. } => {
+                copy_prepared_import_blocking(prepared).expect("copy")
+            }
+            FastPlacementResult::Finished(result) => result,
+        };
+
+        assert_eq!(result.strategy, ImportStrategy::Copy);
+        assert!(result.source_cleanup.is_none());
+        assert!(source.exists());
+    }
+
+    #[test]
+    fn copy_only_retries_a_transient_copy_failure() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        let mtime = pin_mtime(&source);
+        let options = ImportFileOptions {
+            force_transient_copy_failures: 1,
+            ..Default::default()
+        };
+
+        let result = place_copy_only(prepare_in_process(&source, &dest, options, true), false)
+            .expect("transient copy is retried");
+
+        assert_eq!(result.strategy, ImportStrategy::Copy);
+        assert!(result.source_cleanup.is_none());
+        assert!(!dest.with_extension("tmp_import").exists());
+        assert_eq!(std::fs::read(&dest).expect("read dest"), SYNTHETIC_PAYLOAD);
+        assert_source_untouched(&source, SYNTHETIC_PAYLOAD, mtime);
+    }
+
+    #[test]
+    fn copy_only_cancel_removes_the_temporary_destination() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library/title.mkv");
+        std::fs::write(&source, SYNTHETIC_PAYLOAD).expect("write source");
+        let mtime = pin_mtime(&source);
+        let options = ImportFileOptions {
+            force_cancel_during_copy: true,
+            ..Default::default()
+        };
+
+        let error = place_copy_only(prepare_in_process(&source, &dest, options, false), false)
+            .expect_err("cancel stops the copy");
+
+        assert!(matches!(error, AppError::Canceled(_)));
+        assert!(!dest.exists());
+        assert!(!dest.with_extension("tmp_import").exists());
+        assert_source_untouched(&source, SYNTHETIC_PAYLOAD, mtime);
     }
 }
