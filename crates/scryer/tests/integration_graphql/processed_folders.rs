@@ -35,7 +35,7 @@ pub(super) mod fixtures {
         Operation {
             field: "processedFolders",
             root: Root::Query,
-            document: "query { processedFolders { id name enabled } }",
+            document: "query { processedFolders { id name enabled counts { observing stable importing imported skipped failed needsReview ignored rejected superseded gone } } }",
         },
         Operation {
             field: "processedFolder",
@@ -75,7 +75,7 @@ pub(super) mod fixtures {
         Operation {
             field: "scanProcessedFolder",
             root: Root::Mutation,
-            document: r#"mutation { scanProcessedFolder(id: "pf-missing") { discovered recovered folder { id } } }"#,
+            document: r#"mutation { scanProcessedFolder(id: "pf-missing") { discovered becameStable importsQueued needsReview rejected superseded gone recovered folder { id counts { observing stable importing imported skipped failed needsReview ignored rejected superseded gone } } } }"#,
         },
         Operation {
             field: "importProcessedFolderEntry",
@@ -92,6 +92,33 @@ pub(super) mod fixtures {
             root: Root::Mutation,
             document: r#"mutation { ignoreProcessedFolderEntry(entryId: "pfe-missing") { entry { id status } } }"#,
         },
+    ];
+
+    /// `ProcessedFolderEntryCounts` fields, one per ledger status (11).
+    pub const ENTRY_COUNT_FIELDS: &[&str] = &[
+        "observing",
+        "stable",
+        "importing",
+        "imported",
+        "skipped",
+        "failed",
+        "needsReview",
+        "ignored",
+        "rejected",
+        "superseded",
+        "gone",
+    ];
+
+    /// `ProcessedFolderScanPayload` counters. v2.2 adds `superseded` beside `gone`.
+    pub const SCAN_PAYLOAD_COUNTERS: &[&str] = &[
+        "discovered",
+        "becameStable",
+        "importsQueued",
+        "needsReview",
+        "rejected",
+        "superseded",
+        "gone",
+        "recovered",
     ];
 
     /// Section 4 type names the SDL must declare.
@@ -322,6 +349,33 @@ mod fixture_self_tests {
             .count();
         assert_eq!((queries, OPERATIONS.len() - queries), (4, 8));
         assert_eq!(SDL_TYPES.len(), 15);
+        assert_eq!(ENTRY_COUNT_FIELDS.len(), 11);
+        let folders = OPERATIONS
+            .iter()
+            .find(|operation| operation.field == "processedFolders")
+            .expect("processedFolders");
+        let counts = folders
+            .document
+            .split("counts {")
+            .nth(1)
+            .expect("processedFolders selects counts");
+        for field in ENTRY_COUNT_FIELDS {
+            assert!(
+                counts.contains(field),
+                "ProcessedFolderEntryCounts selection lacks {field}"
+            );
+        }
+        let scan = OPERATIONS
+            .iter()
+            .find(|operation| operation.field == "scanProcessedFolder")
+            .expect("scanProcessedFolder");
+        for field in SCAN_PAYLOAD_COUNTERS {
+            assert!(
+                scan.document.contains(field),
+                "scan payload selection lacks {field}"
+            );
+        }
+        assert!(scan.document.contains("counts {"));
     }
 
     #[test]
@@ -428,6 +482,26 @@ async fn the_sdl_declares_every_contract_type_and_operation() {
         );
     }
     assert!(!sdl.contains('\u{2014}'), "no em dash anywhere in the SDL");
+    let counts = sdl
+        .split("type ProcessedFolderEntryCounts")
+        .nth(1)
+        .expect("ProcessedFolderEntryCounts");
+    for field in ENTRY_COUNT_FIELDS {
+        assert!(
+            counts.contains(&format!("{field}:")),
+            "ProcessedFolderEntryCounts lacks {field}"
+        );
+    }
+    let scan = sdl
+        .split("type ProcessedFolderScanPayload")
+        .nth(1)
+        .expect("ProcessedFolderScanPayload");
+    for field in SCAN_PAYLOAD_COUNTERS {
+        assert!(
+            scan.contains(&format!("{field}:")),
+            "ProcessedFolderScanPayload lacks {field}"
+        );
+    }
 }
 
 /// Section 4 auth and section 8: every resolver refuses an actor without
