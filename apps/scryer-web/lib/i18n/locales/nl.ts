@@ -4355,53 +4355,84 @@ const nl: LocaleDictionary = {
   "processedFolder.action.ignore": "Negeren",
   "processedFolder.action.importAs": "Importeren als…",
   "processedFolder.action.retry": "Opnieuw proberen",
-  "processedFolder.reason.alreadyImported": "De bibliotheek heeft dit bestand al.",
+  "processedFolder.reason.alreadyImported":
+    "De bibliotheek heeft dit bestand al.",
   "processedFolder.reason.ambiguous": "Er passen meerdere titels.",
-  "processedFolder.reason.archiveExtractionPluginRequired": "Voor het uitpakken van dit archief is een plug-in nodig.",
-  "processedFolder.reason.archiveExtractionTimedOut": "Het uitpakken van het archief duurde te lang.",
-  "processedFolder.reason.conflict": "De import vond een conflict en heeft een beslissing nodig.",
+  "processedFolder.reason.archiveExtractionPluginRequired":
+    "Voor het uitpakken van dit archief is een plug-in nodig.",
+  "processedFolder.reason.archiveExtractionTimedOut":
+    "Het uitpakken van het archief duurde te lang.",
+  "processedFolder.reason.conflict":
+    "De import vond een conflict en heeft een beslissing nodig.",
   "processedFolder.reason.diskFull": "De schijf van de bibliotheek is vol.",
-  "processedFolder.reason.downloadInProgress": "Het bestand wordt nog geschreven.",
-  "processedFolder.reason.duplicateFile": "Een duplicaat van dit bestand staat al in de bibliotheek.",
+  "processedFolder.reason.downloadInProgress":
+    "Het bestand wordt nog geschreven.",
+  "processedFolder.reason.duplicateFile":
+    "Een duplicaat van dit bestand staat al in de bibliotheek.",
   "processedFolder.reason.empty": "Het bestand is leeg.",
-  "processedFolder.reason.entryChanged": "Het bestand is gewijzigd voordat de import begon.",
+  "processedFolder.reason.entryChanged":
+    "Het bestand is gewijzigd voordat de import begon.",
   "processedFolder.reason.error": "De import is mislukt met een fout.",
   "processedFolder.reason.interrupted": "De import is onderbroken.",
   "processedFolder.reason.noVideoFiles": "Geen videobestanden gevonden.",
   "processedFolder.reason.notAVideo": "Geen videobestand.",
-  "processedFolder.reason.outsideLibrary": "De passende titel staat in een andere bibliotheek.",
-  "processedFolder.reason.passwordRequired": "Het archief heeft een wachtwoord nodig.",
+  "processedFolder.reason.outsideLibrary":
+    "De passende titel staat in een andere bibliotheek.",
+  "processedFolder.reason.passwordRequired":
+    "Het archief heeft een wachtwoord nodig.",
   "processedFolder.reason.permissionDenied": "Toegang geweigerd.",
-  "processedFolder.reason.policyMismatch": "Het bestand voldoet niet aan de kwaliteitsinstellingen van de titel.",
-  "processedFolder.reason.postDownloadRuleBlocked": "Een regel na het downloaden heeft dit bestand geblokkeerd.",
+  "processedFolder.reason.policyMismatch":
+    "Het bestand voldoet niet aan de kwaliteitsinstellingen van de titel.",
+  "processedFolder.reason.postDownloadRuleBlocked":
+    "Een regel na het downloaden heeft dit bestand geblokkeerd.",
   "processedFolder.reason.rejected": "De import heeft dit bestand afgewezen.",
   "processedFolder.reason.symlinkDir": "Gekoppelde mappen worden niet gevolgd.",
-  "processedFolder.reason.symlinkEscapesRoot": "Een symbolische koppeling wijst buiten deze map.",
+  "processedFolder.reason.symlinkEscapesRoot":
+    "Een symbolische koppeling wijst buiten deze map.",
   "processedFolder.reason.unmatched": "Geen passende titel gevonden.",
-  "processedFolder.reason.unparseableEpisode": "Het afleveringsnummer kon niet worden gelezen.",
-  "processedFolder.reason.unresolvedIdentity": "Het bestand kon niet worden herkend.",
-  "processedFolder.reason.unwantedExecutables": "Het bestand is een programma, geen media.",
-  "processedFolder.refusal.disabled": "Deze map is uitgeschakeld. Schakel hem eerst in.",
-  "processedFolder.refusal.entryChanged": "Het bestand is op de schijf gewijzigd. Scan opnieuw.",
-  "processedFolder.refusal.entryNotActionable": "Deze actie is niet meer mogelijk voor dit bestand. Vernieuw de lijst.",
-  "processedFolder.refusal.entryNotFound": "Dit bestandsitem bestaat niet meer.",
-  "processedFolder.refusal.importsInFlight": "Er lopen nog imports uit deze map. Probeer het opnieuw als ze klaar zijn.",
-  "processedFolder.refusal.invalidMarker": "De markering is ongeldig. Gebruik één bestandsnaam zonder schuine strepen of \"..\".",
-  "processedFolder.refusal.invalidStability": "De stabiliteitsinstellingen vallen buiten het bereik.",
-  "processedFolder.refusal.libraryNotFound": "De gekozen bibliotheek bestaat niet meer.",
+  "processedFolder.reason.unparseableEpisode":
+    "Het afleveringsnummer kon niet worden gelezen.",
+  "processedFolder.reason.unresolvedIdentity":
+    "Het bestand kon niet worden herkend.",
+  "processedFolder.reason.unwantedExecutables":
+    "Het bestand is een programma, geen media.",
+  "processedFolder.refusal.disabled":
+    "Deze map is uitgeschakeld. Schakel hem eerst in.",
+  "processedFolder.refusal.entryChanged":
+    "Het bestand is op de schijf gewijzigd. Scan opnieuw.",
+  "processedFolder.refusal.entryNotActionable":
+    "Deze actie is niet meer mogelijk voor dit bestand. Vernieuw de lijst.",
+  "processedFolder.refusal.entryNotFound":
+    "Dit bestandsitem bestaat niet meer.",
+  "processedFolder.refusal.importsInFlight":
+    "Er lopen nog imports uit deze map. Probeer het opnieuw als ze klaar zijn.",
+  "processedFolder.refusal.invalidMarker":
+    'De markering is ongeldig. Gebruik één bestandsnaam zonder schuine strepen of "..".',
+  "processedFolder.refusal.invalidStability":
+    "De stabiliteitsinstellingen vallen buiten het bereik.",
+  "processedFolder.refusal.libraryNotFound":
+    "De gekozen bibliotheek bestaat niet meer.",
   "processedFolder.refusal.nameRequired": "Voer een naam voor de map in.",
   "processedFolder.refusal.nameTaken": "Een andere map gebruikt deze naam al.",
   "processedFolder.refusal.notFound": "Deze map bestaat niet meer.",
-  "processedFolder.refusal.overlapsBackupPath": "Deze map overlapt met de back-upmap.",
-  "processedFolder.refusal.overlapsLibraryRoot": "Deze map overlapt met een hoofdmap van een bibliotheek.",
-  "processedFolder.refusal.overlapsOtherFolder": "Deze map overlapt met een andere verwerkte map.",
-  "processedFolder.refusal.overlapsRecycleBin": "Deze map overlapt met de prullenbak.",
+  "processedFolder.refusal.overlapsBackupPath":
+    "Deze map overlapt met de back-upmap.",
+  "processedFolder.refusal.overlapsLibraryRoot":
+    "Deze map overlapt met een hoofdmap van een bibliotheek.",
+  "processedFolder.refusal.overlapsOtherFolder":
+    "Deze map overlapt met een andere verwerkte map.",
+  "processedFolder.refusal.overlapsRecycleBin":
+    "Deze map overlapt met de prullenbak.",
   "processedFolder.refusal.pathMissing": "Dit pad bestaat niet.",
-  "processedFolder.refusal.pathNotAbsolute": "Voer een volledig pad in dat bij de hoofdmap begint.",
+  "processedFolder.refusal.pathNotAbsolute":
+    "Voer een volledig pad in dat bij de hoofdmap begint.",
   "processedFolder.refusal.pathNotDirectory": "Dit pad is geen map.",
-  "processedFolder.refusal.pathUnresolvable": "Scryer kan dit pad niet herleiden.",
-  "processedFolder.refusal.scanInProgress": "Er loopt al een scan van deze map.",
-  "processedFolder.refusal.titleOutsideLibrary": "Kies een titel uit de bibliotheek van deze map.",
+  "processedFolder.refusal.pathUnresolvable":
+    "Scryer kan dit pad niet herleiden.",
+  "processedFolder.refusal.scanInProgress":
+    "Er loopt al een scan van deze map.",
+  "processedFolder.refusal.titleOutsideLibrary":
+    "Kies een titel uit de bibliotheek van deze map.",
   "processedFolder.status.failed": "Mislukt",
   "processedFolder.status.gone": "Verdwenen",
   "processedFolder.status.ignored": "Genegeerd",
@@ -4413,23 +4444,33 @@ const nl: LocaleDictionary = {
   "processedFolder.status.skipped": "Overgeslagen",
   "processedFolder.status.stable": "Stabiel",
   "processedFolder.status.superseded": "Vervangen",
-  "settings.processedFolders.actionNeedsEnabled": "Schakel deze map in om te scannen, importeren of opnieuw te proberen.",
+  "settings.processedFolders.actionNeedsEnabled":
+    "Schakel deze map in om te scannen, importeren of opnieuw te proberen.",
   "settings.processedFolders.addAction": "Map toevoegen",
-  "settings.processedFolders.addDescription": "Kies een map en de bibliotheek waar de bestanden naartoe gaan.",
+  "settings.processedFolders.addDescription":
+    "Kies een map en de bibliotheek waar de bestanden naartoe gaan.",
   "settings.processedFolders.addTitle": "Verwerkte map toevoegen",
   "settings.processedFolders.attempts": "Pogingen",
   "settings.processedFolders.browse": "Mappen bladeren",
-  "settings.processedFolders.copyOnlyNotice": "Bestanden worden altijd gekopieerd. Scryer verplaatst, koppelt of verwijdert nooit iets in deze map.",
+  "settings.processedFolders.copyOnlyNotice":
+    "Bestanden worden altijd gekopieerd. Scryer verplaatst, koppelt of verwijdert nooit iets in deze map.",
   "settings.processedFolders.counts": "Bestanden",
-  "settings.processedFolders.countsSummary": "{{imported}} geïmporteerd, {{needsReview}} te controleren, {{failed}} mislukt, {{observing}} gevolgd",
-  "settings.processedFolders.created": "Map {{name}} toegevoegd. Hij blijft uitgeschakeld tot je hem inschakelt.",
-  "settings.processedFolders.createdDisabledNote": "Nieuwe mappen starten uitgeschakeld. Bekijk eerst het voorbeeld en schakel de map daarna in om te scannen en te importeren.",
-  "settings.processedFolders.deleteConfirm": "{{name}} verwijderen? Scryer vergeet deze map en de bestandsgeschiedenis. Bestanden in de map worden nooit aangeraakt.",
+  "settings.processedFolders.countsSummary":
+    "{{imported}} geïmporteerd, {{needsReview}} te controleren, {{failed}} mislukt, {{observing}} gevolgd",
+  "settings.processedFolders.created":
+    "Map {{name}} toegevoegd. Hij blijft uitgeschakeld tot je hem inschakelt.",
+  "settings.processedFolders.createdDisabledNote":
+    "Nieuwe mappen starten uitgeschakeld. Bekijk eerst het voorbeeld en schakel de map daarna in om te scannen en te importeren.",
+  "settings.processedFolders.deleteConfirm":
+    "{{name}} verwijderen? Scryer vergeet deze map en de bestandsgeschiedenis. Bestanden in de map worden nooit aangeraakt.",
   "settings.processedFolders.deleteTitle": "Verwerkte map verwijderen",
   "settings.processedFolders.deleted": "Map {{name}} verwijderd.",
-  "settings.processedFolders.description": "Mappen waarin een ander programma voltooide mediabestanden zet. Scryer importeert ze in één bibliotheek.",
-  "settings.processedFolders.disabledNotice": "Deze map is uitgeschakeld. Scannen, importeren en opnieuw proberen staan uit tot je hem inschakelt. Voorbeeld en negeren werken nog wel.",
-  "settings.processedFolders.editDescription": "Wijzig waar Scryer zoekt en wanneer een bestand als voltooid geldt.",
+  "settings.processedFolders.description":
+    "Mappen waarin een ander programma voltooide mediabestanden zet. Scryer importeert ze in één bibliotheek.",
+  "settings.processedFolders.disabledNotice":
+    "Deze map is uitgeschakeld. Scannen, importeren en opnieuw proberen staan uit tot je hem inschakelt. Voorbeeld en negeren werken nog wel.",
+  "settings.processedFolders.editDescription":
+    "Wijzig waar Scryer zoekt en wanneer een bestand als voltooid geldt.",
   "settings.processedFolders.editTitle": "Verwerkte map bewerken",
   "settings.processedFolders.eligibleAt": "Kan voltooid zijn om {{time}}",
   "settings.processedFolders.empty": "Nog geen verwerkte mappen.",
@@ -4438,47 +4479,64 @@ const nl: LocaleDictionary = {
   "settings.processedFolders.entriesEmpty": "Geen bestanden om te tonen.",
   "settings.processedFolders.entriesTitle": "Bestanden",
   "settings.processedFolders.file": "Bestand",
-  "settings.processedFolders.importAsDescription": "Kies een titel in {{library}}.",
-  "settings.processedFolders.importAsEmpty": "Geen titels in deze bibliotheek komen overeen.",
+  "settings.processedFolders.importAsDescription":
+    "Kies een titel in {{library}}.",
+  "settings.processedFolders.importAsEmpty":
+    "Geen titels in deze bibliotheek komen overeen.",
   "settings.processedFolders.importAsPlaceholder": "Titels zoeken",
   "settings.processedFolders.importAsTitle": "Importeren als…",
   "settings.processedFolders.importQueued": "Import in wachtrij gezet.",
   "settings.processedFolders.lastScan": "Laatste scan",
   "settings.processedFolders.library": "Bibliotheek",
-  "settings.processedFolders.libraryHelp": "Bestanden uit deze map worden alleen in deze bibliotheek geïmporteerd.",
+  "settings.processedFolders.libraryHelp":
+    "Bestanden uit deze map worden alleen in deze bibliotheek geïmporteerd.",
   "settings.processedFolders.libraryPlaceholder": "Kies een bibliotheek",
-  "settings.processedFolders.manualScanHelp": "Scryer controleert deze map alleen als je hem scant. Een bestand heeft meer dan één scan nodig voordat het als voltooid geldt.",
-  "settings.processedFolders.markerDirectoryFileHelp": "Een bestand met deze naam in de map van de video markeert hem als voltooid. Gebruik één naam zonder schuine strepen.",
+  "settings.processedFolders.manualScanHelp":
+    "Scryer controleert deze map alleen als je hem scant. Een bestand heeft meer dan één scan nodig voordat het als voltooid geldt.",
+  "settings.processedFolders.markerDirectoryFileHelp":
+    "Een bestand met deze naam in de map van de video markeert hem als voltooid. Gebruik één naam zonder schuine strepen.",
   "settings.processedFolders.markerMode": "Voltooid-markering",
-  "settings.processedFolders.markerModeDirectoryFile": "Bestand in de map van de video",
+  "settings.processedFolders.markerModeDirectoryFile":
+    "Bestand in de map van de video",
   "settings.processedFolders.markerModeNone": "Geen markering",
-  "settings.processedFolders.markerModeSiblingSuffix": "Bestand naast elke video",
-  "settings.processedFolders.markerNoneHelp": "Bestanden gelden als voltooid na de ongewijzigde scans en de minimale leeftijd.",
-  "settings.processedFolders.markerSiblingSuffixHelp": "Een bestand met de naam van de video plus dit achtervoegsel markeert hem als voltooid. Het achtervoegsel begint met een punt, bijvoorbeeld .done.",
+  "settings.processedFolders.markerModeSiblingSuffix":
+    "Bestand naast elke video",
+  "settings.processedFolders.markerNoneHelp":
+    "Bestanden gelden als voltooid na de ongewijzigde scans en de minimale leeftijd.",
+  "settings.processedFolders.markerSiblingSuffixHelp":
+    "Een bestand met de naam van de video plus dit achtervoegsel markeert hem als voltooid. Het achtervoegsel begint met een punt, bijvoorbeeld .done.",
   "settings.processedFolders.markerSummary": "of markering {{marker}}",
   "settings.processedFolders.markerValue": "Naam van de markering",
   "settings.processedFolders.matchedTitle": "Gevonden titel",
   "settings.processedFolders.minAgeSeconds": "Minimale leeftijd (seconden)",
-  "settings.processedFolders.minAgeSecondsHelp": "Hoe lang een bestand onaangeroerd moet zijn, van {{min}} tot {{max}} seconden.",
+  "settings.processedFolders.minAgeSecondsHelp":
+    "Hoe lang een bestand onaangeroerd moet zijn, van {{min}} tot {{max}} seconden.",
   "settings.processedFolders.minStableScans": "Ongewijzigde scans",
-  "settings.processedFolders.minStableScansHelp": "Aantal scans waarin een bestand ongewijzigd moet blijven, van {{min}} tot {{max}}.",
+  "settings.processedFolders.minStableScansHelp":
+    "Aantal scans waarin een bestand ongewijzigd moet blijven, van {{min}} tot {{max}}.",
   "settings.processedFolders.modified": "Gewijzigd",
   "settings.processedFolders.name": "Naam",
   "settings.processedFolders.neverScanned": "Nooit",
-  "settings.processedFolders.nextEligibleAt": "Scan opnieuw na {{time}} om meer bestanden als voltooid te markeren.",
+  "settings.processedFolders.nextEligibleAt":
+    "Scan opnieuw na {{time}} om meer bestanden als voltooid te markeren.",
   "settings.processedFolders.nextPage": "Volgende",
   "settings.processedFolders.pageRange": "{{start}}–{{end}} van {{total}}",
   "settings.processedFolders.preview": "Voorbeeld",
-  "settings.processedFolders.previewEmpty": "Geen bestanden gevonden in deze map.",
-  "settings.processedFolders.previewHelp": "Wat een scan nu zou doen. Er wordt niets gewijzigd.",
+  "settings.processedFolders.previewEmpty":
+    "Geen bestanden gevonden in deze map.",
+  "settings.processedFolders.previewHelp":
+    "Wat een scan nu zou doen. Er wordt niets gewijzigd.",
   "settings.processedFolders.previewTitle": "Voorbeeld",
-  "settings.processedFolders.previewTruncated": "Alleen de eerste {{count}} bestanden worden getoond.",
+  "settings.processedFolders.previewTruncated":
+    "Alleen de eerste {{count}} bestanden worden getoond.",
   "settings.processedFolders.previousPage": "Vorige",
   "settings.processedFolders.progress": "Voortgang",
-  "settings.processedFolders.readonly": "Je hebt toestemming nodig om systeeminstellingen te beheren om verwerkte mappen te gebruiken.",
+  "settings.processedFolders.readonly":
+    "Je hebt toestemming nodig om systeeminstellingen te beheren om verwerkte mappen te gebruiken.",
   "settings.processedFolders.reason": "Reden",
   "settings.processedFolders.rootPath": "Mappad",
-  "settings.processedFolders.rootPathHelp": "Een volledig pad op de Scryer-server. Het mag niet overlappen met een bibliotheek, de prullenbak, de back-upmap of een andere verwerkte map.",
+  "settings.processedFolders.rootPathHelp":
+    "Een volledig pad op de Scryer-server. Het mag niet overlappen met een bibliotheek, de prullenbak, de back-upmap of een andere verwerkte map.",
   "settings.processedFolders.saved": "Map {{name}} opgeslagen.",
   "settings.processedFolders.scanBecameStable": "Voltooid",
   "settings.processedFolders.scanDiscovered": "Nieuwe bestanden",
@@ -4492,7 +4550,8 @@ const nl: LocaleDictionary = {
   "settings.processedFolders.showEntries": "Bestanden tonen",
   "settings.processedFolders.size": "Grootte",
   "settings.processedFolders.stability": "Voltooid wanneer",
-  "settings.processedFolders.stabilitySummary": "{{scans}} ongewijzigde scans, {{seconds}} s oud",
+  "settings.processedFolders.stabilitySummary":
+    "{{scans}} ongewijzigde scans, {{seconds}} s oud",
   "settings.processedFolders.stableScanCount": "{{count}} ongewijzigde scans",
   "settings.processedFolders.statusAll": "Alle statussen",
   "settings.processedFolders.statusFilter": "Status",

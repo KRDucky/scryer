@@ -3655,53 +3655,86 @@ const it: LocaleDictionary = {
   "processedFolder.action.ignore": "Ignora",
   "processedFolder.action.importAs": "Importa come…",
   "processedFolder.action.retry": "Riprova",
-  "processedFolder.reason.alreadyImported": "La libreria contiene già questo file.",
+  "processedFolder.reason.alreadyImported":
+    "La libreria contiene già questo file.",
   "processedFolder.reason.ambiguous": "Corrisponde più di un titolo.",
-  "processedFolder.reason.archiveExtractionPluginRequired": "Per estrarre questo archivio serve un plugin.",
-  "processedFolder.reason.archiveExtractionTimedOut": "L'estrazione dell'archivio ha richiesto troppo tempo.",
-  "processedFolder.reason.conflict": "L'importazione ha trovato un conflitto e richiede una decisione.",
+  "processedFolder.reason.archiveExtractionPluginRequired":
+    "Per estrarre questo archivio serve un plugin.",
+  "processedFolder.reason.archiveExtractionTimedOut":
+    "L'estrazione dell'archivio ha richiesto troppo tempo.",
+  "processedFolder.reason.conflict":
+    "L'importazione ha trovato un conflitto e richiede una decisione.",
   "processedFolder.reason.diskFull": "Il disco della libreria è pieno.",
   "processedFolder.reason.downloadInProgress": "Il file è ancora in scrittura.",
-  "processedFolder.reason.duplicateFile": "Un duplicato di questo file è già nella libreria.",
+  "processedFolder.reason.duplicateFile":
+    "Un duplicato di questo file è già nella libreria.",
   "processedFolder.reason.empty": "Il file è vuoto.",
-  "processedFolder.reason.entryChanged": "Il file è cambiato prima dell'inizio dell'importazione.",
-  "processedFolder.reason.error": "L'importazione non è riuscita a causa di un errore.",
+  "processedFolder.reason.entryChanged":
+    "Il file è cambiato prima dell'inizio dell'importazione.",
+  "processedFolder.reason.error":
+    "L'importazione non è riuscita a causa di un errore.",
   "processedFolder.reason.interrupted": "L'importazione è stata interrotta.",
   "processedFolder.reason.noVideoFiles": "Nessun file video trovato.",
   "processedFolder.reason.notAVideo": "Non è un file video.",
-  "processedFolder.reason.outsideLibrary": "Il titolo corrispondente si trova in un'altra libreria.",
-  "processedFolder.reason.passwordRequired": "L'archivio richiede una password.",
+  "processedFolder.reason.outsideLibrary":
+    "Il titolo corrispondente si trova in un'altra libreria.",
+  "processedFolder.reason.passwordRequired":
+    "L'archivio richiede una password.",
   "processedFolder.reason.permissionDenied": "Permesso negato.",
-  "processedFolder.reason.policyMismatch": "Il file non rispetta le impostazioni di qualità del titolo.",
-  "processedFolder.reason.postDownloadRuleBlocked": "Una regola post-download ha bloccato questo file.",
+  "processedFolder.reason.policyMismatch":
+    "Il file non rispetta le impostazioni di qualità del titolo.",
+  "processedFolder.reason.postDownloadRuleBlocked":
+    "Una regola post-download ha bloccato questo file.",
   "processedFolder.reason.rejected": "L'importazione ha rifiutato questo file.",
-  "processedFolder.reason.symlinkDir": "Le cartelle collegate non vengono seguite.",
-  "processedFolder.reason.symlinkEscapesRoot": "Un collegamento simbolico punta fuori da questa cartella.",
+  "processedFolder.reason.symlinkDir":
+    "Le cartelle collegate non vengono seguite.",
+  "processedFolder.reason.symlinkEscapesRoot":
+    "Un collegamento simbolico punta fuori da questa cartella.",
   "processedFolder.reason.unmatched": "Nessun titolo corrispondente trovato.",
-  "processedFolder.reason.unparseableEpisode": "Impossibile leggere il numero dell'episodio.",
-  "processedFolder.reason.unresolvedIdentity": "Impossibile identificare il file.",
-  "processedFolder.reason.unwantedExecutables": "Il file è un programma, non un contenuto multimediale.",
-  "processedFolder.refusal.disabled": "Questa cartella è disattivata. Attivala prima.",
-  "processedFolder.refusal.entryChanged": "Il file è cambiato sul disco. Esegui di nuovo la scansione.",
-  "processedFolder.refusal.entryNotActionable": "Questa azione non è più disponibile per il file. Aggiorna l'elenco.",
-  "processedFolder.refusal.entryNotFound": "Questa voce di file non esiste più.",
-  "processedFolder.refusal.importsInFlight": "Le importazioni da questa cartella sono ancora in corso. Riprova quando saranno finite.",
-  "processedFolder.refusal.invalidMarker": "Il marcatore non è valido. Usa un solo nome di file senza barre o \"..\".",
-  "processedFolder.refusal.invalidStability": "Le impostazioni di stabilità sono fuori intervallo.",
-  "processedFolder.refusal.libraryNotFound": "La libreria selezionata non esiste più.",
+  "processedFolder.reason.unparseableEpisode":
+    "Impossibile leggere il numero dell'episodio.",
+  "processedFolder.reason.unresolvedIdentity":
+    "Impossibile identificare il file.",
+  "processedFolder.reason.unwantedExecutables":
+    "Il file è un programma, non un contenuto multimediale.",
+  "processedFolder.refusal.disabled":
+    "Questa cartella è disattivata. Attivala prima.",
+  "processedFolder.refusal.entryChanged":
+    "Il file è cambiato sul disco. Esegui di nuovo la scansione.",
+  "processedFolder.refusal.entryNotActionable":
+    "Questa azione non è più disponibile per il file. Aggiorna l'elenco.",
+  "processedFolder.refusal.entryNotFound":
+    "Questa voce di file non esiste più.",
+  "processedFolder.refusal.importsInFlight":
+    "Le importazioni da questa cartella sono ancora in corso. Riprova quando saranno finite.",
+  "processedFolder.refusal.invalidMarker":
+    'Il marcatore non è valido. Usa un solo nome di file senza barre o "..".',
+  "processedFolder.refusal.invalidStability":
+    "Le impostazioni di stabilità sono fuori intervallo.",
+  "processedFolder.refusal.libraryNotFound":
+    "La libreria selezionata non esiste più.",
   "processedFolder.refusal.nameRequired": "Inserisci un nome per la cartella.",
   "processedFolder.refusal.nameTaken": "Un'altra cartella usa già questo nome.",
   "processedFolder.refusal.notFound": "Questa cartella non esiste più.",
-  "processedFolder.refusal.overlapsBackupPath": "Questa cartella si sovrappone alla cartella dei backup.",
-  "processedFolder.refusal.overlapsLibraryRoot": "Questa cartella si sovrappone a una cartella radice di una libreria.",
-  "processedFolder.refusal.overlapsOtherFolder": "Questa cartella si sovrappone a un'altra cartella elaborata.",
-  "processedFolder.refusal.overlapsRecycleBin": "Questa cartella si sovrappone al cestino.",
+  "processedFolder.refusal.overlapsBackupPath":
+    "Questa cartella si sovrappone alla cartella dei backup.",
+  "processedFolder.refusal.overlapsLibraryRoot":
+    "Questa cartella si sovrappone a una cartella radice di una libreria.",
+  "processedFolder.refusal.overlapsOtherFolder":
+    "Questa cartella si sovrappone a un'altra cartella elaborata.",
+  "processedFolder.refusal.overlapsRecycleBin":
+    "Questa cartella si sovrappone al cestino.",
   "processedFolder.refusal.pathMissing": "Questo percorso non esiste.",
-  "processedFolder.refusal.pathNotAbsolute": "Inserisci un percorso completo che parta dalla radice.",
-  "processedFolder.refusal.pathNotDirectory": "Questo percorso non è una cartella.",
-  "processedFolder.refusal.pathUnresolvable": "Scryer non riesce a risolvere questo percorso.",
-  "processedFolder.refusal.scanInProgress": "Una scansione di questa cartella è già in corso.",
-  "processedFolder.refusal.titleOutsideLibrary": "Scegli un titolo dalla libreria di questa cartella.",
+  "processedFolder.refusal.pathNotAbsolute":
+    "Inserisci un percorso completo che parta dalla radice.",
+  "processedFolder.refusal.pathNotDirectory":
+    "Questo percorso non è una cartella.",
+  "processedFolder.refusal.pathUnresolvable":
+    "Scryer non riesce a risolvere questo percorso.",
+  "processedFolder.refusal.scanInProgress":
+    "Una scansione di questa cartella è già in corso.",
+  "processedFolder.refusal.titleOutsideLibrary":
+    "Scegli un titolo dalla libreria di questa cartella.",
   "processedFolder.status.failed": "Non riuscito",
   "processedFolder.status.gone": "Scomparso",
   "processedFolder.status.ignored": "Ignorato",
@@ -3713,23 +3746,33 @@ const it: LocaleDictionary = {
   "processedFolder.status.skipped": "Saltato",
   "processedFolder.status.stable": "Stabile",
   "processedFolder.status.superseded": "Sostituito",
-  "settings.processedFolders.actionNeedsEnabled": "Attiva questa cartella per scansionare, importare o riprovare.",
+  "settings.processedFolders.actionNeedsEnabled":
+    "Attiva questa cartella per scansionare, importare o riprovare.",
   "settings.processedFolders.addAction": "Aggiungi cartella",
-  "settings.processedFolders.addDescription": "Scegli una cartella e la libreria in cui vanno i suoi file.",
+  "settings.processedFolders.addDescription":
+    "Scegli una cartella e la libreria in cui vanno i suoi file.",
   "settings.processedFolders.addTitle": "Aggiungi cartella elaborata",
   "settings.processedFolders.attempts": "Tentativi",
   "settings.processedFolders.browse": "Sfoglia cartelle",
-  "settings.processedFolders.copyOnlyNotice": "I file vengono sempre copiati. Scryer non sposta, non collega e non elimina mai nulla in questa cartella.",
+  "settings.processedFolders.copyOnlyNotice":
+    "I file vengono sempre copiati. Scryer non sposta, non collega e non elimina mai nulla in questa cartella.",
   "settings.processedFolders.counts": "File",
-  "settings.processedFolders.countsSummary": "{{imported}} importati, {{needsReview}} da verificare, {{failed}} non riusciti, {{observing}} in osservazione",
-  "settings.processedFolders.created": "Cartella {{name}} aggiunta. Resta disattivata finché non la attivi.",
-  "settings.processedFolders.createdDisabledNote": "Le nuove cartelle partono disattivate. Controlla l'anteprima, poi attiva la cartella per scansionare e importare.",
-  "settings.processedFolders.deleteConfirm": "Eliminare {{name}}? Scryer dimentica questa cartella e la cronologia dei suoi file. I file nella cartella non vengono mai toccati.",
+  "settings.processedFolders.countsSummary":
+    "{{imported}} importati, {{needsReview}} da verificare, {{failed}} non riusciti, {{observing}} in osservazione",
+  "settings.processedFolders.created":
+    "Cartella {{name}} aggiunta. Resta disattivata finché non la attivi.",
+  "settings.processedFolders.createdDisabledNote":
+    "Le nuove cartelle partono disattivate. Controlla l'anteprima, poi attiva la cartella per scansionare e importare.",
+  "settings.processedFolders.deleteConfirm":
+    "Eliminare {{name}}? Scryer dimentica questa cartella e la cronologia dei suoi file. I file nella cartella non vengono mai toccati.",
   "settings.processedFolders.deleteTitle": "Elimina cartella elaborata",
   "settings.processedFolders.deleted": "Cartella {{name}} eliminata.",
-  "settings.processedFolders.description": "Cartelle in cui un altro strumento lascia i file multimediali completati. Scryer li importa in una libreria.",
-  "settings.processedFolders.disabledNotice": "Questa cartella è disattivata. Scansione, importazione e nuovo tentativo non sono disponibili finché non la attivi. Anteprima e Ignora funzionano comunque.",
-  "settings.processedFolders.editDescription": "Cambia dove cerca Scryer e quando un file si considera completato.",
+  "settings.processedFolders.description":
+    "Cartelle in cui un altro strumento lascia i file multimediali completati. Scryer li importa in una libreria.",
+  "settings.processedFolders.disabledNotice":
+    "Questa cartella è disattivata. Scansione, importazione e nuovo tentativo non sono disponibili finché non la attivi. Anteprima e Ignora funzionano comunque.",
+  "settings.processedFolders.editDescription":
+    "Cambia dove cerca Scryer e quando un file si considera completato.",
   "settings.processedFolders.editTitle": "Modifica cartella elaborata",
   "settings.processedFolders.eligibleAt": "Può completarsi alle {{time}}",
   "settings.processedFolders.empty": "Nessuna cartella elaborata.",
@@ -3738,47 +3781,64 @@ const it: LocaleDictionary = {
   "settings.processedFolders.entriesEmpty": "Nessun file da mostrare.",
   "settings.processedFolders.entriesTitle": "File",
   "settings.processedFolders.file": "File",
-  "settings.processedFolders.importAsDescription": "Scegli un titolo in {{library}}.",
-  "settings.processedFolders.importAsEmpty": "Nessun titolo di questa libreria corrisponde.",
+  "settings.processedFolders.importAsDescription":
+    "Scegli un titolo in {{library}}.",
+  "settings.processedFolders.importAsEmpty":
+    "Nessun titolo di questa libreria corrisponde.",
   "settings.processedFolders.importAsPlaceholder": "Cerca titoli",
   "settings.processedFolders.importAsTitle": "Importa come…",
   "settings.processedFolders.importQueued": "Importazione in coda.",
   "settings.processedFolders.lastScan": "Ultima scansione",
   "settings.processedFolders.library": "Libreria",
-  "settings.processedFolders.libraryHelp": "I file di questa cartella vengono importati solo in questa libreria.",
+  "settings.processedFolders.libraryHelp":
+    "I file di questa cartella vengono importati solo in questa libreria.",
   "settings.processedFolders.libraryPlaceholder": "Scegli una libreria",
-  "settings.processedFolders.manualScanHelp": "Scryer controlla questa cartella solo quando la scansioni. Un file richiede più di una scansione prima di considerarsi completato.",
-  "settings.processedFolders.markerDirectoryFileHelp": "Un file con questo nome nella cartella del video lo segna come completato. Usa un solo nome senza barre.",
+  "settings.processedFolders.manualScanHelp":
+    "Scryer controlla questa cartella solo quando la scansioni. Un file richiede più di una scansione prima di considerarsi completato.",
+  "settings.processedFolders.markerDirectoryFileHelp":
+    "Un file con questo nome nella cartella del video lo segna come completato. Usa un solo nome senza barre.",
   "settings.processedFolders.markerMode": "Marcatore di completamento",
-  "settings.processedFolders.markerModeDirectoryFile": "File nella cartella del video",
+  "settings.processedFolders.markerModeDirectoryFile":
+    "File nella cartella del video",
   "settings.processedFolders.markerModeNone": "Nessun marcatore",
-  "settings.processedFolders.markerModeSiblingSuffix": "File accanto a ogni video",
-  "settings.processedFolders.markerNoneHelp": "I file si considerano completati dopo le scansioni senza modifiche e l'età minima.",
-  "settings.processedFolders.markerSiblingSuffixHelp": "Un file con il nome del video più questo suffisso lo segna come completato. Il suffisso inizia con un punto, per esempio .done.",
+  "settings.processedFolders.markerModeSiblingSuffix":
+    "File accanto a ogni video",
+  "settings.processedFolders.markerNoneHelp":
+    "I file si considerano completati dopo le scansioni senza modifiche e l'età minima.",
+  "settings.processedFolders.markerSiblingSuffixHelp":
+    "Un file con il nome del video più questo suffisso lo segna come completato. Il suffisso inizia con un punto, per esempio .done.",
   "settings.processedFolders.markerSummary": "o marcatore {{marker}}",
   "settings.processedFolders.markerValue": "Nome del marcatore",
   "settings.processedFolders.matchedTitle": "Titolo corrispondente",
   "settings.processedFolders.minAgeSeconds": "Età minima (secondi)",
-  "settings.processedFolders.minAgeSecondsHelp": "Per quanto tempo un file deve restare intatto, da {{min}} a {{max}} secondi.",
+  "settings.processedFolders.minAgeSecondsHelp":
+    "Per quanto tempo un file deve restare intatto, da {{min}} a {{max}} secondi.",
   "settings.processedFolders.minStableScans": "Scansioni senza modifiche",
-  "settings.processedFolders.minStableScansHelp": "Scansioni in cui un file deve restare invariato, da {{min}} a {{max}}.",
+  "settings.processedFolders.minStableScansHelp":
+    "Scansioni in cui un file deve restare invariato, da {{min}} a {{max}}.",
   "settings.processedFolders.modified": "Modificato",
   "settings.processedFolders.name": "Nome",
   "settings.processedFolders.neverScanned": "Mai",
-  "settings.processedFolders.nextEligibleAt": "Scansiona di nuovo dopo {{time}} per segnare altri file come completati.",
+  "settings.processedFolders.nextEligibleAt":
+    "Scansiona di nuovo dopo {{time}} per segnare altri file come completati.",
   "settings.processedFolders.nextPage": "Successiva",
   "settings.processedFolders.pageRange": "{{start}}–{{end}} di {{total}}",
   "settings.processedFolders.preview": "Anteprima",
-  "settings.processedFolders.previewEmpty": "Nessun file trovato in questa cartella.",
-  "settings.processedFolders.previewHelp": "Cosa farebbe ora una scansione. Non viene modificato nulla.",
+  "settings.processedFolders.previewEmpty":
+    "Nessun file trovato in questa cartella.",
+  "settings.processedFolders.previewHelp":
+    "Cosa farebbe ora una scansione. Non viene modificato nulla.",
   "settings.processedFolders.previewTitle": "Anteprima",
-  "settings.processedFolders.previewTruncated": "Vengono mostrati solo i primi {{count}} file.",
+  "settings.processedFolders.previewTruncated":
+    "Vengono mostrati solo i primi {{count}} file.",
   "settings.processedFolders.previousPage": "Precedente",
   "settings.processedFolders.progress": "Avanzamento",
-  "settings.processedFolders.readonly": "Ti serve l'autorizzazione a gestire le impostazioni di sistema per usare le cartelle elaborate.",
+  "settings.processedFolders.readonly":
+    "Ti serve l'autorizzazione a gestire le impostazioni di sistema per usare le cartelle elaborate.",
   "settings.processedFolders.reason": "Motivo",
   "settings.processedFolders.rootPath": "Percorso della cartella",
-  "settings.processedFolders.rootPathHelp": "Un percorso completo sul server Scryer. Non deve sovrapporsi a una libreria, al cestino, alla cartella dei backup o a un'altra cartella elaborata.",
+  "settings.processedFolders.rootPathHelp":
+    "Un percorso completo sul server Scryer. Non deve sovrapporsi a una libreria, al cestino, alla cartella dei backup o a un'altra cartella elaborata.",
   "settings.processedFolders.saved": "Cartella {{name}} salvata.",
   "settings.processedFolders.scanBecameStable": "Completati",
   "settings.processedFolders.scanDiscovered": "Nuovi file",
@@ -3792,8 +3852,10 @@ const it: LocaleDictionary = {
   "settings.processedFolders.showEntries": "Mostra file",
   "settings.processedFolders.size": "Dimensione",
   "settings.processedFolders.stability": "Completato quando",
-  "settings.processedFolders.stabilitySummary": "{{scans}} scansioni senza modifiche, {{seconds}} s di età",
-  "settings.processedFolders.stableScanCount": "{{count}} scansioni senza modifiche",
+  "settings.processedFolders.stabilitySummary":
+    "{{scans}} scansioni senza modifiche, {{seconds}} s di età",
+  "settings.processedFolders.stableScanCount":
+    "{{count}} scansioni senza modifiche",
   "settings.processedFolders.statusAll": "Tutti gli stati",
   "settings.processedFolders.statusFilter": "Stato",
   "settings.processedFolders.title": "Cartelle di contenuti elaborati",

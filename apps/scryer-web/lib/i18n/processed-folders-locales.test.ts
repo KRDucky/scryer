@@ -24,15 +24,32 @@ const PREFIXES = [
 ];
 
 const TRANSLATIONS: Record<string, Record<string, string>> = {
-  cs, de, es, fr, it, ja, ko, nl, pt_BR, ru, zh_CN, zh_HK, zh_TW,
+  cs,
+  de,
+  es,
+  fr,
+  it,
+  ja,
+  ko,
+  nl,
+  pt_BR,
+  ru,
+  zh_CN,
+  zh_HK,
+  zh_TW,
 };
 
-const isProcessedFolderKey = (key: string) => PREFIXES.some((prefix) => key.startsWith(prefix));
-const placeholders = (text: string) => [...text.matchAll(/\{\{(\w+)\}\}/g)].map((match) => match[1]).sort();
+const isProcessedFolderKey = (key: string) =>
+  PREFIXES.some((prefix) => key.startsWith(prefix));
+const placeholders = (text: string) =>
+  [...text.matchAll(/\{\{(\w+)\}\}/g)].map((match) => match[1]).sort();
 const englishKeys = Object.keys(en).filter(isProcessedFolderKey);
 
 test("English carries the processed-folder copy, including the copy-only notice", () => {
-  assert.ok(englishKeys.length > 100, `only ${englishKeys.length} processed-folder keys in en`);
+  assert.ok(
+    englishKeys.length > 100,
+    `only ${englishKeys.length} processed-folder keys in en`,
+  );
   assert.equal(
     en["settings.processedFolders.copyOnlyNotice"],
     "Files are always copied. Scryer never moves, links or deletes anything in this folder.",
@@ -42,9 +59,14 @@ test("English carries the processed-folder copy, including the copy-only notice"
 test("processed-folder copy uses the {{name}} placeholders that interpolate() fills", () => {
   for (const [locale, dictionary] of Object.entries({ en, ...TRANSLATIONS })) {
     const single = Object.entries(dictionary).filter(
-      ([key, text]) => isProcessedFolderKey(key) && /(?<!\{)\{\w+\}(?!\})/.test(text),
+      ([key, text]) =>
+        isProcessedFolderKey(key) && /(?<!\{)\{\w+\}(?!\})/.test(text),
     );
-    assert.deepEqual(single.map(([key]) => key), [], `${locale} has single-brace placeholders`);
+    assert.deepEqual(
+      single.map(([key]) => key),
+      [],
+      `${locale} has single-brace placeholders`,
+    );
   }
 });
 
@@ -52,10 +74,18 @@ for (const [locale, dictionary] of Object.entries(TRANSLATIONS)) {
   test(`${locale} has every processed-folder key, translated, with the English placeholders`, () => {
     const missing = englishKeys.filter((key) => !dictionary[key]?.trim());
     assert.deepEqual(missing, [], `${locale} is missing processed-folder keys`);
-    const extra = Object.keys(dictionary).filter((key) => isProcessedFolderKey(key) && !(key in en));
-    assert.deepEqual(extra, [], `${locale} has processed-folder keys that en does not`);
+    const extra = Object.keys(dictionary).filter(
+      (key) => isProcessedFolderKey(key) && !(key in en),
+    );
+    assert.deepEqual(
+      extra,
+      [],
+      `${locale} has processed-folder keys that en does not`,
+    );
     const mismatched = englishKeys.filter(
-      (key) => placeholders(dictionary[key]).join(",") !== placeholders(en[key]).join(","),
+      (key) =>
+        placeholders(dictionary[key]).join(",") !==
+        placeholders(en[key]).join(","),
     );
     assert.deepEqual(mismatched, [], `${locale} placeholders differ from en`);
     // Short labels can match English (a "Status" column), but the notice and
@@ -68,6 +98,10 @@ for (const [locale, dictionary] of Object.entries(TRANSLATIONS)) {
     const untranslatedSentences = englishKeys.filter(
       (key) => en[key].length > 40 && dictionary[key] === en[key],
     );
-    assert.deepEqual(untranslatedSentences, [], `${locale} sentences left in English`);
+    assert.deepEqual(
+      untranslatedSentences,
+      [],
+      `${locale} sentences left in English`,
+    );
   });
 }

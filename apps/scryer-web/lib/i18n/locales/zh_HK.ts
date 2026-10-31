@@ -5484,7 +5484,8 @@ const zh_HK: LocaleDictionary = {
   "processedFolder.action.retry": "重試",
   "processedFolder.reason.alreadyImported": "媒體庫中已有此檔案。",
   "processedFolder.reason.ambiguous": "有多個標題相符。",
-  "processedFolder.reason.archiveExtractionPluginRequired": "解壓縮此壓縮檔需要插件。",
+  "processedFolder.reason.archiveExtractionPluginRequired":
+    "解壓縮此壓縮檔需要插件。",
   "processedFolder.reason.archiveExtractionTimedOut": "解壓縮壓縮檔耗時過長。",
   "processedFolder.reason.conflict": "匯入發現衝突，需要你做決定。",
   "processedFolder.reason.diskFull": "媒體庫磁碟已滿。",
@@ -5510,25 +5511,31 @@ const zh_HK: LocaleDictionary = {
   "processedFolder.reason.unwantedExecutables": "此檔案是程式，不是媒體。",
   "processedFolder.refusal.disabled": "此資料夾已停用。請先啟用。",
   "processedFolder.refusal.entryChanged": "磁碟上的檔案已變更。請重新掃描。",
-  "processedFolder.refusal.entryNotActionable": "此檔案已無法執行該動作。請重新載入清單。",
+  "processedFolder.refusal.entryNotActionable":
+    "此檔案已無法執行該動作。請重新載入清單。",
   "processedFolder.refusal.entryNotFound": "此檔案項目已不存在。",
-  "processedFolder.refusal.importsInFlight": "此資料夾的匯入仍在進行。完成後再試。",
-  "processedFolder.refusal.invalidMarker": "標記無效。請使用不含斜線或 \"..\" 的單一檔名。",
+  "processedFolder.refusal.importsInFlight":
+    "此資料夾的匯入仍在進行。完成後再試。",
+  "processedFolder.refusal.invalidMarker":
+    '標記無效。請使用不含斜線或 ".." 的單一檔名。',
   "processedFolder.refusal.invalidStability": "穩定性設定超出範圍。",
   "processedFolder.refusal.libraryNotFound": "所選的媒體庫已不存在。",
   "processedFolder.refusal.nameRequired": "請輸入資料夾名稱。",
   "processedFolder.refusal.nameTaken": "已有其他資料夾使用此名稱。",
   "processedFolder.refusal.notFound": "此資料夾已不存在。",
   "processedFolder.refusal.overlapsBackupPath": "此資料夾與備份資料夾重疊。",
-  "processedFolder.refusal.overlapsLibraryRoot": "此資料夾與媒體庫根資料夾重疊。",
-  "processedFolder.refusal.overlapsOtherFolder": "此資料夾與另一個已處理資料夾重疊。",
+  "processedFolder.refusal.overlapsLibraryRoot":
+    "此資料夾與媒體庫根資料夾重疊。",
+  "processedFolder.refusal.overlapsOtherFolder":
+    "此資料夾與另一個已處理資料夾重疊。",
   "processedFolder.refusal.overlapsRecycleBin": "此資料夾與回收站重疊。",
   "processedFolder.refusal.pathMissing": "此路徑不存在。",
   "processedFolder.refusal.pathNotAbsolute": "請輸入從根目錄開始的完整路徑。",
   "processedFolder.refusal.pathNotDirectory": "此路徑不是資料夾。",
   "processedFolder.refusal.pathUnresolvable": "Scryer 無法解析此路徑。",
   "processedFolder.refusal.scanInProgress": "此資料夾的掃描已在進行中。",
-  "processedFolder.refusal.titleOutsideLibrary": "請從此資料夾的媒體庫中選擇標題。",
+  "processedFolder.refusal.titleOutsideLibrary":
+    "請從此資料夾的媒體庫中選擇標題。",
   "processedFolder.status.failed": "失敗",
   "processedFolder.status.gone": "已消失",
   "processedFolder.status.ignored": "已忽略",
@@ -5540,23 +5547,33 @@ const zh_HK: LocaleDictionary = {
   "processedFolder.status.skipped": "已略過",
   "processedFolder.status.stable": "已穩定",
   "processedFolder.status.superseded": "已被取代",
-  "settings.processedFolders.actionNeedsEnabled": "啟用此資料夾後才能掃描、匯入或重試。",
+  "settings.processedFolders.actionNeedsEnabled":
+    "啟用此資料夾後才能掃描、匯入或重試。",
   "settings.processedFolders.addAction": "添加資料夾",
-  "settings.processedFolders.addDescription": "選擇一個資料夾，以及其檔案要匯入的媒體庫。",
+  "settings.processedFolders.addDescription":
+    "選擇一個資料夾，以及其檔案要匯入的媒體庫。",
   "settings.processedFolders.addTitle": "添加已處理資料夾",
   "settings.processedFolders.attempts": "嘗試次數",
   "settings.processedFolders.browse": "瀏覽資料夾",
-  "settings.processedFolders.copyOnlyNotice": "檔案一律以複製方式匯入。Scryer 絕不會移動、連結或刪除此資料夾中的任何內容。",
+  "settings.processedFolders.copyOnlyNotice":
+    "檔案一律以複製方式匯入。Scryer 絕不會移動、連結或刪除此資料夾中的任何內容。",
   "settings.processedFolders.counts": "檔案",
-  "settings.processedFolders.countsSummary": "已匯入 {{imported}}，需審核 {{needsReview}}，失敗 {{failed}}，觀察中 {{observing}}",
-  "settings.processedFolders.created": "已添加資料夾 {{name}}。啟用前會保持停用。",
-  "settings.processedFolders.createdDisabledNote": "新資料夾預設會停用。先查看預覽，再啟用以進行掃描與匯入。",
-  "settings.processedFolders.deleteConfirm": "要刪除 {{name}} 嗎？Scryer 會忘記此資料夾及其檔案紀錄。資料夾中的檔案絕不會被變動。",
+  "settings.processedFolders.countsSummary":
+    "已匯入 {{imported}}，需審核 {{needsReview}}，失敗 {{failed}}，觀察中 {{observing}}",
+  "settings.processedFolders.created":
+    "已添加資料夾 {{name}}。啟用前會保持停用。",
+  "settings.processedFolders.createdDisabledNote":
+    "新資料夾預設會停用。先查看預覽，再啟用以進行掃描與匯入。",
+  "settings.processedFolders.deleteConfirm":
+    "要刪除 {{name}} 嗎？Scryer 會忘記此資料夾及其檔案紀錄。資料夾中的檔案絕不會被變動。",
   "settings.processedFolders.deleteTitle": "刪除已處理資料夾",
   "settings.processedFolders.deleted": "已刪除資料夾 {{name}}。",
-  "settings.processedFolders.description": "其他工具存放已完成媒體檔案的資料夾。Scryer 會將它們匯入到一個媒體庫。",
-  "settings.processedFolders.disabledNotice": "此資料夾已停用。啟用前無法掃描、匯入或重試。預覽與忽略仍可使用。",
-  "settings.processedFolders.editDescription": "變更 Scryer 尋找的位置，以及檔案何時算是完成。",
+  "settings.processedFolders.description":
+    "其他工具存放已完成媒體檔案的資料夾。Scryer 會將它們匯入到一個媒體庫。",
+  "settings.processedFolders.disabledNotice":
+    "此資料夾已停用。啟用前無法掃描、匯入或重試。預覽與忽略仍可使用。",
+  "settings.processedFolders.editDescription":
+    "變更 Scryer 尋找的位置，以及檔案何時算是完成。",
   "settings.processedFolders.editTitle": "編輯已處理資料夾",
   "settings.processedFolders.eligibleAt": "可於 {{time}} 完成",
   "settings.processedFolders.empty": "尚無已處理資料夾。",
@@ -5565,47 +5582,60 @@ const zh_HK: LocaleDictionary = {
   "settings.processedFolders.entriesEmpty": "沒有可顯示的檔案。",
   "settings.processedFolders.entriesTitle": "檔案",
   "settings.processedFolders.file": "檔案",
-  "settings.processedFolders.importAsDescription": "在 {{library}} 中選擇一個標題。",
+  "settings.processedFolders.importAsDescription":
+    "在 {{library}} 中選擇一個標題。",
   "settings.processedFolders.importAsEmpty": "此媒體庫中沒有相符的標題。",
   "settings.processedFolders.importAsPlaceholder": "搜尋標題",
   "settings.processedFolders.importAsTitle": "匯入為…",
   "settings.processedFolders.importQueued": "匯入已排入隊列。",
   "settings.processedFolders.lastScan": "上次掃描",
   "settings.processedFolders.library": "媒體庫",
-  "settings.processedFolders.libraryHelp": "此資料夾中的檔案只會匯入到這個媒體庫。",
+  "settings.processedFolders.libraryHelp":
+    "此資料夾中的檔案只會匯入到這個媒體庫。",
   "settings.processedFolders.libraryPlaceholder": "選擇媒體庫",
-  "settings.processedFolders.manualScanHelp": "Scryer 只在你掃描時檢查此資料夾。檔案需要多次掃描才算完成。",
-  "settings.processedFolders.markerDirectoryFileHelp": "影片所在資料夾中存在此名稱的檔案時，影片即算完成。請使用不含斜線的單一名稱。",
+  "settings.processedFolders.manualScanHelp":
+    "Scryer 只在你掃描時檢查此資料夾。檔案需要多次掃描才算完成。",
+  "settings.processedFolders.markerDirectoryFileHelp":
+    "影片所在資料夾中存在此名稱的檔案時，影片即算完成。請使用不含斜線的單一名稱。",
   "settings.processedFolders.markerMode": "完成標記",
   "settings.processedFolders.markerModeDirectoryFile": "影片所在資料夾中的檔案",
   "settings.processedFolders.markerModeNone": "無標記",
   "settings.processedFolders.markerModeSiblingSuffix": "每部影片旁的檔案",
-  "settings.processedFolders.markerNoneHelp": "達到無變化掃描次數與最短時間後，檔案即算完成。",
-  "settings.processedFolders.markerSiblingSuffixHelp": "存在與影片同名並加上此後綴的檔案時，影片即算完成。後綴以點開頭，例如 .done。",
+  "settings.processedFolders.markerNoneHelp":
+    "達到無變化掃描次數與最短時間後，檔案即算完成。",
+  "settings.processedFolders.markerSiblingSuffixHelp":
+    "存在與影片同名並加上此後綴的檔案時，影片即算完成。後綴以點開頭，例如 .done。",
   "settings.processedFolders.markerSummary": "或標記 {{marker}}",
   "settings.processedFolders.markerValue": "標記名稱",
   "settings.processedFolders.matchedTitle": "相符的標題",
   "settings.processedFolders.minAgeSeconds": "最短時間（秒）",
-  "settings.processedFolders.minAgeSecondsHelp": "檔案需保持未修改的時間，範圍 {{min}} 到 {{max}} 秒。",
+  "settings.processedFolders.minAgeSecondsHelp":
+    "檔案需保持未修改的時間，範圍 {{min}} 到 {{max}} 秒。",
   "settings.processedFolders.minStableScans": "無變化掃描次數",
-  "settings.processedFolders.minStableScansHelp": "檔案需保持不變的掃描次數，範圍 {{min}} 到 {{max}}。",
+  "settings.processedFolders.minStableScansHelp":
+    "檔案需保持不變的掃描次數，範圍 {{min}} 到 {{max}}。",
   "settings.processedFolders.modified": "修改時間",
   "settings.processedFolders.name": "名稱",
   "settings.processedFolders.neverScanned": "從未",
-  "settings.processedFolders.nextEligibleAt": "在 {{time}} 之後再次掃描，可將更多檔案標記為完成。",
+  "settings.processedFolders.nextEligibleAt":
+    "在 {{time}} 之後再次掃描，可將更多檔案標記為完成。",
   "settings.processedFolders.nextPage": "下一頁",
-  "settings.processedFolders.pageRange": "第 {{start}}–{{end}} 項，共 {{total}} 項",
+  "settings.processedFolders.pageRange":
+    "第 {{start}}–{{end}} 項，共 {{total}} 項",
   "settings.processedFolders.preview": "預覽",
   "settings.processedFolders.previewEmpty": "此資料夾中沒有檔案。",
-  "settings.processedFolders.previewHelp": "現在掃描將會執行的動作。不會變更任何內容。",
+  "settings.processedFolders.previewHelp":
+    "現在掃描將會執行的動作。不會變更任何內容。",
   "settings.processedFolders.previewTitle": "預覽",
   "settings.processedFolders.previewTruncated": "僅顯示前 {{count}} 個檔案。",
   "settings.processedFolders.previousPage": "上一頁",
   "settings.processedFolders.progress": "進度",
-  "settings.processedFolders.readonly": "你需要管理系統設定的權限才能使用已處理資料夾。",
+  "settings.processedFolders.readonly":
+    "你需要管理系統設定的權限才能使用已處理資料夾。",
   "settings.processedFolders.reason": "原因",
   "settings.processedFolders.rootPath": "資料夾路徑",
-  "settings.processedFolders.rootPathHelp": "Scryer 伺服器上的完整路徑。不可與媒體庫、回收站、備份資料夾或其他已處理資料夾重疊。",
+  "settings.processedFolders.rootPathHelp":
+    "Scryer 伺服器上的完整路徑。不可與媒體庫、回收站、備份資料夾或其他已處理資料夾重疊。",
   "settings.processedFolders.saved": "已儲存資料夾 {{name}}。",
   "settings.processedFolders.scanBecameStable": "已完成",
   "settings.processedFolders.scanDiscovered": "新檔案",
@@ -5619,7 +5649,8 @@ const zh_HK: LocaleDictionary = {
   "settings.processedFolders.showEntries": "顯示檔案",
   "settings.processedFolders.size": "大小",
   "settings.processedFolders.stability": "完成條件",
-  "settings.processedFolders.stabilitySummary": "{{scans}} 次無變化掃描，已過 {{seconds}} 秒",
+  "settings.processedFolders.stabilitySummary":
+    "{{scans}} 次無變化掃描，已過 {{seconds}} 秒",
   "settings.processedFolders.stableScanCount": "{{count}} 次無變化掃描",
   "settings.processedFolders.statusAll": "所有狀態",
   "settings.processedFolders.statusFilter": "狀態",

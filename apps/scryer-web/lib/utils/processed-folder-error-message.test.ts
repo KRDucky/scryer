@@ -19,12 +19,20 @@ import {
 const t = (key: string) => en[key] ?? key;
 
 const refusal = (reason: string, code = "VALIDATION_ERROR") => ({
-  graphQLErrors: [{ message: "changed server wording", extensions: { code, reason } }],
+  graphQLErrors: [
+    { message: "changed server wording", extensions: { code, reason } },
+  ],
 });
 
 const REPO_ROOT = new URL("../../../../", import.meta.url);
-const RUST_REFUSALS = new URL("crates/scryer-application/src/processed_folder_refusal.rs", REPO_ROOT);
-const RUST_REFUSAL_TEMPLATE = new URL("crates/scryer-application/src/http_release_refusal.rs", REPO_ROOT);
+const RUST_REFUSALS = new URL(
+  "crates/scryer-application/src/processed_folder_refusal.rs",
+  REPO_ROOT,
+);
+const RUST_REFUSAL_TEMPLATE = new URL(
+  "crates/scryer-application/src/http_release_refusal.rs",
+  REPO_ROOT,
+);
 
 // The refusal codes in the PR1 contract, section 4. Kept by hand so a code
 // the map gains or loses is a visible change here as well.
@@ -60,10 +68,14 @@ const CONTRACT_REFUSAL_CODES = [
  */
 function rustRefusalCodes(source: string): string[] {
   const constants = new Map<string, string>();
-  for (const match of source.matchAll(/pub\s+const\s+([A-Z0-9_]+)\s*:\s*&(?:'static\s+)?str\s*=\s*"([^"]+)"\s*;/g)) {
+  for (const match of source.matchAll(
+    /pub\s+const\s+([A-Z0-9_]+)\s*:\s*&(?:'static\s+)?str\s*=\s*"([^"]+)"\s*;/g,
+  )) {
     constants.set(match[1], match[2]);
   }
-  const all = source.match(/pub\s+const\s+ALL\s*:\s*&\[\s*&(?:'static\s+)?str\s*\]\s*=\s*&\[([\s\S]*?)\]\s*;/);
+  const all = source.match(
+    /pub\s+const\s+ALL\s*:\s*&\[\s*&(?:'static\s+)?str\s*\]\s*=\s*&\[([\s\S]*?)\]\s*;/,
+  );
   assert.ok(all, "the refusal module has a `pub const ALL` list");
   const body = all[1].replace(/\/\/[^\n]*/g, "");
   return body
@@ -74,7 +86,10 @@ function rustRefusalCodes(source: string): string[] {
       const literal = item.match(/^"([^"]+)"$/);
       if (literal) return literal[1];
       const code = constants.get(item);
-      assert.ok(code, `ALL names ${item}, which is not a string constant in the module`);
+      assert.ok(
+        code,
+        `ALL names ${item}, which is not a string constant in the module`,
+      );
       return code;
     });
 }
@@ -83,21 +98,35 @@ test("each processed-folder refusal is translated whatever the server says", () 
   for (const [reason, key] of Object.entries(PROCESSED_FOLDER_REFUSAL_KEYS)) {
     assert.ok(en[key], `${key} has English text`);
     assert.equal(processedFolderRefusalKey(refusal(reason)), key);
-    assert.equal(processedFolderErrorMessage(refusal(reason), t, "failed"), en[key]);
+    assert.equal(
+      processedFolderErrorMessage(refusal(reason), t, "failed"),
+      en[key],
+    );
   }
 });
 
 test("a processed-folder reason this client does not know shows the server sentence", () => {
-  assert.equal(processedFolderRefusalKey(refusal("PROCESSED_FOLDER_FUTURE_CONDITION")), null);
   assert.equal(
-    processedFolderErrorMessage(refusal("PROCESSED_FOLDER_FUTURE_CONDITION"), t, "failed"),
+    processedFolderRefusalKey(refusal("PROCESSED_FOLDER_FUTURE_CONDITION")),
+    null,
+  );
+  assert.equal(
+    processedFolderErrorMessage(
+      refusal("PROCESSED_FOLDER_FUTURE_CONDITION"),
+      t,
+      "failed",
+    ),
     "changed server wording",
   );
 });
 
 test("a reason on a non-validation error is not read as a processed-folder refusal", () => {
   assert.equal(
-    processedFolderErrorMessage(refusal("PROCESSED_FOLDER_DISABLED", "REPOSITORY_ERROR"), t, "failed"),
+    processedFolderErrorMessage(
+      refusal("PROCESSED_FOLDER_DISABLED", "REPOSITORY_ERROR"),
+      t,
+      "failed",
+    ),
     "changed server wording",
   );
 });
@@ -107,18 +136,29 @@ test("an error with no usable sentence falls back to the caller's text", () => {
 });
 
 test("the refusal map holds exactly the contract's codes", () => {
-  assert.deepEqual(Object.keys(PROCESSED_FOLDER_REFUSAL_KEYS).sort(), [...CONTRACT_REFUSAL_CODES].sort());
-  assert.equal(new Set(Object.values(PROCESSED_FOLDER_REFUSAL_KEYS)).size, CONTRACT_REFUSAL_CODES.length);
+  assert.deepEqual(
+    Object.keys(PROCESSED_FOLDER_REFUSAL_KEYS).sort(),
+    [...CONTRACT_REFUSAL_CODES].sort(),
+  );
+  assert.equal(
+    new Set(Object.values(PROCESSED_FOLDER_REFUSAL_KEYS)).size,
+    CONTRACT_REFUSAL_CODES.length,
+  );
 });
 
 test("the refusal parser reads the http-release module it is modelled on", (context) => {
   if (!existsSync(RUST_REFUSAL_TEMPLATE)) {
-    context.skip("crates/scryer-application/src/http_release_refusal.rs is not in this checkout");
+    context.skip(
+      "crates/scryer-application/src/http_release_refusal.rs is not in this checkout",
+    );
     return;
   }
   const codes = rustRefusalCodes(readFileSync(RUST_REFUSAL_TEMPLATE, "utf8"));
   assert.ok(codes.length > 0);
-  assert.ok(codes.every((code) => code.startsWith("HTTP_RELEASE_")), codes.join(", "));
+  assert.ok(
+    codes.every((code) => code.startsWith("HTTP_RELEASE_")),
+    codes.join(", "),
+  );
   assert.equal(new Set(codes).size, codes.length);
 });
 
@@ -132,11 +172,16 @@ test("the refusal map matches the server's ALL list", (context) => {
     return;
   }
   const codes = rustRefusalCodes(readFileSync(RUST_REFUSALS, "utf8"));
-  assert.deepEqual([...new Set(codes)].sort(), Object.keys(PROCESSED_FOLDER_REFUSAL_KEYS).sort());
+  assert.deepEqual(
+    [...new Set(codes)].sort(),
+    Object.keys(PROCESSED_FOLDER_REFUSAL_KEYS).sort(),
+  );
 });
 
 test("every status, action and reason has English text", () => {
-  assert.deepEqual(Object.keys(PROCESSED_FOLDER_STATUS_KEYS), [...PROCESSED_FOLDER_ENTRY_STATUSES]);
+  assert.deepEqual(Object.keys(PROCESSED_FOLDER_STATUS_KEYS), [
+    ...PROCESSED_FOLDER_ENTRY_STATUSES,
+  ]);
   for (const key of [
     ...Object.values(PROCESSED_FOLDER_STATUS_KEYS),
     ...Object.values(PROCESSED_FOLDER_ACTION_KEYS),
@@ -147,8 +192,14 @@ test("every status, action and reason has English text", () => {
 });
 
 test("a known reason code is translated and an unknown one shows as sent", () => {
-  assert.equal(processedFolderReasonLabel("unmatched", t), en["processedFolder.reason.unmatched"]);
-  assert.equal(processedFolderReasonLabel("some_new_reason", t), "some_new_reason");
+  assert.equal(
+    processedFolderReasonLabel("unmatched", t),
+    en["processedFolder.reason.unmatched"],
+  );
+  assert.equal(
+    processedFolderReasonLabel("some_new_reason", t),
+    "some_new_reason",
+  );
   assert.equal(processedFolderReasonLabel(null, t), null);
 });
 
@@ -206,22 +257,41 @@ extend type Mutation {
 `;
 
 test("the processed-folder documents validate against the API schema (or the contract SDL until it lands)", () => {
-  const apiSchema = readFileSync(new URL("api/graphql/schema.graphql", REPO_ROOT), "utf8");
+  const apiSchema = readFileSync(
+    new URL("api/graphql/schema.graphql", REPO_ROOT),
+    "utf8",
+  );
   const schemaHasFolders = /\btype\s+ProcessedFolder\b/.test(apiSchema);
   if (!schemaHasFolders) {
-    console.log("api/graphql/schema.graphql has no ProcessedFolder type yet; validating against the contract SDL");
+    console.log(
+      "api/graphql/schema.graphql has no ProcessedFolder type yet; validating against the contract SDL",
+    );
   }
   // The API names its root types QueryRoot and MutationRoot; the contract
   // shorthand writes Query and Mutation.
   const baseSchema = buildSchema(apiSchema);
-  const contractSdl = CONTRACT_SDL.replace("extend type Query", `extend type ${baseSchema.getQueryType()?.name ?? "Query"}`)
-    .replace("extend type Mutation", `extend type ${baseSchema.getMutationType()?.name ?? "Mutation"}`);
-  const schema = schemaHasFolders ? baseSchema : buildSchema(`${apiSchema}\n${contractSdl}`);
-  const documents = Object.entries({ ...queries, ...mutations }).filter(
-    ([name, value]) => typeof value === "string" && /ProcessedFolder/i.test(name),
+  const contractSdl = CONTRACT_SDL.replace(
+    "extend type Query",
+    `extend type ${baseSchema.getQueryType()?.name ?? "Query"}`,
+  ).replace(
+    "extend type Mutation",
+    `extend type ${baseSchema.getMutationType()?.name ?? "Mutation"}`,
   );
-  const operations = documents.filter(([name]) => /(Query|Mutation)$/.test(name));
-  assert.equal(operations.length, 11, operations.map(([name]) => name).join(", "));
+  const schema = schemaHasFolders
+    ? baseSchema
+    : buildSchema(`${apiSchema}\n${contractSdl}`);
+  const documents = Object.entries({ ...queries, ...mutations }).filter(
+    ([name, value]) =>
+      typeof value === "string" && /ProcessedFolder/i.test(name),
+  );
+  const operations = documents.filter(([name]) =>
+    /(Query|Mutation)$/.test(name),
+  );
+  assert.equal(
+    operations.length,
+    11,
+    operations.map(([name]) => name).join(", "),
+  );
   const failures: string[] = [];
   for (const [name, source] of operations) {
     for (const error of validate(schema, parse(source as string))) {

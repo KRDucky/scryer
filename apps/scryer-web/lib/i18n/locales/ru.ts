@@ -6880,51 +6880,74 @@ const ru: LocaleDictionary = {
   "processedFolder.action.retry": "Повторить",
   "processedFolder.reason.alreadyImported": "Этот файл уже есть в библиотеке.",
   "processedFolder.reason.ambiguous": "Подходит несколько тайтлов.",
-  "processedFolder.reason.archiveExtractionPluginRequired": "Для распаковки этого архива нужен плагин.",
-  "processedFolder.reason.archiveExtractionTimedOut": "Распаковка архива заняла слишком много времени.",
-  "processedFolder.reason.conflict": "При импорте возник конфликт, нужно решение.",
+  "processedFolder.reason.archiveExtractionPluginRequired":
+    "Для распаковки этого архива нужен плагин.",
+  "processedFolder.reason.archiveExtractionTimedOut":
+    "Распаковка архива заняла слишком много времени.",
+  "processedFolder.reason.conflict":
+    "При импорте возник конфликт, нужно решение.",
   "processedFolder.reason.diskFull": "Диск библиотеки заполнен.",
   "processedFolder.reason.downloadInProgress": "Файл ещё записывается.",
-  "processedFolder.reason.duplicateFile": "Дубликат этого файла уже есть в библиотеке.",
+  "processedFolder.reason.duplicateFile":
+    "Дубликат этого файла уже есть в библиотеке.",
   "processedFolder.reason.empty": "Файл пуст.",
   "processedFolder.reason.entryChanged": "Файл изменился до начала импорта.",
   "processedFolder.reason.error": "Импорт завершился с ошибкой.",
   "processedFolder.reason.interrupted": "Импорт был прерван.",
   "processedFolder.reason.noVideoFiles": "Видеофайлы не найдены.",
   "processedFolder.reason.notAVideo": "Это не видеофайл.",
-  "processedFolder.reason.outsideLibrary": "Подходящий тайтл находится в другой библиотеке.",
+  "processedFolder.reason.outsideLibrary":
+    "Подходящий тайтл находится в другой библиотеке.",
   "processedFolder.reason.passwordRequired": "Архиву нужен пароль.",
   "processedFolder.reason.permissionDenied": "Доступ запрещён.",
-  "processedFolder.reason.policyMismatch": "Файл не соответствует настройкам качества тайтла.",
-  "processedFolder.reason.postDownloadRuleBlocked": "Правило после загрузки заблокировало этот файл.",
+  "processedFolder.reason.policyMismatch":
+    "Файл не соответствует настройкам качества тайтла.",
+  "processedFolder.reason.postDownloadRuleBlocked":
+    "Правило после загрузки заблокировало этот файл.",
   "processedFolder.reason.rejected": "Импорт отклонил этот файл.",
   "processedFolder.reason.symlinkDir": "Связанные папки не обходятся.",
-  "processedFolder.reason.symlinkEscapesRoot": "Символическая ссылка ведёт за пределы этой папки.",
+  "processedFolder.reason.symlinkEscapesRoot":
+    "Символическая ссылка ведёт за пределы этой папки.",
   "processedFolder.reason.unmatched": "Подходящий тайтл не найден.",
-  "processedFolder.reason.unparseableEpisode": "Не удалось прочитать номер эпизода.",
+  "processedFolder.reason.unparseableEpisode":
+    "Не удалось прочитать номер эпизода.",
   "processedFolder.reason.unresolvedIdentity": "Не удалось определить файл.",
-  "processedFolder.reason.unwantedExecutables": "Файл является программой, а не медиафайлом.",
-  "processedFolder.refusal.disabled": "Эта папка отключена. Сначала включите её.",
-  "processedFolder.refusal.entryChanged": "Файл изменился на диске. Просканируйте снова.",
-  "processedFolder.refusal.entryNotActionable": "Это действие больше недоступно для файла. Обновите список.",
+  "processedFolder.reason.unwantedExecutables":
+    "Файл является программой, а не медиафайлом.",
+  "processedFolder.refusal.disabled":
+    "Эта папка отключена. Сначала включите её.",
+  "processedFolder.refusal.entryChanged":
+    "Файл изменился на диске. Просканируйте снова.",
+  "processedFolder.refusal.entryNotActionable":
+    "Это действие больше недоступно для файла. Обновите список.",
   "processedFolder.refusal.entryNotFound": "Этой записи файла больше нет.",
-  "processedFolder.refusal.importsInFlight": "Импорт из этой папки ещё идёт. Повторите, когда он завершится.",
-  "processedFolder.refusal.invalidMarker": "Недопустимый маркер. Используйте одно имя файла без косых черт и \"..\".",
-  "processedFolder.refusal.invalidStability": "Настройки стабильности вне допустимого диапазона.",
+  "processedFolder.refusal.importsInFlight":
+    "Импорт из этой папки ещё идёт. Повторите, когда он завершится.",
+  "processedFolder.refusal.invalidMarker":
+    'Недопустимый маркер. Используйте одно имя файла без косых черт и "..".',
+  "processedFolder.refusal.invalidStability":
+    "Настройки стабильности вне допустимого диапазона.",
   "processedFolder.refusal.libraryNotFound": "Выбранной библиотеки больше нет.",
   "processedFolder.refusal.nameRequired": "Введите название папки.",
-  "processedFolder.refusal.nameTaken": "Это название уже использует другая папка.",
+  "processedFolder.refusal.nameTaken":
+    "Это название уже использует другая папка.",
   "processedFolder.refusal.notFound": "Этой папки больше нет.",
-  "processedFolder.refusal.overlapsBackupPath": "Эта папка пересекается с папкой резервных копий.",
-  "processedFolder.refusal.overlapsLibraryRoot": "Эта папка пересекается с корневой папкой библиотеки.",
-  "processedFolder.refusal.overlapsOtherFolder": "Эта папка пересекается с другой обрабатываемой папкой.",
-  "processedFolder.refusal.overlapsRecycleBin": "Эта папка пересекается с корзиной.",
+  "processedFolder.refusal.overlapsBackupPath":
+    "Эта папка пересекается с папкой резервных копий.",
+  "processedFolder.refusal.overlapsLibraryRoot":
+    "Эта папка пересекается с корневой папкой библиотеки.",
+  "processedFolder.refusal.overlapsOtherFolder":
+    "Эта папка пересекается с другой обрабатываемой папкой.",
+  "processedFolder.refusal.overlapsRecycleBin":
+    "Эта папка пересекается с корзиной.",
   "processedFolder.refusal.pathMissing": "Этот путь не существует.",
   "processedFolder.refusal.pathNotAbsolute": "Введите полный путь от корня.",
   "processedFolder.refusal.pathNotDirectory": "Этот путь не является папкой.",
-  "processedFolder.refusal.pathUnresolvable": "Scryer не может разрешить этот путь.",
+  "processedFolder.refusal.pathUnresolvable":
+    "Scryer не может разрешить этот путь.",
   "processedFolder.refusal.scanInProgress": "Сканирование этой папки уже идёт.",
-  "processedFolder.refusal.titleOutsideLibrary": "Выберите тайтл из библиотеки этой папки.",
+  "processedFolder.refusal.titleOutsideLibrary":
+    "Выберите тайтл из библиотеки этой папки.",
   "processedFolder.status.failed": "Ошибка",
   "processedFolder.status.gone": "Исчез",
   "processedFolder.status.ignored": "Игнорируется",
@@ -6936,23 +6959,33 @@ const ru: LocaleDictionary = {
   "processedFolder.status.skipped": "Пропущен",
   "processedFolder.status.stable": "Стабилен",
   "processedFolder.status.superseded": "Заменён",
-  "settings.processedFolders.actionNeedsEnabled": "Включите эту папку, чтобы сканировать, импортировать или повторять.",
+  "settings.processedFolders.actionNeedsEnabled":
+    "Включите эту папку, чтобы сканировать, импортировать или повторять.",
   "settings.processedFolders.addAction": "Добавить папку",
-  "settings.processedFolders.addDescription": "Выберите папку и библиотеку, куда пойдут её файлы.",
+  "settings.processedFolders.addDescription":
+    "Выберите папку и библиотеку, куда пойдут её файлы.",
   "settings.processedFolders.addTitle": "Добавить обрабатываемую папку",
   "settings.processedFolders.attempts": "Попытки",
   "settings.processedFolders.browse": "Обзор папок",
-  "settings.processedFolders.copyOnlyNotice": "Файлы всегда копируются. Scryer никогда не перемещает, не связывает и не удаляет ничего в этой папке.",
+  "settings.processedFolders.copyOnlyNotice":
+    "Файлы всегда копируются. Scryer никогда не перемещает, не связывает и не удаляет ничего в этой папке.",
   "settings.processedFolders.counts": "Файлы",
-  "settings.processedFolders.countsSummary": "импортировано {{imported}}, на проверку {{needsReview}}, ошибок {{failed}}, наблюдается {{observing}}",
-  "settings.processedFolders.created": "Папка {{name}} добавлена. Она отключена, пока вы её не включите.",
-  "settings.processedFolders.createdDisabledNote": "Новые папки создаются отключёнными. Посмотрите предпросмотр, затем включите папку для сканирования и импорта.",
-  "settings.processedFolders.deleteConfirm": "Удалить {{name}}? Scryer забудет эту папку и историю её файлов. Файлы в папке никогда не затрагиваются.",
+  "settings.processedFolders.countsSummary":
+    "импортировано {{imported}}, на проверку {{needsReview}}, ошибок {{failed}}, наблюдается {{observing}}",
+  "settings.processedFolders.created":
+    "Папка {{name}} добавлена. Она отключена, пока вы её не включите.",
+  "settings.processedFolders.createdDisabledNote":
+    "Новые папки создаются отключёнными. Посмотрите предпросмотр, затем включите папку для сканирования и импорта.",
+  "settings.processedFolders.deleteConfirm":
+    "Удалить {{name}}? Scryer забудет эту папку и историю её файлов. Файлы в папке никогда не затрагиваются.",
   "settings.processedFolders.deleteTitle": "Удалить обрабатываемую папку",
   "settings.processedFolders.deleted": "Папка {{name}} удалена.",
-  "settings.processedFolders.description": "Папки, куда другая программа складывает готовые медиафайлы. Scryer импортирует их в одну библиотеку.",
-  "settings.processedFolders.disabledNotice": "Эта папка отключена. Сканирование, импорт и повтор недоступны, пока вы её не включите. Предпросмотр и игнорирование работают.",
-  "settings.processedFolders.editDescription": "Измените, где ищет Scryer и когда файл считается готовым.",
+  "settings.processedFolders.description":
+    "Папки, куда другая программа складывает готовые медиафайлы. Scryer импортирует их в одну библиотеку.",
+  "settings.processedFolders.disabledNotice":
+    "Эта папка отключена. Сканирование, импорт и повтор недоступны, пока вы её не включите. Предпросмотр и игнорирование работают.",
+  "settings.processedFolders.editDescription":
+    "Измените, где ищет Scryer и когда файл считается готовым.",
   "settings.processedFolders.editTitle": "Изменить обрабатываемую папку",
   "settings.processedFolders.eligibleAt": "Может стать готовым в {{time}}",
   "settings.processedFolders.empty": "Обрабатываемых папок пока нет.",
@@ -6961,47 +6994,62 @@ const ru: LocaleDictionary = {
   "settings.processedFolders.entriesEmpty": "Нет файлов для показа.",
   "settings.processedFolders.entriesTitle": "Файлы",
   "settings.processedFolders.file": "Файл",
-  "settings.processedFolders.importAsDescription": "Выберите тайтл в библиотеке {{library}}.",
-  "settings.processedFolders.importAsEmpty": "В этой библиотеке нет подходящих тайтлов.",
+  "settings.processedFolders.importAsDescription":
+    "Выберите тайтл в библиотеке {{library}}.",
+  "settings.processedFolders.importAsEmpty":
+    "В этой библиотеке нет подходящих тайтлов.",
   "settings.processedFolders.importAsPlaceholder": "Поиск тайтлов",
   "settings.processedFolders.importAsTitle": "Импортировать как…",
   "settings.processedFolders.importQueued": "Импорт поставлен в очередь.",
   "settings.processedFolders.lastScan": "Последнее сканирование",
   "settings.processedFolders.library": "Библиотека",
-  "settings.processedFolders.libraryHelp": "Файлы из этой папки импортируются только в эту библиотеку.",
+  "settings.processedFolders.libraryHelp":
+    "Файлы из этой папки импортируются только в эту библиотеку.",
   "settings.processedFolders.libraryPlaceholder": "Выберите библиотеку",
-  "settings.processedFolders.manualScanHelp": "Scryer проверяет эту папку, только когда вы её сканируете. Файлу нужно больше одного сканирования, чтобы считаться готовым.",
-  "settings.processedFolders.markerDirectoryFileHelp": "Файл с этим именем в папке видео отмечает его готовым. Используйте одно имя без косых черт.",
+  "settings.processedFolders.manualScanHelp":
+    "Scryer проверяет эту папку, только когда вы её сканируете. Файлу нужно больше одного сканирования, чтобы считаться готовым.",
+  "settings.processedFolders.markerDirectoryFileHelp":
+    "Файл с этим именем в папке видео отмечает его готовым. Используйте одно имя без косых черт.",
   "settings.processedFolders.markerMode": "Маркер готовности",
   "settings.processedFolders.markerModeDirectoryFile": "Файл в папке видео",
   "settings.processedFolders.markerModeNone": "Без маркера",
-  "settings.processedFolders.markerModeSiblingSuffix": "Файл рядом с каждым видео",
-  "settings.processedFolders.markerNoneHelp": "Файлы считаются готовыми после сканирований без изменений и минимального возраста.",
-  "settings.processedFolders.markerSiblingSuffixHelp": "Файл с именем видео и этим суффиксом отмечает его готовым. Суффикс начинается с точки, например .done.",
+  "settings.processedFolders.markerModeSiblingSuffix":
+    "Файл рядом с каждым видео",
+  "settings.processedFolders.markerNoneHelp":
+    "Файлы считаются готовыми после сканирований без изменений и минимального возраста.",
+  "settings.processedFolders.markerSiblingSuffixHelp":
+    "Файл с именем видео и этим суффиксом отмечает его готовым. Суффикс начинается с точки, например .done.",
   "settings.processedFolders.markerSummary": "или маркер {{marker}}",
   "settings.processedFolders.markerValue": "Имя маркера",
   "settings.processedFolders.matchedTitle": "Найденный тайтл",
   "settings.processedFolders.minAgeSeconds": "Минимальный возраст (секунды)",
-  "settings.processedFolders.minAgeSecondsHelp": "Сколько файл должен оставаться нетронутым, от {{min}} до {{max}} секунд.",
+  "settings.processedFolders.minAgeSecondsHelp":
+    "Сколько файл должен оставаться нетронутым, от {{min}} до {{max}} секунд.",
   "settings.processedFolders.minStableScans": "Сканирований без изменений",
-  "settings.processedFolders.minStableScansHelp": "Сколько сканирований файл должен оставаться неизменным, от {{min}} до {{max}}.",
+  "settings.processedFolders.minStableScansHelp":
+    "Сколько сканирований файл должен оставаться неизменным, от {{min}} до {{max}}.",
   "settings.processedFolders.modified": "Изменён",
   "settings.processedFolders.name": "Название",
   "settings.processedFolders.neverScanned": "Никогда",
-  "settings.processedFolders.nextEligibleAt": "Просканируйте снова после {{time}}, чтобы отметить готовыми другие файлы.",
+  "settings.processedFolders.nextEligibleAt":
+    "Просканируйте снова после {{time}}, чтобы отметить готовыми другие файлы.",
   "settings.processedFolders.nextPage": "Далее",
   "settings.processedFolders.pageRange": "{{start}}–{{end}} из {{total}}",
   "settings.processedFolders.preview": "Предпросмотр",
   "settings.processedFolders.previewEmpty": "В этой папке нет файлов.",
-  "settings.processedFolders.previewHelp": "Что сделало бы сканирование сейчас. Ничего не меняется.",
+  "settings.processedFolders.previewHelp":
+    "Что сделало бы сканирование сейчас. Ничего не меняется.",
   "settings.processedFolders.previewTitle": "Предпросмотр",
-  "settings.processedFolders.previewTruncated": "Показаны только первые {{count}} файлов.",
+  "settings.processedFolders.previewTruncated":
+    "Показаны только первые {{count}} файлов.",
   "settings.processedFolders.previousPage": "Назад",
   "settings.processedFolders.progress": "Ход",
-  "settings.processedFolders.readonly": "Для работы с обрабатываемыми папками нужно право управлять системными настройками.",
+  "settings.processedFolders.readonly":
+    "Для работы с обрабатываемыми папками нужно право управлять системными настройками.",
   "settings.processedFolders.reason": "Причина",
   "settings.processedFolders.rootPath": "Путь к папке",
-  "settings.processedFolders.rootPathHelp": "Полный путь на сервере Scryer. Он не должен пересекаться с библиотекой, корзиной, папкой резервных копий или другой обрабатываемой папкой.",
+  "settings.processedFolders.rootPathHelp":
+    "Полный путь на сервере Scryer. Он не должен пересекаться с библиотекой, корзиной, папкой резервных копий или другой обрабатываемой папкой.",
   "settings.processedFolders.saved": "Папка {{name}} сохранена.",
   "settings.processedFolders.scanBecameStable": "Готовы",
   "settings.processedFolders.scanDiscovered": "Новые файлы",
@@ -7015,8 +7063,10 @@ const ru: LocaleDictionary = {
   "settings.processedFolders.showEntries": "Показать файлы",
   "settings.processedFolders.size": "Размер",
   "settings.processedFolders.stability": "Готов, когда",
-  "settings.processedFolders.stabilitySummary": "{{scans}} сканирований без изменений, возраст {{seconds}} с",
-  "settings.processedFolders.stableScanCount": "Сканирований без изменений: {{count}}",
+  "settings.processedFolders.stabilitySummary":
+    "{{scans}} сканирований без изменений, возраст {{seconds}} с",
+  "settings.processedFolders.stableScanCount":
+    "Сканирований без изменений: {{count}}",
   "settings.processedFolders.statusAll": "Все статусы",
   "settings.processedFolders.statusFilter": "Статус",
   "settings.processedFolders.title": "Папки обработанных медиафайлов",

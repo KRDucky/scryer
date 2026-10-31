@@ -7042,53 +7042,78 @@ const cs: LocaleDictionary = {
   "processedFolder.action.ignore": "Ignorovat",
   "processedFolder.action.importAs": "Importovat jako…",
   "processedFolder.action.retry": "Zkusit znovu",
-  "processedFolder.reason.alreadyImported": "Knihovna už tento soubor obsahuje.",
+  "processedFolder.reason.alreadyImported":
+    "Knihovna už tento soubor obsahuje.",
   "processedFolder.reason.ambiguous": "Odpovídá více titulů.",
-  "processedFolder.reason.archiveExtractionPluginRequired": "Rozbalení tohoto archivu vyžaduje plugin.",
-  "processedFolder.reason.archiveExtractionTimedOut": "Rozbalování archivu trvalo příliš dlouho.",
-  "processedFolder.reason.conflict": "Import narazil na konflikt a čeká na rozhodnutí.",
+  "processedFolder.reason.archiveExtractionPluginRequired":
+    "Rozbalení tohoto archivu vyžaduje plugin.",
+  "processedFolder.reason.archiveExtractionTimedOut":
+    "Rozbalování archivu trvalo příliš dlouho.",
+  "processedFolder.reason.conflict":
+    "Import narazil na konflikt a čeká na rozhodnutí.",
   "processedFolder.reason.diskFull": "Disk knihovny je plný.",
   "processedFolder.reason.downloadInProgress": "Soubor se stále zapisuje.",
-  "processedFolder.reason.duplicateFile": "Duplikát tohoto souboru už je v knihovně.",
+  "processedFolder.reason.duplicateFile":
+    "Duplikát tohoto souboru už je v knihovně.",
   "processedFolder.reason.empty": "Soubor je prázdný.",
-  "processedFolder.reason.entryChanged": "Soubor se změnil před zahájením importu.",
+  "processedFolder.reason.entryChanged":
+    "Soubor se změnil před zahájením importu.",
   "processedFolder.reason.error": "Import selhal s chybou.",
   "processedFolder.reason.interrupted": "Import byl přerušen.",
   "processedFolder.reason.noVideoFiles": "Nebyly nalezeny žádné videosoubory.",
   "processedFolder.reason.notAVideo": "Nejde o videosoubor.",
-  "processedFolder.reason.outsideLibrary": "Odpovídající titul je v jiné knihovně.",
+  "processedFolder.reason.outsideLibrary":
+    "Odpovídající titul je v jiné knihovně.",
   "processedFolder.reason.passwordRequired": "Archiv vyžaduje heslo.",
   "processedFolder.reason.permissionDenied": "Přístup byl odepřen.",
-  "processedFolder.reason.policyMismatch": "Soubor nesplňuje nastavení kvality titulu.",
-  "processedFolder.reason.postDownloadRuleBlocked": "Pravidlo po stažení tento soubor zablokovalo.",
+  "processedFolder.reason.policyMismatch":
+    "Soubor nesplňuje nastavení kvality titulu.",
+  "processedFolder.reason.postDownloadRuleBlocked":
+    "Pravidlo po stažení tento soubor zablokovalo.",
   "processedFolder.reason.rejected": "Import tento soubor odmítl.",
   "processedFolder.reason.symlinkDir": "Propojené složky se neprocházejí.",
-  "processedFolder.reason.symlinkEscapesRoot": "Symbolický odkaz vede mimo tuto složku.",
+  "processedFolder.reason.symlinkEscapesRoot":
+    "Symbolický odkaz vede mimo tuto složku.",
   "processedFolder.reason.unmatched": "Nebyl nalezen žádný odpovídající titul.",
-  "processedFolder.reason.unparseableEpisode": "Číslo epizody se nepodařilo přečíst.",
-  "processedFolder.reason.unresolvedIdentity": "Soubor se nepodařilo identifikovat.",
+  "processedFolder.reason.unparseableEpisode":
+    "Číslo epizody se nepodařilo přečíst.",
+  "processedFolder.reason.unresolvedIdentity":
+    "Soubor se nepodařilo identifikovat.",
   "processedFolder.reason.unwantedExecutables": "Soubor je program, ne médium.",
-  "processedFolder.refusal.disabled": "Tato složka je vypnutá. Nejdřív ji zapněte.",
-  "processedFolder.refusal.entryChanged": "Soubor se na disku změnil. Spusťte kontrolu znovu.",
-  "processedFolder.refusal.entryNotActionable": "Tuto akci už pro soubor nelze provést. Obnovte seznam.",
-  "processedFolder.refusal.entryNotFound": "Tento záznam souboru už neexistuje.",
-  "processedFolder.refusal.importsInFlight": "Importy z této složky stále probíhají. Zkuste to znovu, až skončí.",
-  "processedFolder.refusal.invalidMarker": "Značka není platná. Použijte jediný název souboru bez lomítek a \"..\".",
-  "processedFolder.refusal.invalidStability": "Nastavení stability je mimo povolený rozsah.",
+  "processedFolder.refusal.disabled":
+    "Tato složka je vypnutá. Nejdřív ji zapněte.",
+  "processedFolder.refusal.entryChanged":
+    "Soubor se na disku změnil. Spusťte kontrolu znovu.",
+  "processedFolder.refusal.entryNotActionable":
+    "Tuto akci už pro soubor nelze provést. Obnovte seznam.",
+  "processedFolder.refusal.entryNotFound":
+    "Tento záznam souboru už neexistuje.",
+  "processedFolder.refusal.importsInFlight":
+    "Importy z této složky stále probíhají. Zkuste to znovu, až skončí.",
+  "processedFolder.refusal.invalidMarker":
+    'Značka není platná. Použijte jediný název souboru bez lomítek a "..".',
+  "processedFolder.refusal.invalidStability":
+    "Nastavení stability je mimo povolený rozsah.",
   "processedFolder.refusal.libraryNotFound": "Vybraná knihovna už neexistuje.",
   "processedFolder.refusal.nameRequired": "Zadejte název složky.",
   "processedFolder.refusal.nameTaken": "Tento název už používá jiná složka.",
   "processedFolder.refusal.notFound": "Tato složka už neexistuje.",
-  "processedFolder.refusal.overlapsBackupPath": "Tato složka se překrývá se složkou záloh.",
-  "processedFolder.refusal.overlapsLibraryRoot": "Tato složka se překrývá s kořenovou složkou knihovny.",
-  "processedFolder.refusal.overlapsOtherFolder": "Tato složka se překrývá s jinou zpracovanou složkou.",
-  "processedFolder.refusal.overlapsRecycleBin": "Tato složka se překrývá s košem.",
+  "processedFolder.refusal.overlapsBackupPath":
+    "Tato složka se překrývá se složkou záloh.",
+  "processedFolder.refusal.overlapsLibraryRoot":
+    "Tato složka se překrývá s kořenovou složkou knihovny.",
+  "processedFolder.refusal.overlapsOtherFolder":
+    "Tato složka se překrývá s jinou zpracovanou složkou.",
+  "processedFolder.refusal.overlapsRecycleBin":
+    "Tato složka se překrývá s košem.",
   "processedFolder.refusal.pathMissing": "Tato cesta neexistuje.",
   "processedFolder.refusal.pathNotAbsolute": "Zadejte úplnou cestu od kořene.",
   "processedFolder.refusal.pathNotDirectory": "Tato cesta není složka.",
-  "processedFolder.refusal.pathUnresolvable": "Scryer tuto cestu nedokáže vyhodnotit.",
+  "processedFolder.refusal.pathUnresolvable":
+    "Scryer tuto cestu nedokáže vyhodnotit.",
   "processedFolder.refusal.scanInProgress": "Kontrola této složky už probíhá.",
-  "processedFolder.refusal.titleOutsideLibrary": "Vyberte titul z knihovny této složky.",
+  "processedFolder.refusal.titleOutsideLibrary":
+    "Vyberte titul z knihovny této složky.",
   "processedFolder.status.failed": "Selhalo",
   "processedFolder.status.gone": "Zmizelo",
   "processedFolder.status.ignored": "Ignorováno",
@@ -7100,23 +7125,33 @@ const cs: LocaleDictionary = {
   "processedFolder.status.skipped": "Přeskočeno",
   "processedFolder.status.stable": "Stabilní",
   "processedFolder.status.superseded": "Nahrazeno",
-  "settings.processedFolders.actionNeedsEnabled": "Zapněte tuto složku, abyste mohli kontrolovat, importovat nebo zkoušet znovu.",
+  "settings.processedFolders.actionNeedsEnabled":
+    "Zapněte tuto složku, abyste mohli kontrolovat, importovat nebo zkoušet znovu.",
   "settings.processedFolders.addAction": "Přidat složku",
-  "settings.processedFolders.addDescription": "Vyberte složku a knihovnu, do které půjdou její soubory.",
+  "settings.processedFolders.addDescription":
+    "Vyberte složku a knihovnu, do které půjdou její soubory.",
   "settings.processedFolders.addTitle": "Přidat zpracovanou složku",
   "settings.processedFolders.attempts": "Pokusy",
   "settings.processedFolders.browse": "Procházet složky",
-  "settings.processedFolders.copyOnlyNotice": "Soubory se vždy kopírují. Scryer v této složce nikdy nic nepřesouvá, nepropojuje ani nemaže.",
+  "settings.processedFolders.copyOnlyNotice":
+    "Soubory se vždy kopírují. Scryer v této složce nikdy nic nepřesouvá, nepropojuje ani nemaže.",
   "settings.processedFolders.counts": "Soubory",
-  "settings.processedFolders.countsSummary": "{{imported}} importováno, {{needsReview}} ke kontrole, {{failed}} selhalo, {{observing}} sledováno",
-  "settings.processedFolders.created": "Složka {{name}} přidána. Zůstane vypnutá, dokud ji nezapnete.",
-  "settings.processedFolders.createdDisabledNote": "Nové složky začínají vypnuté. Prohlédněte si náhled a pak složku zapněte pro kontrolu a import.",
-  "settings.processedFolders.deleteConfirm": "Smazat {{name}}? Scryer zapomene tuto složku a historii jejích souborů. Soubory ve složce zůstanou vždy nedotčené.",
+  "settings.processedFolders.countsSummary":
+    "{{imported}} importováno, {{needsReview}} ke kontrole, {{failed}} selhalo, {{observing}} sledováno",
+  "settings.processedFolders.created":
+    "Složka {{name}} přidána. Zůstane vypnutá, dokud ji nezapnete.",
+  "settings.processedFolders.createdDisabledNote":
+    "Nové složky začínají vypnuté. Prohlédněte si náhled a pak složku zapněte pro kontrolu a import.",
+  "settings.processedFolders.deleteConfirm":
+    "Smazat {{name}}? Scryer zapomene tuto složku a historii jejích souborů. Soubory ve složce zůstanou vždy nedotčené.",
   "settings.processedFolders.deleteTitle": "Smazat zpracovanou složku",
   "settings.processedFolders.deleted": "Složka {{name}} smazána.",
-  "settings.processedFolders.description": "Složky, do kterých jiný nástroj ukládá hotové mediální soubory. Scryer je importuje do jedné knihovny.",
-  "settings.processedFolders.disabledNotice": "Tato složka je vypnutá. Kontrola, import a opakování jsou nedostupné, dokud ji nezapnete. Náhled a ignorování fungují dál.",
-  "settings.processedFolders.editDescription": "Změňte, kde Scryer hledá a kdy je soubor považován za hotový.",
+  "settings.processedFolders.description":
+    "Složky, do kterých jiný nástroj ukládá hotové mediální soubory. Scryer je importuje do jedné knihovny.",
+  "settings.processedFolders.disabledNotice":
+    "Tato složka je vypnutá. Kontrola, import a opakování jsou nedostupné, dokud ji nezapnete. Náhled a ignorování fungují dál.",
+  "settings.processedFolders.editDescription":
+    "Změňte, kde Scryer hledá a kdy je soubor považován za hotový.",
   "settings.processedFolders.editTitle": "Upravit zpracovanou složku",
   "settings.processedFolders.eligibleAt": "Může být hotové v {{time}}",
   "settings.processedFolders.empty": "Zatím žádné zpracované složky.",
@@ -7125,47 +7160,63 @@ const cs: LocaleDictionary = {
   "settings.processedFolders.entriesEmpty": "Žádné soubory k zobrazení.",
   "settings.processedFolders.entriesTitle": "Soubory",
   "settings.processedFolders.file": "Soubor",
-  "settings.processedFolders.importAsDescription": "Vyberte titul v knihovně {{library}}.",
-  "settings.processedFolders.importAsEmpty": "Žádný titul v této knihovně neodpovídá.",
+  "settings.processedFolders.importAsDescription":
+    "Vyberte titul v knihovně {{library}}.",
+  "settings.processedFolders.importAsEmpty":
+    "Žádný titul v této knihovně neodpovídá.",
   "settings.processedFolders.importAsPlaceholder": "Hledat tituly",
   "settings.processedFolders.importAsTitle": "Importovat jako…",
   "settings.processedFolders.importQueued": "Import zařazen do fronty.",
   "settings.processedFolders.lastScan": "Poslední kontrola",
   "settings.processedFolders.library": "Knihovna",
-  "settings.processedFolders.libraryHelp": "Soubory z této složky se importují jen do této knihovny.",
+  "settings.processedFolders.libraryHelp":
+    "Soubory z této složky se importují jen do této knihovny.",
   "settings.processedFolders.libraryPlaceholder": "Vyberte knihovnu",
-  "settings.processedFolders.manualScanHelp": "Scryer tuto složku kontroluje jen tehdy, když ji zkontrolujete. Soubor potřebuje více než jednu kontrolu, než je hotový.",
-  "settings.processedFolders.markerDirectoryFileHelp": "Soubor s tímto názvem ve složce videa ho označí jako hotové. Použijte jediný název bez lomítek.",
+  "settings.processedFolders.manualScanHelp":
+    "Scryer tuto složku kontroluje jen tehdy, když ji zkontrolujete. Soubor potřebuje více než jednu kontrolu, než je hotový.",
+  "settings.processedFolders.markerDirectoryFileHelp":
+    "Soubor s tímto názvem ve složce videa ho označí jako hotové. Použijte jediný název bez lomítek.",
   "settings.processedFolders.markerMode": "Značka dokončení",
   "settings.processedFolders.markerModeDirectoryFile": "Soubor ve složce videa",
   "settings.processedFolders.markerModeNone": "Bez značky",
-  "settings.processedFolders.markerModeSiblingSuffix": "Soubor vedle každého videa",
-  "settings.processedFolders.markerNoneHelp": "Soubory jsou hotové po kontrolách beze změny a po dosažení minimálního stáří.",
-  "settings.processedFolders.markerSiblingSuffixHelp": "Soubor pojmenovaný jako video s touto příponou ho označí jako hotové. Přípona začíná tečkou, například .done.",
+  "settings.processedFolders.markerModeSiblingSuffix":
+    "Soubor vedle každého videa",
+  "settings.processedFolders.markerNoneHelp":
+    "Soubory jsou hotové po kontrolách beze změny a po dosažení minimálního stáří.",
+  "settings.processedFolders.markerSiblingSuffixHelp":
+    "Soubor pojmenovaný jako video s touto příponou ho označí jako hotové. Přípona začíná tečkou, například .done.",
   "settings.processedFolders.markerSummary": "nebo značka {{marker}}",
   "settings.processedFolders.markerValue": "Název značky",
   "settings.processedFolders.matchedTitle": "Přiřazený titul",
   "settings.processedFolders.minAgeSeconds": "Minimální stáří (sekundy)",
-  "settings.processedFolders.minAgeSecondsHelp": "Jak dlouho musí soubor zůstat nedotčený, od {{min}} do {{max}} sekund.",
+  "settings.processedFolders.minAgeSecondsHelp":
+    "Jak dlouho musí soubor zůstat nedotčený, od {{min}} do {{max}} sekund.",
   "settings.processedFolders.minStableScans": "Kontroly beze změny",
-  "settings.processedFolders.minStableScansHelp": "Počet kontrol, během kterých se soubor nesmí změnit, od {{min}} do {{max}}.",
+  "settings.processedFolders.minStableScansHelp":
+    "Počet kontrol, během kterých se soubor nesmí změnit, od {{min}} do {{max}}.",
   "settings.processedFolders.modified": "Změněno",
   "settings.processedFolders.name": "Název",
   "settings.processedFolders.neverScanned": "Nikdy",
-  "settings.processedFolders.nextEligibleAt": "Zkontrolujte znovu po {{time}}, aby se další soubory označily jako hotové.",
+  "settings.processedFolders.nextEligibleAt":
+    "Zkontrolujte znovu po {{time}}, aby se další soubory označily jako hotové.",
   "settings.processedFolders.nextPage": "Další",
   "settings.processedFolders.pageRange": "{{start}}–{{end}} z {{total}}",
   "settings.processedFolders.preview": "Náhled",
-  "settings.processedFolders.previewEmpty": "V této složce nebyly nalezeny žádné soubory.",
-  "settings.processedFolders.previewHelp": "Co by kontrola udělala teď. Nic se nemění.",
+  "settings.processedFolders.previewEmpty":
+    "V této složce nebyly nalezeny žádné soubory.",
+  "settings.processedFolders.previewHelp":
+    "Co by kontrola udělala teď. Nic se nemění.",
   "settings.processedFolders.previewTitle": "Náhled",
-  "settings.processedFolders.previewTruncated": "Zobrazeno jen prvních {{count}} souborů.",
+  "settings.processedFolders.previewTruncated":
+    "Zobrazeno jen prvních {{count}} souborů.",
   "settings.processedFolders.previousPage": "Předchozí",
   "settings.processedFolders.progress": "Průběh",
-  "settings.processedFolders.readonly": "Pro práci se zpracovanými složkami potřebujete oprávnění ke správě nastavení systému.",
+  "settings.processedFolders.readonly":
+    "Pro práci se zpracovanými složkami potřebujete oprávnění ke správě nastavení systému.",
   "settings.processedFolders.reason": "Důvod",
   "settings.processedFolders.rootPath": "Cesta ke složce",
-  "settings.processedFolders.rootPathHelp": "Úplná cesta na serveru Scryer. Nesmí se překrývat s knihovnou, košem, složkou záloh ani jinou zpracovanou složkou.",
+  "settings.processedFolders.rootPathHelp":
+    "Úplná cesta na serveru Scryer. Nesmí se překrývat s knihovnou, košem, složkou záloh ani jinou zpracovanou složkou.",
   "settings.processedFolders.saved": "Složka {{name}} uložena.",
   "settings.processedFolders.scanBecameStable": "Hotové",
   "settings.processedFolders.scanDiscovered": "Nové soubory",
@@ -7179,7 +7230,8 @@ const cs: LocaleDictionary = {
   "settings.processedFolders.showEntries": "Zobrazit soubory",
   "settings.processedFolders.size": "Velikost",
   "settings.processedFolders.stability": "Hotovo, když",
-  "settings.processedFolders.stabilitySummary": "{{scans}} kontrol beze změny, stáří {{seconds}} s",
+  "settings.processedFolders.stabilitySummary":
+    "{{scans}} kontrol beze změny, stáří {{seconds}} s",
   "settings.processedFolders.stableScanCount": "{{count}} kontrol beze změny",
   "settings.processedFolders.statusAll": "Všechny stavy",
   "settings.processedFolders.statusFilter": "Stav",

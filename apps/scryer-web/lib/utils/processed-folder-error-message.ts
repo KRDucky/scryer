@@ -18,20 +18,29 @@ export const PROCESSED_FOLDER_REFUSAL_KEYS: Readonly<Record<string, string>> = {
   PROCESSED_FOLDER_NAME_TAKEN: "processedFolder.refusal.nameTaken",
   PROCESSED_FOLDER_PATH_NOT_ABSOLUTE: "processedFolder.refusal.pathNotAbsolute",
   PROCESSED_FOLDER_PATH_MISSING: "processedFolder.refusal.pathMissing",
-  PROCESSED_FOLDER_PATH_NOT_DIRECTORY: "processedFolder.refusal.pathNotDirectory",
-  PROCESSED_FOLDER_PATH_UNRESOLVABLE: "processedFolder.refusal.pathUnresolvable",
-  PROCESSED_FOLDER_OVERLAPS_LIBRARY_ROOT: "processedFolder.refusal.overlapsLibraryRoot",
-  PROCESSED_FOLDER_OVERLAPS_RECYCLE_BIN: "processedFolder.refusal.overlapsRecycleBin",
-  PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH: "processedFolder.refusal.overlapsBackupPath",
-  PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER: "processedFolder.refusal.overlapsOtherFolder",
+  PROCESSED_FOLDER_PATH_NOT_DIRECTORY:
+    "processedFolder.refusal.pathNotDirectory",
+  PROCESSED_FOLDER_PATH_UNRESOLVABLE:
+    "processedFolder.refusal.pathUnresolvable",
+  PROCESSED_FOLDER_OVERLAPS_LIBRARY_ROOT:
+    "processedFolder.refusal.overlapsLibraryRoot",
+  PROCESSED_FOLDER_OVERLAPS_RECYCLE_BIN:
+    "processedFolder.refusal.overlapsRecycleBin",
+  PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH:
+    "processedFolder.refusal.overlapsBackupPath",
+  PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER:
+    "processedFolder.refusal.overlapsOtherFolder",
   PROCESSED_FOLDER_LIBRARY_NOT_FOUND: "processedFolder.refusal.libraryNotFound",
-  PROCESSED_FOLDER_INVALID_STABILITY: "processedFolder.refusal.invalidStability",
+  PROCESSED_FOLDER_INVALID_STABILITY:
+    "processedFolder.refusal.invalidStability",
   PROCESSED_FOLDER_INVALID_MARKER: "processedFolder.refusal.invalidMarker",
   PROCESSED_FOLDER_DISABLED: "processedFolder.refusal.disabled",
   PROCESSED_FOLDER_SCAN_IN_PROGRESS: "processedFolder.refusal.scanInProgress",
-  PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE: "processedFolder.refusal.entryNotActionable",
+  PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE:
+    "processedFolder.refusal.entryNotActionable",
   PROCESSED_FOLDER_ENTRY_CHANGED: "processedFolder.refusal.entryChanged",
-  PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY: "processedFolder.refusal.titleOutsideLibrary",
+  PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY:
+    "processedFolder.refusal.titleOutsideLibrary",
   PROCESSED_FOLDER_IMPORTS_IN_FLIGHT: "processedFolder.refusal.importsInFlight",
 };
 
@@ -48,7 +57,11 @@ export function processedFolderRefusalKey(error: unknown): string | null {
  * when the server named one this client knows, otherwise the server's own
  * sentence, and `fallback` when the failure carries no usable sentence.
  */
-export function processedFolderErrorMessage(error: unknown, t: Translate, fallback: string): string {
+export function processedFolderErrorMessage(
+  error: unknown,
+  t: Translate,
+  fallback: string,
+): string {
   const key = processedFolderRefusalKey(error);
   return key ? t(key) : userFacingGraphQlErrorMessage(error, fallback);
 }
@@ -68,9 +81,12 @@ export const PROCESSED_FOLDER_ENTRY_STATUSES = [
   "GONE",
 ] as const;
 
-export type ProcessedFolderEntryStatus = (typeof PROCESSED_FOLDER_ENTRY_STATUSES)[number];
+export type ProcessedFolderEntryStatus =
+  (typeof PROCESSED_FOLDER_ENTRY_STATUSES)[number];
 
-export const PROCESSED_FOLDER_STATUS_KEYS: Readonly<Record<ProcessedFolderEntryStatus, string>> = {
+export const PROCESSED_FOLDER_STATUS_KEYS: Readonly<
+  Record<ProcessedFolderEntryStatus, string>
+> = {
   OBSERVING: "processedFolder.status.observing",
   STABLE: "processedFolder.status.stable",
   IMPORTING: "processedFolder.status.importing",
@@ -87,7 +103,9 @@ export const PROCESSED_FOLDER_STATUS_KEYS: Readonly<Record<ProcessedFolderEntryS
 /** Operator actions, as the GraphQL `ProcessedFolderEntryAction` enum names them. */
 export type ProcessedFolderEntryAction = "IMPORT_AS" | "RETRY" | "IGNORE";
 
-export const PROCESSED_FOLDER_ACTION_KEYS: Readonly<Record<ProcessedFolderEntryAction, string>> = {
+export const PROCESSED_FOLDER_ACTION_KEYS: Readonly<
+  Record<ProcessedFolderEntryAction, string>
+> = {
   IMPORT_AS: "processedFolder.action.importAs",
   RETRY: "processedFolder.action.retry",
   IGNORE: "processedFolder.action.ignore",
@@ -122,12 +140,17 @@ export const PROCESSED_FOLDER_REASON_KEYS: Readonly<Record<string, string>> = {
   disk_full: "processedFolder.reason.diskFull",
   permission_denied: "processedFolder.reason.permissionDenied",
   password_required: "processedFolder.reason.passwordRequired",
-  archive_extraction_plugin_required: "processedFolder.reason.archiveExtractionPluginRequired",
-  archive_extraction_timed_out: "processedFolder.reason.archiveExtractionTimedOut",
+  archive_extraction_plugin_required:
+    "processedFolder.reason.archiveExtractionPluginRequired",
+  archive_extraction_timed_out:
+    "processedFolder.reason.archiveExtractionTimedOut",
 };
 
 /** The entry's reason in the viewer's language; an unknown code shows as sent. */
-export function processedFolderReasonLabel(reasonCode: string | null | undefined, t: Translate): string | null {
+export function processedFolderReasonLabel(
+  reasonCode: string | null | undefined,
+  t: Translate,
+): string | null {
   if (!reasonCode) return null;
   return Object.hasOwn(PROCESSED_FOLDER_REASON_KEYS, reasonCode)
     ? t(PROCESSED_FOLDER_REASON_KEYS[reasonCode])
