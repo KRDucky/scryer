@@ -1,23 +1,44 @@
-//! Migration 0312 (PR1 contract section 3): the processed-folder tables on
-//! SQLite and Postgres, with the same columns, nullability, defaults and
-//! indexes on both engines.
+//! Migration 0318 (PR1 contract V1.4): the processed-folder tables on SQLite
+//! and Postgres, with the same columns, nullability, defaults and indexes on
+//! both engines. Manifest `version = 318`, after 0317.
 //!
-//! The migration does not exist on baddf1f, so the engine tests are ignored
+//! The migration does not exist on ab526b42, so the engine tests are ignored
 //! until `pf/pr1-base` lands. The Postgres test reads the SQL file at run time
-//! (not `include_str!`) so this file compiles before the file exists, and it is
-//! opt-in through `SCRYER_TEST_POSTGRES_URL` like
-//! `delay_profile_tables_upgrade_tests.rs`. The store itself lives in
-//! `scryer-infrastructure-acquisition`, which this crate cannot reach, so store
-//! behaviour parity is tested there; this file covers schema parity only.
+//! (not `include_str!`) so this file compiles before the file exists. It runs
+//! only when `SCRYER_TEST_POSTGRES_URL` is set: unset skips with a visible
+//! message, and a set but unreachable or unusable database fails the test.
+//! The store itself lives in `scryer-infrastructure-acquisition`, which this
+//! crate cannot reach, so store behaviour parity is tested there; this file
+//! covers schema parity only.
 
 use sqlx::SqlitePool;
 
-/// Version the catalog is replayed to before 0312 is applied.
-const PRE_UPGRADE_VERSION: i64 = 311;
+/// Version the catalog is replayed to before 0318 is applied.
+const PRE_UPGRADE_VERSION: i64 = 317;
 
-/// Postgres 0312 SQL, relative to this crate.
-const POSTGRES_0312: &str =
-    "../scryer/src/db/postgres/migrations/0312_processed_folder_imports.sql";
+/// Manifest version of `0318_processed_folder_imports.sql`.
+const MANIFEST_VERSION: i64 = 318;
+
+/// SQLite 0318 SQL, relative to this crate.
+const SQLITE_0318: &str = "../scryer/src/db/migrations/0318_processed_folder_imports.sql";
+
+/// Postgres 0318 SQL, relative to this crate.
+const POSTGRES_0318: &str =
+    "../scryer/src/db/postgres/migrations/0318_processed_folder_imports.sql";
+
+/// Timestamp columns the contract stores without a column default.
+const TIMESTAMPS_WITHOUT_DEFAULT: &[(&str, &str)] = &[
+    ("processed_folder_entries", "first_seen_at"),
+    ("processed_folder_entries", "last_seen_at"),
+];
+
+/// Host of a Postgres URL, without user, password, port, or database.
+fn postgres_url_host(url: &str) -> &str {
+    let rest = url.split_once("://").map(|(_, rest)| rest).unwrap_or(url);
+    let hostport = rest.rsplit_once('@').map(|(_, host)| host).unwrap_or(rest);
+    let hostport = hostport.split(['/', '?']).next().unwrap_or(hostport);
+    hostport.split(':').next().unwrap_or(hostport)
+}
 
 /// Expected type of a column on each engine.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -151,7 +172,7 @@ async fn pre_upgrade_pool() -> SqlitePool {
         true,
     )
     .await
-    .expect("pre-0312 migration fixture should apply");
+    .expect("pre-0318 migration fixture should apply");
     pool
 }
 
@@ -159,7 +180,7 @@ async fn upgraded_pool() -> SqlitePool {
     let pool = pre_upgrade_pool().await;
     crate::migrations::run_migrations(&pool, crate::MigrationMode::Apply)
         .await
-        .expect("0312 upgrade should apply");
+        .expect("0318 upgrade should apply");
     pool
 }
 
@@ -184,12 +205,32 @@ fn the_expected_schema_spec_is_consistent() {
         names.dedup();
         assert_eq!(names.len(), spec.len(), "duplicate column in spec");
     }
+    assert_eq!(Kind::Integer.postgres(), "bigint");
     assert_eq!(Kind::Flag.postgres(), "boolean");
+    assert_eq!(Kind::Timestamp.postgres(), "timestamp with time zone");
     assert_eq!(Kind::Timestamp.sqlite(), "TEXT");
+    assert_eq!(PRE_UPGRADE_VERSION, 317);
+    assert_eq!(MANIFEST_VERSION, 318);
+    assert!(SQLITE_0318.ends_with("0318_processed_folder_imports.sql"));
+    assert!(POSTGRES_0318.ends_with("0318_processed_folder_imports.sql"));
+    for (table, column) in TIMESTAMPS_WITHOUT_DEFAULT {
+        let spec = table_spec(table);
+        assert!(
+            spec.iter().any(|(name, kind, not_null)| name == column
+                && *kind == Kind::Timestamp
+                && *not_null),
+            "{table}.{column} is NOT NULL timestamptz with no default"
+        );
+    }
+    assert_eq!(
+        postgres_url_host("postgres://scryer:secret@127.0.0.1:5432/pfqa"),
+        "127.0.0.1"
+    );
+    assert_eq!(postgres_url_host("postgres://localhost/pfqa"), "localhost");
 }
 
 #[tokio::test]
-#[ignore = "pending pf/pr1-base: migration 0312 (SQLite) and manifest entry"]
+#[ignore = "pending pf/pr1-base: migration 0318 (SQLite) and manifest version 318"]
 async fn sqlite_upgrade_creates_both_tables_with_the_contract_columns() {
     let pool = upgraded_pool().await;
     for table in ["processed_folders", "processed_folder_entries"] {
@@ -211,11 +252,28 @@ async fn sqlite_upgrade_creates_both_tables_with_the_contract_columns() {
             })
             .collect();
         assert_eq!(columns, expected, "{table}");
+        let sql: String =
+            sqlx::query_scalar("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?1")
+                .bind(table)
+                .fetch_one(&pool)
+                .await
+                .expect("table sql");
+        assert!(
+            !sql.to_ascii_lowercase().contains("check"),
+            "{table} has a CHECK constraint"
+        );
     }
+    let applied: i64 =
+        sqlx::query_scalar("SELECT version FROM _sqlx_migrations WHERE version = ?1")
+            .bind(MANIFEST_VERSION)
+            .fetch_one(&pool)
+            .await
+            .expect("manifest version 318 applied");
+    assert_eq!(applied, MANIFEST_VERSION);
 }
 
 #[tokio::test]
-#[ignore = "pending pf/pr1-base: migration 0312 (SQLite) and manifest entry"]
+#[ignore = "pending pf/pr1-base: migration 0318 (SQLite) and manifest version 318"]
 async fn sqlite_upgrade_creates_the_contract_indexes() {
     let pool = upgraded_pool().await;
     for (index, table, unique, columns) in INDEXES {
@@ -240,7 +298,7 @@ async fn sqlite_upgrade_creates_the_contract_indexes() {
 }
 
 #[tokio::test]
-#[ignore = "pending pf/pr1-base: migration 0312 (SQLite) and manifest entry"]
+#[ignore = "pending pf/pr1-base: migration 0318 (SQLite) and manifest version 318"]
 async fn sqlite_defaults_uniqueness_and_cascade_follow_the_contract() {
     let pool = upgraded_pool().await;
     sqlx::query(
@@ -324,20 +382,28 @@ async fn sqlite_defaults_uniqueness_and_cascade_follow_the_contract() {
 }
 
 #[tokio::test]
-#[ignore = "pending pf/pr1-base: migration 0312 (Postgres)"]
-async fn postgres_0312_matches_the_sqlite_schema() {
+#[ignore = "pending pf/pr1-base: migration 0318 (Postgres)"]
+async fn postgres_0318_matches_the_sqlite_schema() {
     let Ok(url) = std::env::var("SCRYER_TEST_POSTGRES_URL") else {
         eprintln!("skipped: SCRYER_TEST_POSTGRES_URL must name an isolated test database");
         return;
     };
-    let sql_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(POSTGRES_0312);
-    let sql = std::fs::read_to_string(&sql_path)
-        .unwrap_or_else(|error| panic!("{}: {error}", sql_path.display()));
     let pool = sqlx::postgres::PgPoolOptions::new()
         .max_connections(1)
         .connect(&url)
         .await
-        .expect("connect to test postgres");
+        .unwrap_or_else(|error| {
+            panic!(
+                "SCRYER_TEST_POSTGRES_URL is set but the database is unreachable or unusable: {error}"
+            )
+        });
+    eprintln!(
+        "processed_folder postgres parity ran against {}",
+        postgres_url_host(&url)
+    );
+    let sql_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(POSTGRES_0318);
+    let sql = std::fs::read_to_string(&sql_path)
+        .unwrap_or_else(|error| panic!("{}: {error}", sql_path.display()));
     let mut tx = pool.begin().await.expect("begin fixture");
     let schema = format!("upgrade_test_{}", uuid::Uuid::new_v4().simple());
     sqlx::raw_sql(sqlx::AssertSqlSafe(format!(
@@ -353,7 +419,7 @@ async fn postgres_0312_matches_the_sqlite_schema() {
     sqlx::raw_sql(sqlx::AssertSqlSafe(sql))
         .execute(&mut *tx)
         .await
-        .expect("apply 0312");
+        .expect("apply 0318");
 
     for table in ["processed_folders", "processed_folder_entries"] {
         let columns: Vec<(String, String, String)> = sqlx::query_as(
@@ -377,6 +443,38 @@ async fn postgres_0312_matches_the_sqlite_schema() {
             })
             .collect();
         assert_eq!(columns, expected, "{table}");
+    }
+
+    let checks: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*)::bigint FROM pg_constraint c
+         JOIN pg_class t ON t.oid = c.conrelid
+         JOIN pg_namespace n ON n.oid = t.relnamespace
+         WHERE n.nspname = $1
+           AND t.relname IN ('processed_folders', 'processed_folder_entries')
+           AND c.contype = 'c'",
+    )
+    .bind(&schema)
+    .fetch_one(&mut *tx)
+    .await
+    .expect("check constraints");
+    assert_eq!(checks, 0, "V1.4 has no CHECK constraints");
+    for (table, column) in TIMESTAMPS_WITHOUT_DEFAULT {
+        let (nullable, default): (String, Option<String>) = sqlx::query_as(
+            "SELECT is_nullable::text, column_default::text
+             FROM information_schema.columns
+             WHERE table_schema = $1 AND table_name = $2 AND column_name = $3",
+        )
+        .bind(&schema)
+        .bind(table)
+        .bind(column)
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap_or_else(|error| panic!("{table}.{column}: {error}"));
+        assert_eq!(nullable, "NO", "{table}.{column} is NOT NULL");
+        assert!(
+            default.is_none(),
+            "{table}.{column} has no default, got {default:?}"
+        );
     }
 
     for (index, table, unique, columns) in INDEXES {

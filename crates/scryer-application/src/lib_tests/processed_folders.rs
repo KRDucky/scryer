@@ -3400,7 +3400,7 @@ mod contract_and_hygiene {
             .map(|entry| entry.classification)
     }
 
-    /// Contract section 3 backup catalog. Real body: fails on baddf1f by
+    /// Contract section 3 backup catalog. Real body: fails on ab526b42 by
     /// design, passes once api adds the two entries.
     #[test]
     #[ignore = "pending pf/pr1-base: backup catalog entries in security/backup_bundle.rs"]
@@ -3420,14 +3420,26 @@ mod contract_and_hygiene {
         assert_eq!(count, 2, "exactly two processed-folder catalog rows");
     }
 
-    /// Runs today: the two tables are not classified on baddf1f, which is the
-    /// state the ignored test above flips.
+    /// Runs today on ab526b42: the two tables are unclassified and migration
+    /// 0318 (manifest version 318) is not in the catalog yet. Once pf/pr1-base
+    /// lands either, this returns and the ignored test above is the contract.
     #[test]
     fn the_baseline_catalog_does_not_yet_know_the_processed_folder_tables() {
-        if classification_of("processed_folders").is_some() {
-            // The base has landed in this checkout; the real test above covers it.
+        let manifest = crate_source("../scryer/src/db/migration_manifest.toml")
+            .expect("migration manifest is readable");
+        let base_landed = classification_of("processed_folders").is_some()
+            || manifest.contains("0318_processed_folder_imports.sql");
+        if base_landed {
             return;
         }
+        assert!(
+            manifest.contains("0317_user_ui_drop_glow.sql"),
+            "baseline is the 0317 catalog"
+        );
+        assert!(
+            !manifest.contains("version = 318"),
+            "0318 must not be in the manifest yet"
+        );
         assert_eq!(classification_of("processed_folder_entries"), None);
         assert!(
             classification_of("imports").is_some(),
