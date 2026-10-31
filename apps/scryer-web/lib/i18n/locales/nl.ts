@@ -4404,6 +4404,8 @@ const nl: LocaleDictionary = {
     "Deze actie is niet meer mogelijk voor dit bestand. Vernieuw de lijst.",
   "processedFolder.refusal.entryNotFound":
     "Dit bestandsitem bestaat niet meer.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Verwijder de spaties aan het begin of einde.",
   "processedFolder.refusal.importsInFlight":
     "Er lopen nog imports uit deze map. Probeer het opnieuw als ze klaar zijn.",
   "processedFolder.refusal.invalidMarker":
@@ -4412,8 +4414,12 @@ const nl: LocaleDictionary = {
     "De stabiliteitsinstellingen vallen buiten het bereik.",
   "processedFolder.refusal.libraryNotFound":
     "De gekozen bibliotheek bestaat niet meer.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Laat de markeringsnaam leeg als er geen markering wordt gebruikt.",
   "processedFolder.refusal.nameRequired": "Voer een naam voor de map in.",
   "processedFolder.refusal.nameTaken": "Een andere map gebruikt deze naam al.",
+  "processedFolder.refusal.nameTooLong":
+    "Gebruik een naam van hoogstens 100 tekens.",
   "processedFolder.refusal.notFound": "Deze map bestaat niet meer.",
   "processedFolder.refusal.overlapsBackupPath":
     "Deze map overlapt met de back-upmap.",
@@ -4431,6 +4437,10 @@ const nl: LocaleDictionary = {
     "Scryer kan dit pad niet herleiden.",
   "processedFolder.refusal.scanInProgress":
     "Er loopt al een scan van deze map.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Deze map gebruikt een bereik dat Scryer niet ondersteunt. Alleen bibliotheekmappen worden ondersteund.",
+  "processedFolder.refusal.titleNotFound":
+    "Die titel bestaat niet meer. Zoek opnieuw.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Kies een titel uit de bibliotheek van deze map.",
   "processedFolder.status.failed": "Mislukt",
@@ -4455,6 +4465,9 @@ const nl: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Bestanden worden altijd gekopieerd. Scryer verplaatst, koppelt of verwijdert nooit iets in deze map.",
   "settings.processedFolders.counts": "Bestanden",
+  "settings.processedFolders.countsByStatus": "Bestanden per status",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} vervangen, {{gone}} verdwenen",
   "settings.processedFolders.countsSummary":
     "{{imported}} geïmporteerd, {{needsReview}} te controleren, {{failed}} mislukt, {{observing}} gevolgd",
   "settings.processedFolders.created":
@@ -4547,6 +4560,7 @@ const nl: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Hersteld",
   "settings.processedFolders.scanRejected": "Afgewezen",
   "settings.processedFolders.scanResultTitle": "Scan voltooid",
+  "settings.processedFolders.scanSuperseded": "Vervangen",
   "settings.processedFolders.showEntries": "Bestanden tonen",
   "settings.processedFolders.size": "Grootte",
   "settings.processedFolders.stability": "Voltooid wanneer",

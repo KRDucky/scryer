@@ -6921,6 +6921,8 @@ const ru: LocaleDictionary = {
   "processedFolder.refusal.entryNotActionable":
     "Это действие больше недоступно для файла. Обновите список.",
   "processedFolder.refusal.entryNotFound": "Этой записи файла больше нет.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Уберите пробелы в начале или в конце.",
   "processedFolder.refusal.importsInFlight":
     "Импорт из этой папки ещё идёт. Повторите, когда он завершится.",
   "processedFolder.refusal.invalidMarker":
@@ -6928,9 +6930,13 @@ const ru: LocaleDictionary = {
   "processedFolder.refusal.invalidStability":
     "Настройки стабильности вне допустимого диапазона.",
   "processedFolder.refusal.libraryNotFound": "Выбранной библиотеки больше нет.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Оставьте имя маркера пустым, если маркер не используется.",
   "processedFolder.refusal.nameRequired": "Введите название папки.",
   "processedFolder.refusal.nameTaken":
     "Это название уже использует другая папка.",
+  "processedFolder.refusal.nameTooLong":
+    "Используйте имя не длиннее 100 символов.",
   "processedFolder.refusal.notFound": "Этой папки больше нет.",
   "processedFolder.refusal.overlapsBackupPath":
     "Эта папка пересекается с папкой резервных копий.",
@@ -6946,6 +6952,10 @@ const ru: LocaleDictionary = {
   "processedFolder.refusal.pathUnresolvable":
     "Scryer не может разрешить этот путь.",
   "processedFolder.refusal.scanInProgress": "Сканирование этой папки уже идёт.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Эта папка использует область, которую Scryer не поддерживает. Поддерживаются только папки библиотек.",
+  "processedFolder.refusal.titleNotFound":
+    "Этот тайтл больше не существует. Повторите поиск.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Выберите тайтл из библиотеки этой папки.",
   "processedFolder.status.failed": "Ошибка",
@@ -6970,6 +6980,9 @@ const ru: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Файлы всегда копируются. Scryer никогда не перемещает, не связывает и не удаляет ничего в этой папке.",
   "settings.processedFolders.counts": "Файлы",
+  "settings.processedFolders.countsByStatus": "Файлы по статусу",
+  "settings.processedFolders.countsRetired":
+    "Заменено: {{superseded}}, исчезло: {{gone}}",
   "settings.processedFolders.countsSummary":
     "импортировано {{imported}}, на проверку {{needsReview}}, ошибок {{failed}}, наблюдается {{observing}}",
   "settings.processedFolders.created":
@@ -7060,6 +7073,7 @@ const ru: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Восстановлены",
   "settings.processedFolders.scanRejected": "Отклонены",
   "settings.processedFolders.scanResultTitle": "Сканирование завершено",
+  "settings.processedFolders.scanSuperseded": "Заменены",
   "settings.processedFolders.showEntries": "Показать файлы",
   "settings.processedFolders.size": "Размер",
   "settings.processedFolders.stability": "Готов, когда",

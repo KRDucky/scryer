@@ -3336,14 +3336,18 @@ const zh_CN: LocaleDictionary = {
   "processedFolder.refusal.entryNotActionable":
     "此文件已无法执行该操作。请刷新列表。",
   "processedFolder.refusal.entryNotFound": "此文件条目已不存在。",
+  "processedFolder.refusal.fieldNotTrimmed": "请删除开头或结尾的空格。",
   "processedFolder.refusal.importsInFlight":
     "此文件夹的导入仍在进行。完成后再试。",
   "processedFolder.refusal.invalidMarker":
     '标记无效。请使用不含斜杠或 ".." 的单个文件名。',
   "processedFolder.refusal.invalidStability": "稳定性设置超出范围。",
   "processedFolder.refusal.libraryNotFound": "所选媒体库已不存在。",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "不使用标记时，请将标记名称留空。",
   "processedFolder.refusal.nameRequired": "请输入文件夹名称。",
   "processedFolder.refusal.nameTaken": "已有其他文件夹使用此名称。",
+  "processedFolder.refusal.nameTooLong": "名称不能超过 100 个字符。",
   "processedFolder.refusal.notFound": "此文件夹已不存在。",
   "processedFolder.refusal.overlapsBackupPath": "此文件夹与备份文件夹重叠。",
   "processedFolder.refusal.overlapsLibraryRoot":
@@ -3356,6 +3360,9 @@ const zh_CN: LocaleDictionary = {
   "processedFolder.refusal.pathNotDirectory": "此路径不是文件夹。",
   "processedFolder.refusal.pathUnresolvable": "Scryer 无法解析此路径。",
   "processedFolder.refusal.scanInProgress": "此文件夹的扫描已在进行中。",
+  "processedFolder.refusal.scopeKindInvalid":
+    "此文件夹使用了 Scryer 不支持的范围。仅支持媒体库文件夹。",
+  "processedFolder.refusal.titleNotFound": "该作品已不存在。请重新搜索。",
   "processedFolder.refusal.titleOutsideLibrary":
     "请从此文件夹的媒体库中选择标题。",
   "processedFolder.status.failed": "失败",
@@ -3380,6 +3387,9 @@ const zh_CN: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "文件始终以复制方式导入。Scryer 从不移动、链接或删除此文件夹中的任何内容。",
   "settings.processedFolders.counts": "文件",
+  "settings.processedFolders.countsByStatus": "按状态查看文件",
+  "settings.processedFolders.countsRetired":
+    "已被取代 {{superseded}} 个，已消失 {{gone}} 个",
   "settings.processedFolders.countsSummary":
     "已导入 {{imported}}，需审核 {{needsReview}}，失败 {{failed}}，观察中 {{observing}}",
   "settings.processedFolders.created":
@@ -3468,6 +3478,7 @@ const zh_CN: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "已恢复",
   "settings.processedFolders.scanRejected": "已拒绝",
   "settings.processedFolders.scanResultTitle": "扫描完成",
+  "settings.processedFolders.scanSuperseded": "已被取代",
   "settings.processedFolders.showEntries": "显示文件",
   "settings.processedFolders.size": "大小",
   "settings.processedFolders.stability": "完成条件",

@@ -3705,6 +3705,8 @@ const it: LocaleDictionary = {
     "Questa azione non è più disponibile per il file. Aggiorna l'elenco.",
   "processedFolder.refusal.entryNotFound":
     "Questa voce di file non esiste più.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Rimuovi gli spazi all'inizio o alla fine.",
   "processedFolder.refusal.importsInFlight":
     "Le importazioni da questa cartella sono ancora in corso. Riprova quando saranno finite.",
   "processedFolder.refusal.invalidMarker":
@@ -3713,8 +3715,12 @@ const it: LocaleDictionary = {
     "Le impostazioni di stabilità sono fuori intervallo.",
   "processedFolder.refusal.libraryNotFound":
     "La libreria selezionata non esiste più.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Lascia vuoto il nome del marcatore quando non si usa un marcatore.",
   "processedFolder.refusal.nameRequired": "Inserisci un nome per la cartella.",
   "processedFolder.refusal.nameTaken": "Un'altra cartella usa già questo nome.",
+  "processedFolder.refusal.nameTooLong":
+    "Usa un nome di massimo 100 caratteri.",
   "processedFolder.refusal.notFound": "Questa cartella non esiste più.",
   "processedFolder.refusal.overlapsBackupPath":
     "Questa cartella si sovrappone alla cartella dei backup.",
@@ -3733,6 +3739,10 @@ const it: LocaleDictionary = {
     "Scryer non riesce a risolvere questo percorso.",
   "processedFolder.refusal.scanInProgress":
     "Una scansione di questa cartella è già in corso.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Questa cartella usa un ambito che Scryer non supporta. Sono supportate solo le cartelle di libreria.",
+  "processedFolder.refusal.titleNotFound":
+    "Questo titolo non esiste più. Cerca di nuovo.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Scegli un titolo dalla libreria di questa cartella.",
   "processedFolder.status.failed": "Non riuscito",
@@ -3757,6 +3767,9 @@ const it: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "I file vengono sempre copiati. Scryer non sposta, non collega e non elimina mai nulla in questa cartella.",
   "settings.processedFolders.counts": "File",
+  "settings.processedFolders.countsByStatus": "File per stato",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} sostituiti, {{gone}} scomparsi",
   "settings.processedFolders.countsSummary":
     "{{imported}} importati, {{needsReview}} da verificare, {{failed}} non riusciti, {{observing}} in osservazione",
   "settings.processedFolders.created":
@@ -3849,6 +3862,7 @@ const it: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Recuperati",
   "settings.processedFolders.scanRejected": "Rifiutati",
   "settings.processedFolders.scanResultTitle": "Scansione completata",
+  "settings.processedFolders.scanSuperseded": "Sostituiti",
   "settings.processedFolders.showEntries": "Mostra file",
   "settings.processedFolders.size": "Dimensione",
   "settings.processedFolders.stability": "Completato quando",

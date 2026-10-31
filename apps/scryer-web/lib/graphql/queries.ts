@@ -5940,6 +5940,8 @@ export const PROCESSED_FOLDER_FIELDS = `
       needsReview
       ignored
       rejected
+      superseded
+      gone
     }`;
 
 /** One observed file version in a processed folder's ledger. */

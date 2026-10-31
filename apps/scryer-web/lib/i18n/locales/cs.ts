@@ -7088,6 +7088,8 @@ const cs: LocaleDictionary = {
     "Tuto akci už pro soubor nelze provést. Obnovte seznam.",
   "processedFolder.refusal.entryNotFound":
     "Tento záznam souboru už neexistuje.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Odstraňte mezery na začátku nebo na konci.",
   "processedFolder.refusal.importsInFlight":
     "Importy z této složky stále probíhají. Zkuste to znovu, až skončí.",
   "processedFolder.refusal.invalidMarker":
@@ -7095,8 +7097,12 @@ const cs: LocaleDictionary = {
   "processedFolder.refusal.invalidStability":
     "Nastavení stability je mimo povolený rozsah.",
   "processedFolder.refusal.libraryNotFound": "Vybraná knihovna už neexistuje.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Když se značka nepoužívá, nechte název značky prázdný.",
   "processedFolder.refusal.nameRequired": "Zadejte název složky.",
   "processedFolder.refusal.nameTaken": "Tento název už používá jiná složka.",
+  "processedFolder.refusal.nameTooLong":
+    "Použijte název o nejvýše 100 znacích.",
   "processedFolder.refusal.notFound": "Tato složka už neexistuje.",
   "processedFolder.refusal.overlapsBackupPath":
     "Tato složka se překrývá se složkou záloh.",
@@ -7112,6 +7118,10 @@ const cs: LocaleDictionary = {
   "processedFolder.refusal.pathUnresolvable":
     "Scryer tuto cestu nedokáže vyhodnotit.",
   "processedFolder.refusal.scanInProgress": "Kontrola této složky už probíhá.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Tato složka používá rozsah, který Scryer nepodporuje. Podporovány jsou jen složky knihoven.",
+  "processedFolder.refusal.titleNotFound":
+    "Tento titul už neexistuje. Vyhledejte znovu.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Vyberte titul z knihovny této složky.",
   "processedFolder.status.failed": "Selhalo",
@@ -7136,6 +7146,9 @@ const cs: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Soubory se vždy kopírují. Scryer v této složce nikdy nic nepřesouvá, nepropojuje ani nemaže.",
   "settings.processedFolders.counts": "Soubory",
+  "settings.processedFolders.countsByStatus": "Soubory podle stavu",
+  "settings.processedFolders.countsRetired":
+    "Nahrazeno: {{superseded}}, zmizelo: {{gone}}",
   "settings.processedFolders.countsSummary":
     "{{imported}} importováno, {{needsReview}} ke kontrole, {{failed}} selhalo, {{observing}} sledováno",
   "settings.processedFolders.created":
@@ -7227,6 +7240,7 @@ const cs: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Obnovené",
   "settings.processedFolders.scanRejected": "Odmítnuté",
   "settings.processedFolders.scanResultTitle": "Kontrola dokončena",
+  "settings.processedFolders.scanSuperseded": "Nahrazené",
   "settings.processedFolders.showEntries": "Zobrazit soubory",
   "settings.processedFolders.size": "Velikost",
   "settings.processedFolders.stability": "Hotovo, když",

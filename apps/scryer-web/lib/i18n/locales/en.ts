@@ -11382,6 +11382,8 @@ const en: LocaleDictionary = {
   "processedFolder.refusal.entryNotActionable":
     "This file can no longer take that action. Refresh the list.",
   "processedFolder.refusal.entryNotFound": "This file entry no longer exists.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Remove the spaces at the start or end.",
   "processedFolder.refusal.importsInFlight":
     "Imports from this folder are still running. Try again when they finish.",
   "processedFolder.refusal.invalidMarker":
@@ -11390,8 +11392,12 @@ const en: LocaleDictionary = {
     "The stability settings are out of range.",
   "processedFolder.refusal.libraryNotFound":
     "The selected library no longer exists.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Leave the marker name empty when no marker is used.",
   "processedFolder.refusal.nameRequired": "Enter a name for the folder.",
   "processedFolder.refusal.nameTaken": "Another folder already uses this name.",
+  "processedFolder.refusal.nameTooLong":
+    "Use a name of 100 characters or fewer.",
   "processedFolder.refusal.notFound": "This folder no longer exists.",
   "processedFolder.refusal.overlapsBackupPath":
     "This folder overlaps the backup folder.",
@@ -11409,6 +11415,10 @@ const en: LocaleDictionary = {
     "Scryer cannot resolve this path.",
   "processedFolder.refusal.scanInProgress":
     "A scan of this folder is already running.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "This folder uses a scope Scryer does not support. Only library folders are supported.",
+  "processedFolder.refusal.titleNotFound":
+    "That title no longer exists. Search again.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Choose a title from this folder's library.",
   "processedFolder.status.failed": "Failed",
@@ -11433,6 +11443,9 @@ const en: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Files are always copied. Scryer never moves, links or deletes anything in this folder.",
   "settings.processedFolders.counts": "Files",
+  "settings.processedFolders.countsByStatus": "Files by status",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} superseded, {{gone}} gone",
   "settings.processedFolders.countsSummary":
     "{{imported}} imported, {{needsReview}} need review, {{failed}} failed, {{observing}} observing",
   "settings.processedFolders.created":
@@ -11523,6 +11536,7 @@ const en: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Recovered",
   "settings.processedFolders.scanRejected": "Rejected",
   "settings.processedFolders.scanResultTitle": "Scan finished",
+  "settings.processedFolders.scanSuperseded": "Superseded",
   "settings.processedFolders.showEntries": "Show files",
   "settings.processedFolders.size": "Size",
   "settings.processedFolders.stability": "Finished when",

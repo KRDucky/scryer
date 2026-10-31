@@ -62,6 +62,7 @@ import {
   PROCESSED_FOLDER_ACTION_KEYS,
   PROCESSED_FOLDER_ENTRY_STATUSES,
   PROCESSED_FOLDER_STATUS_KEYS,
+  processedFolderErrorMessage,
   processedFolderReasonLabel,
   type ProcessedFolderEntryAction,
   type ProcessedFolderEntryStatus,
@@ -82,6 +83,8 @@ export type ProcessedFolderEntryCounts = {
   needsReview: number;
   ignored: number;
   rejected: number;
+  superseded: number;
+  gone: number;
 };
 
 export type ProcessedFolder = {
@@ -132,6 +135,7 @@ export type ProcessedFolderScanResult = {
   importsQueued: number;
   needsReview: number;
   rejected: number;
+  superseded: number;
   gone: number;
   recovered: number;
   nextEligibleAt: string | null;
@@ -229,21 +233,33 @@ function parseIntegerInRange(
     : null;
 }
 
+/** Longest folder name the server accepts, counted in Unicode scalar values. */
+const PROCESSED_FOLDER_NAME_MAX_CHARS = 100;
+
+/** The server refuses leading or trailing whitespace instead of trimming it. */
+function hasOuterWhitespace(value: string): boolean {
+  return value !== value.trim();
+}
+
 /** Mirrors the server's marker rule so the form can say what is wrong before saving. */
 function markerValueValid(
   mode: ProcessedFolderMarkerMode,
   value: string,
 ): boolean {
   if (mode === "NONE") return true;
-  const trimmed = value.trim();
-  if (
-    !trimmed ||
-    trimmed.includes("/") ||
-    trimmed.includes("\\") ||
-    trimmed.includes("..")
-  )
+  if (value.includes("/") || value.includes("\\") || value.includes("\u0000"))
     return false;
-  return mode !== "SIBLING_SUFFIX" || trimmed.startsWith(".");
+  if (mode === "SIBLING_SUFFIX") {
+    const length = [...value].length;
+    return (
+      value.startsWith(".") &&
+      length >= 2 &&
+      length <= 32 &&
+      !value.includes("..")
+    );
+  }
+  const bytes = new TextEncoder().encode(value).length;
+  return bytes >= 1 && bytes <= 255 && value !== "." && value !== "..";
 }
 
 function StatusBadge({ status }: { status: ProcessedFolderEntryStatus }) {
@@ -316,10 +332,20 @@ function FolderFormDialog({
     PROCESSED_FOLDER_MAX_AGE_SECONDS,
   );
   const markerValid = markerValueValid(markerMode, markerValue);
+  const nameTooLong = [...name].length > PROCESSED_FOLDER_NAME_MAX_CHARS;
+  const nameUntrimmed = hasOuterWhitespace(name);
+  const rootPathUntrimmed = hasOuterWhitespace(rootPath);
+  const markerUntrimmed =
+    markerMode !== "NONE" && hasOuterWhitespace(markerValue);
+  const notTrimmedMessage = t("processedFolder.refusal.fieldNotTrimmed");
   const canSubmit =
     !saving &&
     name.trim().length > 0 &&
+    !nameTooLong &&
+    !nameUntrimmed &&
     rootPath.trim().length > 0 &&
+    !rootPathUntrimmed &&
+    !markerUntrimmed &&
     libraryId !== "" &&
     stableScans !== null &&
     minAge !== null &&
@@ -353,13 +379,13 @@ function FolderFormDialog({
             event.preventDefault();
             if (!canSubmit || stableScans === null || minAge === null) return;
             onSubmit({
-              name: name.trim(),
-              rootPath: rootPath.trim(),
+              name,
+              rootPath,
               libraryId,
               minStableScans: stableScans,
               minAgeSeconds: minAge,
               markerMode,
-              markerValue: markerMode === "NONE" ? null : markerValue.trim(),
+              markerValue: markerMode === "NONE" ? null : markerValue,
             });
           }}
         >
@@ -370,10 +396,25 @@ function FolderFormDialog({
             <Input
               id="settings-processed-folder-name"
               value={name}
-              maxLength={100}
               disabled={saving}
+              aria-invalid={nameTooLong || nameUntrimmed}
+              aria-describedby={
+                nameTooLong || nameUntrimmed
+                  ? "settings-processed-folder-name-error"
+                  : undefined
+              }
               onChange={(event) => setName(event.target.value)}
             />
+            {nameTooLong || nameUntrimmed ? (
+              <p
+                id="settings-processed-folder-name-error"
+                className="text-xs text-[var(--scry-danger-text)]"
+              >
+                {nameTooLong
+                  ? t("processedFolder.refusal.nameTooLong")
+                  : notTrimmedMessage}
+              </p>
+            ) : null}
           </div>
           <div className="space-y-1">
             <Label htmlFor="settings-processed-folder-path">
@@ -386,6 +427,12 @@ function FolderFormDialog({
                 disabled={saving}
                 className="font-mono"
                 placeholder="/srv/media/processed"
+                aria-invalid={rootPathUntrimmed}
+                aria-describedby={
+                  rootPathUntrimmed
+                    ? "settings-processed-folder-path-error"
+                    : undefined
+                }
                 onChange={(event) => setRootPath(event.target.value)}
               />
               <Button
@@ -408,6 +455,14 @@ function FolderFormDialog({
                 initialPath={rootPath || "/"}
                 title={t("settings.processedFolders.rootPath")}
               />
+            ) : null}
+            {rootPathUntrimmed ? (
+              <p
+                id="settings-processed-folder-path-error"
+                className="text-xs text-[var(--scry-danger-text)]"
+              >
+                {notTrimmedMessage}
+              </p>
             ) : null}
             <p className="text-xs text-muted-foreground">
               {t("settings.processedFolders.rootPathHelp")}
@@ -544,9 +599,14 @@ function FolderFormDialog({
                   placeholder={
                     markerMode === "SIBLING_SUFFIX" ? ".done" : ".processed"
                   }
-                  aria-invalid={!markerValid}
+                  aria-invalid={!markerValid || markerUntrimmed}
                   onChange={(event) => setMarkerValue(event.target.value)}
                 />
+                {markerUntrimmed ? (
+                  <p className="text-xs text-[var(--scry-danger-text)]">
+                    {notTrimmedMessage}
+                  </p>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -654,9 +714,11 @@ function ImportAsDialog({
           if (cancelled) return;
           setResults([]);
           setError(
-            searchError instanceof Error
-              ? searchError.message
-              : t("status.failedToLoad"),
+            processedFolderErrorMessage(
+              searchError,
+              t,
+              t("status.failedToLoad"),
+            ),
           );
         })
         .finally(() => {
@@ -758,6 +820,72 @@ function ImportAsDialog({
   );
 }
 
+const COUNT_FIELDS: Record<
+  ProcessedFolderEntryStatus,
+  keyof ProcessedFolderEntryCounts
+> = {
+  OBSERVING: "observing",
+  STABLE: "stable",
+  IMPORTING: "importing",
+  IMPORTED: "imported",
+  SKIPPED: "skipped",
+  FAILED: "failed",
+  NEEDS_REVIEW: "needsReview",
+  IGNORED: "ignored",
+  REJECTED: "rejected",
+  SUPERSEDED: "superseded",
+  GONE: "gone",
+};
+
+/** One count per ledger state; choosing one filters the table to it. */
+function StatusCounts({
+  counts,
+  statusFilter,
+  onStatusFilterChange,
+}: {
+  counts: ProcessedFolderEntryCounts;
+  statusFilter: ProcessedFolderStatusFilter;
+  onStatusFilterChange: (filter: ProcessedFolderStatusFilter) => void;
+}) {
+  const t = useTranslate();
+  return (
+    <div
+      id="settings-processed-folder-status-counts"
+      role="group"
+      aria-label={t("settings.processedFolders.countsByStatus")}
+      className="space-y-1"
+    >
+      <p className="text-xs text-muted-foreground">
+        {t("settings.processedFolders.countsByStatus")}
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {PROCESSED_FOLDER_ENTRY_STATUSES.map((status) => {
+          const active = statusFilter === status;
+          return (
+            <Button
+              key={status}
+              id={selectorId("settings-processed-folder-count", status)}
+              type="button"
+              size="sm"
+              variant={active ? "secondary" : "outline"}
+              className="h-7 gap-1.5 px-2 text-xs"
+              aria-pressed={active}
+              onClick={() =>
+                onStatusFilterChange(active ? STATUS_FILTER_ALL : status)
+              }
+            >
+              {t(PROCESSED_FOLDER_STATUS_KEYS[status])}
+              <span className="font-[var(--font-code)] text-muted-foreground">
+                {counts[COUNT_FIELDS[status]]}
+              </span>
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ScanResultSummary({ result }: { result: ProcessedFolderScanResult }) {
   const t = useTranslate();
   const dateTimeFormat = useUiDateTimeFormat();
@@ -767,6 +895,7 @@ function ScanResultSummary({ result }: { result: ProcessedFolderScanResult }) {
     [t("settings.processedFolders.scanImportsQueued"), result.importsQueued],
     [t("settings.processedFolders.scanNeedsReview"), result.needsReview],
     [t("settings.processedFolders.scanRejected"), result.rejected],
+    [t("settings.processedFolders.scanSuperseded"), result.superseded],
     [t("settings.processedFolders.scanGone"), result.gone],
     [t("settings.processedFolders.scanRecovered"), result.recovered],
   ];
@@ -1151,12 +1280,27 @@ export function SettingsProcessedFoldersSection({
                     ) : null}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {t("settings.processedFolders.countsSummary", {
-                      imported: folder.counts.imported,
-                      needsReview: folder.counts.needsReview,
-                      failed: folder.counts.failed,
-                      observing: folder.counts.observing,
-                    })}
+                    <div>
+                      {t("settings.processedFolders.countsSummary", {
+                        imported: folder.counts.imported,
+                        needsReview: folder.counts.needsReview,
+                        failed: folder.counts.failed,
+                        observing: folder.counts.observing,
+                      })}
+                    </div>
+                    {folder.counts.superseded + folder.counts.gone > 0 ? (
+                      <div
+                        id={selectorId(
+                          "settings-processed-folder-counts-retired",
+                          folder.id,
+                        )}
+                      >
+                        {t("settings.processedFolders.countsRetired", {
+                          superseded: folder.counts.superseded,
+                          gone: folder.counts.gone,
+                        })}
+                      </div>
+                    ) : null}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                     {folder.lastScanFinishedAt
@@ -1291,6 +1435,12 @@ export function SettingsProcessedFoldersSection({
           {preview ? (
             <PreviewResults preview={preview} onClose={onClosePreview} />
           ) : null}
+
+          <StatusCounts
+            counts={selectedFolder.counts}
+            statusFilter={statusFilter}
+            onStatusFilterChange={onStatusFilterChange}
+          />
 
           <div className="space-y-2">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

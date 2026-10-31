@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
-import { buildSchema, parse, validate } from "graphql";
+import { buildSchema, Kind, parse, validate, visit } from "graphql";
 import en from "../i18n/locales/en.ts";
 import * as mutations from "../graphql/mutations.ts";
 import * as queries from "../graphql/queries.ts";
@@ -40,7 +40,9 @@ const CONTRACT_REFUSAL_CODES = [
   "PROCESSED_FOLDER_NOT_FOUND",
   "PROCESSED_FOLDER_ENTRY_NOT_FOUND",
   "PROCESSED_FOLDER_NAME_REQUIRED",
+  "PROCESSED_FOLDER_NAME_TOO_LONG",
   "PROCESSED_FOLDER_NAME_TAKEN",
+  "PROCESSED_FOLDER_FIELD_NOT_TRIMMED",
   "PROCESSED_FOLDER_PATH_NOT_ABSOLUTE",
   "PROCESSED_FOLDER_PATH_MISSING",
   "PROCESSED_FOLDER_PATH_NOT_DIRECTORY",
@@ -50,13 +52,16 @@ const CONTRACT_REFUSAL_CODES = [
   "PROCESSED_FOLDER_OVERLAPS_BACKUP_PATH",
   "PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER",
   "PROCESSED_FOLDER_LIBRARY_NOT_FOUND",
+  "PROCESSED_FOLDER_SCOPE_KIND_INVALID",
   "PROCESSED_FOLDER_INVALID_STABILITY",
   "PROCESSED_FOLDER_INVALID_MARKER",
+  "PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED",
   "PROCESSED_FOLDER_DISABLED",
   "PROCESSED_FOLDER_SCAN_IN_PROGRESS",
   "PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE",
   "PROCESSED_FOLDER_ENTRY_CHANGED",
   "PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY",
+  "PROCESSED_FOLDER_TITLE_NOT_FOUND",
   "PROCESSED_FOLDER_IMPORTS_IN_FLIGHT",
 ];
 
@@ -136,6 +141,11 @@ test("an error with no usable sentence falls back to the caller's text", () => {
 });
 
 test("the refusal map holds exactly the contract's codes", () => {
+  assert.equal(
+    CONTRACT_REFUSAL_CODES.length,
+    26,
+    "contract v2.2 table V4 lists 26 codes",
+  );
   assert.deepEqual(
     Object.keys(PROCESSED_FOLDER_REFUSAL_KEYS).sort(),
     [...CONTRACT_REFUSAL_CODES].sort(),
@@ -216,7 +226,7 @@ type ProcessedFolder {
   lastScanStartedAt: DateTime lastScanFinishedAt: DateTime
   counts: ProcessedFolderEntryCounts!
 }
-type ProcessedFolderEntryCounts { observing: Int! stable: Int! importing: Int! imported: Int! skipped: Int! failed: Int! needsReview: Int! ignored: Int! rejected: Int! }
+type ProcessedFolderEntryCounts { observing: Int! stable: Int! importing: Int! imported: Int! skipped: Int! failed: Int! needsReview: Int! ignored: Int! rejected: Int! superseded: Int! gone: Int! }
 type ProcessedFolderEntry {
   id: ID! folderId: ID! relativePath: String! sizeBytes: Long! modifiedAt: DateTime!
   status: ProcessedFolderEntryStatus! reasonCode: String
@@ -228,7 +238,7 @@ type ProcessedFolderEntry {
 type ProcessedFolderEntryConnection { items: [ProcessedFolderEntry!]! totalCount: Int! }
 type ProcessedFolderScanPayload {
   folder: ProcessedFolder!
-  discovered: Int! becameStable: Int! importsQueued: Int! needsReview: Int! rejected: Int! gone: Int! recovered: Int!
+  discovered: Int! becameStable: Int! importsQueued: Int! needsReview: Int! rejected: Int! superseded: Int! gone: Int! recovered: Int!
   nextEligibleAt: DateTime
 }
 type ProcessedFolderPreviewPayload { entries: [ProcessedFolderPreviewEntry!]! truncated: Boolean! }
@@ -299,4 +309,34 @@ test("the processed-folder documents validate against the API schema (or the con
     }
   }
   assert.deepEqual(failures, []);
+});
+
+test("folder documents select every ledger count and the scan's superseded count", () => {
+  const countFields = [
+    "observing",
+    "stable",
+    "importing",
+    "imported",
+    "skipped",
+    "failed",
+    "needsReview",
+    "ignored",
+    "rejected",
+    "superseded",
+    "gone",
+  ];
+  assert.equal(countFields.length, PROCESSED_FOLDER_ENTRY_STATUSES.length);
+  const folderDocument = parse(queries.processedFoldersQuery);
+  const selected: string[] = [];
+  visit(folderDocument, {
+    Field(node) {
+      if (node.name.value !== "counts") return;
+      for (const selection of node.selectionSet?.selections ?? []) {
+        if (selection.kind === Kind.FIELD) selected.push(selection.name.value);
+      }
+    },
+  });
+  assert.deepEqual([...selected].sort(), [...countFields].sort());
+  assert.match(mutations.scanProcessedFolderMutation, /\bsuperseded\b/);
+  assert.match(mutations.scanProcessedFolderMutation, /\bgone\b/);
 });

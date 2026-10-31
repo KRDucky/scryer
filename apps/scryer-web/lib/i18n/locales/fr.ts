@@ -3779,6 +3779,8 @@ const fr: LocaleDictionary = {
     "Cette action n'est plus possible pour ce fichier. Actualisez la liste.",
   "processedFolder.refusal.entryNotFound":
     "Cette entrée de fichier n'existe plus.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Supprimez les espaces au début ou à la fin.",
   "processedFolder.refusal.importsInFlight":
     "Des importations de ce dossier sont encore en cours. Réessayez quand elles seront terminées.",
   "processedFolder.refusal.invalidMarker":
@@ -3787,8 +3789,12 @@ const fr: LocaleDictionary = {
     "Les paramètres de stabilité sont hors limites.",
   "processedFolder.refusal.libraryNotFound":
     "La bibliothèque sélectionnée n'existe plus.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Laissez le nom du marqueur vide quand aucun marqueur n'est utilisé.",
   "processedFolder.refusal.nameRequired": "Saisissez un nom pour le dossier.",
   "processedFolder.refusal.nameTaken": "Un autre dossier utilise déjà ce nom.",
+  "processedFolder.refusal.nameTooLong":
+    "Utilisez un nom de 100 caractères au maximum.",
   "processedFolder.refusal.notFound": "Ce dossier n'existe plus.",
   "processedFolder.refusal.overlapsBackupPath":
     "Ce dossier chevauche le dossier de sauvegarde.",
@@ -3806,6 +3812,10 @@ const fr: LocaleDictionary = {
     "Scryer ne peut pas résoudre ce chemin.",
   "processedFolder.refusal.scanInProgress":
     "Une analyse de ce dossier est déjà en cours.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Ce dossier utilise une portée que Scryer ne prend pas en charge. Seuls les dossiers de bibliothèque sont pris en charge.",
+  "processedFolder.refusal.titleNotFound":
+    "Ce titre n'existe plus. Relancez la recherche.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Choisissez un titre de la bibliothèque de ce dossier.",
   "processedFolder.status.failed": "Échec",
@@ -3830,6 +3840,9 @@ const fr: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Les fichiers sont toujours copiés. Scryer ne déplace, ne lie et ne supprime jamais rien dans ce dossier.",
   "settings.processedFolders.counts": "Fichiers",
+  "settings.processedFolders.countsByStatus": "Fichiers par état",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} remplacés, {{gone}} disparus",
   "settings.processedFolders.countsSummary":
     "{{imported}} importés, {{needsReview}} à vérifier, {{failed}} en échec, {{observing}} en observation",
   "settings.processedFolders.created":
@@ -3922,6 +3935,7 @@ const fr: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Récupérés",
   "settings.processedFolders.scanRejected": "Refusés",
   "settings.processedFolders.scanResultTitle": "Analyse terminée",
+  "settings.processedFolders.scanSuperseded": "Remplacés",
   "settings.processedFolders.showEntries": "Afficher les fichiers",
   "settings.processedFolders.size": "Taille",
   "settings.processedFolders.stability": "Terminé quand",

@@ -3684,6 +3684,8 @@ const pt_BR: LocaleDictionary = {
     "Esta ação não está mais disponível para este arquivo. Atualize a lista.",
   "processedFolder.refusal.entryNotFound":
     "Esta entrada de arquivo não existe mais.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Remova os espaços do início ou do fim.",
   "processedFolder.refusal.importsInFlight":
     "Ainda há importações desta pasta em andamento. Tente novamente quando terminarem.",
   "processedFolder.refusal.invalidMarker":
@@ -3692,8 +3694,12 @@ const pt_BR: LocaleDictionary = {
     "As configurações de estabilidade estão fora do intervalo.",
   "processedFolder.refusal.libraryNotFound":
     "A biblioteca selecionada não existe mais.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Deixe o nome do marcador vazio quando nenhum marcador for usado.",
   "processedFolder.refusal.nameRequired": "Digite um nome para a pasta.",
   "processedFolder.refusal.nameTaken": "Outra pasta já usa este nome.",
+  "processedFolder.refusal.nameTooLong":
+    "Use um nome com no máximo 100 caracteres.",
   "processedFolder.refusal.notFound": "Esta pasta não existe mais.",
   "processedFolder.refusal.overlapsBackupPath":
     "Esta pasta se sobrepõe à pasta de backup.",
@@ -3711,6 +3717,10 @@ const pt_BR: LocaleDictionary = {
     "O Scryer não consegue resolver este caminho.",
   "processedFolder.refusal.scanInProgress":
     "Já há uma varredura desta pasta em andamento.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Esta pasta usa um escopo que o Scryer não suporta. Só pastas de biblioteca são suportadas.",
+  "processedFolder.refusal.titleNotFound":
+    "Esse título não existe mais. Pesquise de novo.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Escolha um título da biblioteca desta pasta.",
   "processedFolder.status.failed": "Falhou",
@@ -3735,6 +3745,9 @@ const pt_BR: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Os arquivos são sempre copiados. O Scryer nunca move, vincula ou exclui nada nesta pasta.",
   "settings.processedFolders.counts": "Arquivos",
+  "settings.processedFolders.countsByStatus": "Arquivos por status",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} substituídos, {{gone}} sumiram",
   "settings.processedFolders.countsSummary":
     "{{imported}} importados, {{needsReview}} para revisar, {{failed}} com falha, {{observing}} em observação",
   "settings.processedFolders.created":
@@ -3827,6 +3840,7 @@ const pt_BR: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Recuperados",
   "settings.processedFolders.scanRejected": "Rejeitados",
   "settings.processedFolders.scanResultTitle": "Varredura concluída",
+  "settings.processedFolders.scanSuperseded": "Substituídos",
   "settings.processedFolders.showEntries": "Mostrar arquivos",
   "settings.processedFolders.size": "Tamanho",
   "settings.processedFolders.stability": "Pronto quando",

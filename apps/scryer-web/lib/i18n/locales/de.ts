@@ -3694,6 +3694,8 @@ const de: LocaleDictionary = {
     "Diese Aktion ist für diese Datei nicht mehr möglich. Aktualisieren Sie die Liste.",
   "processedFolder.refusal.entryNotFound":
     "Dieser Dateieintrag existiert nicht mehr.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Entferne die Leerzeichen am Anfang oder Ende.",
   "processedFolder.refusal.importsInFlight":
     "Importe aus diesem Ordner laufen noch. Versuchen Sie es erneut, wenn sie fertig sind.",
   "processedFolder.refusal.invalidMarker":
@@ -3702,10 +3704,14 @@ const de: LocaleDictionary = {
     "Die Stabilitätseinstellungen liegen außerhalb des erlaubten Bereichs.",
   "processedFolder.refusal.libraryNotFound":
     "Die gewählte Bibliothek existiert nicht mehr.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Lass den Markernamen leer, wenn kein Marker verwendet wird.",
   "processedFolder.refusal.nameRequired":
     "Geben Sie einen Namen für den Ordner ein.",
   "processedFolder.refusal.nameTaken":
     "Ein anderer Ordner verwendet diesen Namen bereits.",
+  "processedFolder.refusal.nameTooLong":
+    "Verwende einen Namen mit höchstens 100 Zeichen.",
   "processedFolder.refusal.notFound": "Dieser Ordner existiert nicht mehr.",
   "processedFolder.refusal.overlapsBackupPath":
     "Dieser Ordner überschneidet sich mit dem Sicherungsordner.",
@@ -3723,6 +3729,10 @@ const de: LocaleDictionary = {
     "Scryer kann diesen Pfad nicht auflösen.",
   "processedFolder.refusal.scanInProgress":
     "Ein Scan dieses Ordners läuft bereits.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Dieser Ordner verwendet einen Bereich, den Scryer nicht unterstützt. Unterstützt werden nur Bibliotheksordner.",
+  "processedFolder.refusal.titleNotFound":
+    "Dieser Titel existiert nicht mehr. Suche erneut.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Wählen Sie einen Titel aus der Bibliothek dieses Ordners.",
   "processedFolder.status.failed": "Fehlgeschlagen",
@@ -3747,6 +3757,9 @@ const de: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Dateien werden immer kopiert. Scryer verschiebt, verknüpft oder löscht in diesem Ordner niemals etwas.",
   "settings.processedFolders.counts": "Dateien",
+  "settings.processedFolders.countsByStatus": "Dateien nach Status",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} ersetzt, {{gone}} verschwunden",
   "settings.processedFolders.countsSummary":
     "{{imported}} importiert, {{needsReview}} zu prüfen, {{failed}} fehlgeschlagen, {{observing}} beobachtet",
   "settings.processedFolders.created":
@@ -3839,6 +3852,7 @@ const de: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Wiederhergestellt",
   "settings.processedFolders.scanRejected": "Abgelehnt",
   "settings.processedFolders.scanResultTitle": "Scan abgeschlossen",
+  "settings.processedFolders.scanSuperseded": "Ersetzt",
   "settings.processedFolders.showEntries": "Dateien anzeigen",
   "settings.processedFolders.size": "Größe",
   "settings.processedFolders.stability": "Fertig, wenn",

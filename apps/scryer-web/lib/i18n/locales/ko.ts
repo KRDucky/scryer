@@ -3555,6 +3555,7 @@ const ko: LocaleDictionary = {
     "이 파일에서는 더 이상 그 작업을 할 수 없습니다. 목록을 새로 고치세요.",
   "processedFolder.refusal.entryNotFound":
     "이 파일 항목은 더 이상 존재하지 않습니다.",
+  "processedFolder.refusal.fieldNotTrimmed": "앞이나 뒤의 공백을 지우세요.",
   "processedFolder.refusal.importsInFlight":
     "이 폴더의 가져오기가 아직 실행 중입니다. 끝나면 다시 시도하세요.",
   "processedFolder.refusal.invalidMarker":
@@ -3563,8 +3564,11 @@ const ko: LocaleDictionary = {
     "안정성 설정이 범위를 벗어났습니다.",
   "processedFolder.refusal.libraryNotFound":
     "선택한 라이브러리가 더 이상 존재하지 않습니다.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "마커를 사용하지 않을 때는 마커 이름을 비워 두세요.",
   "processedFolder.refusal.nameRequired": "폴더 이름을 입력하세요.",
   "processedFolder.refusal.nameTaken": "다른 폴더가 이미 이 이름을 사용합니다.",
+  "processedFolder.refusal.nameTooLong": "이름은 100자 이하로 입력하세요.",
   "processedFolder.refusal.notFound": "이 폴더는 더 이상 존재하지 않습니다.",
   "processedFolder.refusal.overlapsBackupPath":
     "이 폴더가 백업 폴더와 겹칩니다.",
@@ -3581,6 +3585,10 @@ const ko: LocaleDictionary = {
     "Scryer가 이 경로를 확인할 수 없습니다.",
   "processedFolder.refusal.scanInProgress":
     "이 폴더의 스캔이 이미 실행 중입니다.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "이 폴더는 Scryer가 지원하지 않는 범위를 사용합니다. 라이브러리 폴더만 지원됩니다.",
+  "processedFolder.refusal.titleNotFound":
+    "해당 타이틀이 더 이상 존재하지 않습니다. 다시 검색하세요.",
   "processedFolder.refusal.titleOutsideLibrary":
     "이 폴더의 라이브러리에서 타이틀을 선택하세요.",
   "processedFolder.status.failed": "실패",
@@ -3605,6 +3613,9 @@ const ko: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "파일은 항상 복사됩니다. Scryer는 이 폴더의 어떤 것도 이동, 연결 또는 삭제하지 않습니다.",
   "settings.processedFolders.counts": "파일",
+  "settings.processedFolders.countsByStatus": "상태별 파일",
+  "settings.processedFolders.countsRetired":
+    "대체됨 {{superseded}}, 사라짐 {{gone}}",
   "settings.processedFolders.countsSummary":
     "가져옴 {{imported}}, 검토 필요 {{needsReview}}, 실패 {{failed}}, 관찰 중 {{observing}}",
   "settings.processedFolders.created":
@@ -3694,6 +3705,7 @@ const ko: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "복구됨",
   "settings.processedFolders.scanRejected": "거부됨",
   "settings.processedFolders.scanResultTitle": "스캔 완료",
+  "settings.processedFolders.scanSuperseded": "대체됨",
   "settings.processedFolders.showEntries": "파일 보기",
   "settings.processedFolders.size": "크기",
   "settings.processedFolders.stability": "완료 조건",

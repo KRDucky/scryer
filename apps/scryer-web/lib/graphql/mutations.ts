@@ -3565,6 +3565,7 @@ ${PROCESSED_FOLDER_FIELDS}
     needsReview
     rejected
     gone
+    superseded
     recovered
     nextEligibleAt
   }

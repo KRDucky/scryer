@@ -3628,6 +3628,8 @@ const ja: LocaleDictionary = {
     "このファイルではその操作をもう実行できません。一覧を更新してください。",
   "processedFolder.refusal.entryNotFound":
     "このファイル項目はもう存在しません。",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "先頭または末尾の空白を削除してください。",
   "processedFolder.refusal.importsInFlight":
     "このフォルダーからのインポートがまだ実行中です。完了してから再試行してください。",
   "processedFolder.refusal.invalidMarker":
@@ -3635,10 +3637,13 @@ const ja: LocaleDictionary = {
   "processedFolder.refusal.invalidStability": "安定性の設定が範囲外です。",
   "processedFolder.refusal.libraryNotFound":
     "選択したライブラリはもう存在しません。",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "マーカーを使わない場合は、マーカー名を空にしてください。",
   "processedFolder.refusal.nameRequired":
     "フォルダーの名前を入力してください。",
   "processedFolder.refusal.nameTaken":
     "この名前は別のフォルダーで使われています。",
+  "processedFolder.refusal.nameTooLong": "名前は 100 文字以内にしてください。",
   "processedFolder.refusal.notFound": "このフォルダーはもう存在しません。",
   "processedFolder.refusal.overlapsBackupPath":
     "このフォルダーはバックアップフォルダーと重なっています。",
@@ -3657,6 +3662,10 @@ const ja: LocaleDictionary = {
     "Scryer はこのパスを解決できません。",
   "processedFolder.refusal.scanInProgress":
     "このフォルダーのスキャンはすでに実行中です。",
+  "processedFolder.refusal.scopeKindInvalid":
+    "このフォルダーは Scryer が対応していない範囲を使っています。対応しているのはライブラリのフォルダーだけです。",
+  "processedFolder.refusal.titleNotFound":
+    "そのタイトルはもう存在しません。もう一度検索してください。",
   "processedFolder.refusal.titleOutsideLibrary":
     "このフォルダーのライブラリからタイトルを選んでください。",
   "processedFolder.status.failed": "失敗",
@@ -3681,6 +3690,9 @@ const ja: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "ファイルは常にコピーされます。Scryer がこのフォルダー内のものを移動、リンク、削除することはありません。",
   "settings.processedFolders.counts": "ファイル",
+  "settings.processedFolders.countsByStatus": "状態別のファイル",
+  "settings.processedFolders.countsRetired":
+    "置き換え済み {{superseded}}、消失 {{gone}}",
   "settings.processedFolders.countsSummary":
     "インポート済み {{imported}}、要確認 {{needsReview}}、失敗 {{failed}}、監視中 {{observing}}",
   "settings.processedFolders.created":
@@ -3773,6 +3785,7 @@ const ja: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "回復",
   "settings.processedFolders.scanRejected": "拒否",
   "settings.processedFolders.scanResultTitle": "スキャン完了",
+  "settings.processedFolders.scanSuperseded": "置き換え済み",
   "settings.processedFolders.showEntries": "ファイルを表示",
   "settings.processedFolders.size": "サイズ",
   "settings.processedFolders.stability": "完了条件",

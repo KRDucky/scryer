@@ -5521,14 +5521,18 @@ const zh_TW: LocaleDictionary = {
   "processedFolder.refusal.entryNotActionable":
     "此檔案已無法執行該動作。請重新整理清單。",
   "processedFolder.refusal.entryNotFound": "此檔案項目已不存在。",
+  "processedFolder.refusal.fieldNotTrimmed": "請刪除開頭或結尾的空格。",
   "processedFolder.refusal.importsInFlight":
     "此資料夾的匯入仍在進行。完成後再試。",
   "processedFolder.refusal.invalidMarker":
     '標記無效。請使用不含斜線或 ".." 的單一檔名。',
   "processedFolder.refusal.invalidStability": "穩定性設定超出範圍。",
   "processedFolder.refusal.libraryNotFound": "所選的媒體庫已不存在。",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "不使用標記時，請將標記名稱留空。",
   "processedFolder.refusal.nameRequired": "請輸入資料夾名稱。",
   "processedFolder.refusal.nameTaken": "已有其他資料夾使用此名稱。",
+  "processedFolder.refusal.nameTooLong": "名稱不能超過 100 個字元。",
   "processedFolder.refusal.notFound": "此資料夾已不存在。",
   "processedFolder.refusal.overlapsBackupPath": "此資料夾與備份資料夾重疊。",
   "processedFolder.refusal.overlapsLibraryRoot":
@@ -5541,6 +5545,9 @@ const zh_TW: LocaleDictionary = {
   "processedFolder.refusal.pathNotDirectory": "此路徑不是資料夾。",
   "processedFolder.refusal.pathUnresolvable": "Scryer 無法解析此路徑。",
   "processedFolder.refusal.scanInProgress": "此資料夾的掃描已在進行中。",
+  "processedFolder.refusal.scopeKindInvalid":
+    "此資料夾使用了 Scryer 不支援的範圍。僅支援媒體庫資料夾。",
+  "processedFolder.refusal.titleNotFound": "該作品已不存在。請重新搜尋。",
   "processedFolder.refusal.titleOutsideLibrary":
     "請從此資料夾的媒體庫中選擇標題。",
   "processedFolder.status.failed": "失敗",
@@ -5565,6 +5572,9 @@ const zh_TW: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "檔案一律以複製方式匯入。Scryer 絕不會移動、連結或刪除此資料夾中的任何內容。",
   "settings.processedFolders.counts": "檔案",
+  "settings.processedFolders.countsByStatus": "依狀態檢視檔案",
+  "settings.processedFolders.countsRetired":
+    "已被取代 {{superseded}} 個，已消失 {{gone}} 個",
   "settings.processedFolders.countsSummary":
     "已匯入 {{imported}}，需審核 {{needsReview}}，失敗 {{failed}}，觀察中 {{observing}}",
   "settings.processedFolders.created":
@@ -5653,6 +5663,7 @@ const zh_TW: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "已恢復",
   "settings.processedFolders.scanRejected": "已拒絕",
   "settings.processedFolders.scanResultTitle": "掃描完成",
+  "settings.processedFolders.scanSuperseded": "已被取代",
   "settings.processedFolders.showEntries": "顯示檔案",
   "settings.processedFolders.size": "大小",
   "settings.processedFolders.stability": "完成條件",

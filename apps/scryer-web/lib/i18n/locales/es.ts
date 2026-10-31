@@ -3715,6 +3715,8 @@ const es: LocaleDictionary = {
     "Este archivo ya no admite esa acción. Actualiza la lista.",
   "processedFolder.refusal.entryNotFound":
     "Esta entrada de archivo ya no existe.",
+  "processedFolder.refusal.fieldNotTrimmed":
+    "Quita los espacios del principio o del final.",
   "processedFolder.refusal.importsInFlight":
     "Todavía hay importaciones de esta carpeta en curso. Inténtalo de nuevo cuando terminen.",
   "processedFolder.refusal.invalidMarker":
@@ -3723,9 +3725,13 @@ const es: LocaleDictionary = {
     "Los ajustes de estabilidad están fuera de rango.",
   "processedFolder.refusal.libraryNotFound":
     "La biblioteca seleccionada ya no existe.",
+  "processedFolder.refusal.markerValueNotAllowed":
+    "Deja vacío el nombre del marcador cuando no se use marcador.",
   "processedFolder.refusal.nameRequired":
     "Introduce un nombre para la carpeta.",
   "processedFolder.refusal.nameTaken": "Otra carpeta ya usa este nombre.",
+  "processedFolder.refusal.nameTooLong":
+    "Usa un nombre de 100 caracteres como máximo.",
   "processedFolder.refusal.notFound": "Esta carpeta ya no existe.",
   "processedFolder.refusal.overlapsBackupPath":
     "Esta carpeta se solapa con la carpeta de copias de seguridad.",
@@ -3743,6 +3749,10 @@ const es: LocaleDictionary = {
     "Scryer no puede resolver esta ruta.",
   "processedFolder.refusal.scanInProgress":
     "Ya hay un escaneo de esta carpeta en curso.",
+  "processedFolder.refusal.scopeKindInvalid":
+    "Esta carpeta usa un ámbito que Scryer no admite. Solo se admiten carpetas de biblioteca.",
+  "processedFolder.refusal.titleNotFound":
+    "Ese título ya no existe. Vuelve a buscar.",
   "processedFolder.refusal.titleOutsideLibrary":
     "Elige un título de la biblioteca de esta carpeta.",
   "processedFolder.status.failed": "Fallido",
@@ -3767,6 +3777,9 @@ const es: LocaleDictionary = {
   "settings.processedFolders.copyOnlyNotice":
     "Los archivos siempre se copian. Scryer nunca mueve, enlaza ni elimina nada en esta carpeta.",
   "settings.processedFolders.counts": "Archivos",
+  "settings.processedFolders.countsByStatus": "Archivos por estado",
+  "settings.processedFolders.countsRetired":
+    "{{superseded}} reemplazados, {{gone}} desaparecidos",
   "settings.processedFolders.countsSummary":
     "{{imported}} importados, {{needsReview}} por revisar, {{failed}} fallidos, {{observing}} en observación",
   "settings.processedFolders.created":
@@ -3859,6 +3872,7 @@ const es: LocaleDictionary = {
   "settings.processedFolders.scanRecovered": "Recuperados",
   "settings.processedFolders.scanRejected": "Rechazados",
   "settings.processedFolders.scanResultTitle": "Escaneo terminado",
+  "settings.processedFolders.scanSuperseded": "Reemplazados",
   "settings.processedFolders.showEntries": "Mostrar archivos",
   "settings.processedFolders.size": "Tamaño",
   "settings.processedFolders.stability": "Terminado cuando",

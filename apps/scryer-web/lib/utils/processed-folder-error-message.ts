@@ -15,7 +15,9 @@ export const PROCESSED_FOLDER_REFUSAL_KEYS: Readonly<Record<string, string>> = {
   PROCESSED_FOLDER_NOT_FOUND: "processedFolder.refusal.notFound",
   PROCESSED_FOLDER_ENTRY_NOT_FOUND: "processedFolder.refusal.entryNotFound",
   PROCESSED_FOLDER_NAME_REQUIRED: "processedFolder.refusal.nameRequired",
+  PROCESSED_FOLDER_NAME_TOO_LONG: "processedFolder.refusal.nameTooLong",
   PROCESSED_FOLDER_NAME_TAKEN: "processedFolder.refusal.nameTaken",
+  PROCESSED_FOLDER_FIELD_NOT_TRIMMED: "processedFolder.refusal.fieldNotTrimmed",
   PROCESSED_FOLDER_PATH_NOT_ABSOLUTE: "processedFolder.refusal.pathNotAbsolute",
   PROCESSED_FOLDER_PATH_MISSING: "processedFolder.refusal.pathMissing",
   PROCESSED_FOLDER_PATH_NOT_DIRECTORY:
@@ -31,9 +33,13 @@ export const PROCESSED_FOLDER_REFUSAL_KEYS: Readonly<Record<string, string>> = {
   PROCESSED_FOLDER_OVERLAPS_OTHER_FOLDER:
     "processedFolder.refusal.overlapsOtherFolder",
   PROCESSED_FOLDER_LIBRARY_NOT_FOUND: "processedFolder.refusal.libraryNotFound",
+  PROCESSED_FOLDER_SCOPE_KIND_INVALID:
+    "processedFolder.refusal.scopeKindInvalid",
   PROCESSED_FOLDER_INVALID_STABILITY:
     "processedFolder.refusal.invalidStability",
   PROCESSED_FOLDER_INVALID_MARKER: "processedFolder.refusal.invalidMarker",
+  PROCESSED_FOLDER_MARKER_VALUE_NOT_ALLOWED:
+    "processedFolder.refusal.markerValueNotAllowed",
   PROCESSED_FOLDER_DISABLED: "processedFolder.refusal.disabled",
   PROCESSED_FOLDER_SCAN_IN_PROGRESS: "processedFolder.refusal.scanInProgress",
   PROCESSED_FOLDER_ENTRY_NOT_ACTIONABLE:
@@ -41,6 +47,7 @@ export const PROCESSED_FOLDER_REFUSAL_KEYS: Readonly<Record<string, string>> = {
   PROCESSED_FOLDER_ENTRY_CHANGED: "processedFolder.refusal.entryChanged",
   PROCESSED_FOLDER_TITLE_OUTSIDE_LIBRARY:
     "processedFolder.refusal.titleOutsideLibrary",
+  PROCESSED_FOLDER_TITLE_NOT_FOUND: "processedFolder.refusal.titleNotFound",
   PROCESSED_FOLDER_IMPORTS_IN_FLIGHT: "processedFolder.refusal.importsInFlight",
 };
 
@@ -63,7 +70,7 @@ export function processedFolderErrorMessage(
   fallback: string,
 ): string {
   const key = processedFolderRefusalKey(error);
-  return key ? t(key) : userFacingGraphQlErrorMessage(error, fallback);
+  return key ? t(key) : userFacingGraphQlErrorMessage(error, fallback, t);
 }
 
 /** Ledger states, as the GraphQL `ProcessedFolderEntryStatus` enum names them. */
