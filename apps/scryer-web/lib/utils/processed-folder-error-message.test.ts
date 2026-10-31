@@ -167,7 +167,7 @@ type ProcessedFolder {
 }
 type ProcessedFolderEntryCounts { observing: Int! stable: Int! importing: Int! imported: Int! skipped: Int! failed: Int! needsReview: Int! ignored: Int! rejected: Int! }
 type ProcessedFolderEntry {
-  id: ID! folderId: ID! relativePath: String! sizeBytes: Int! modifiedAt: DateTime!
+  id: ID! folderId: ID! relativePath: String! sizeBytes: Long! modifiedAt: DateTime!
   status: ProcessedFolderEntryStatus! reasonCode: String
   stableScanCount: Int! firstSeenAt: DateTime! lastSeenAt: DateTime! markerSeen: Boolean!
   titleId: ID importId: ID attempts: Int! lastError: String
@@ -181,7 +181,7 @@ type ProcessedFolderScanPayload {
   nextEligibleAt: DateTime
 }
 type ProcessedFolderPreviewPayload { entries: [ProcessedFolderPreviewEntry!]! truncated: Boolean! }
-type ProcessedFolderPreviewEntry { relativePath: String! sizeBytes: Int! modifiedAt: DateTime! wouldBe: ProcessedFolderEntryStatus! reasonCode: String matchedTitleId: ID }
+type ProcessedFolderPreviewEntry { relativePath: String! sizeBytes: Long! modifiedAt: DateTime! wouldBe: ProcessedFolderEntryStatus! reasonCode: String matchedTitleId: ID }
 input CreateProcessedFolderInput { name: String! rootPath: String! libraryId: ID! minStableScans: Int minAgeSeconds: Int markerMode: ProcessedFolderMarkerMode markerValue: String }
 input UpdateProcessedFolderInput { id: ID! name: String rootPath: String libraryId: ID minStableScans: Int minAgeSeconds: Int markerMode: ProcessedFolderMarkerMode markerValue: String }
 type ProcessedFolderPayload { folder: ProcessedFolder! }
