@@ -3662,6 +3662,7 @@ const it: LocaleDictionary = {
     "Per estrarre questo archivio serve un plugin.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "L'estrazione dell'archivio ha richiesto troppo tempo.",
+  "processedFolder.reason.cancelled": "L'importazione è stata annullata.",
   "processedFolder.reason.conflict":
     "L'importazione ha trovato un conflitto e richiede una decisione.",
   "processedFolder.reason.diskFull": "Il disco della libreria è pieno.",
@@ -3673,7 +3674,11 @@ const it: LocaleDictionary = {
     "Il file è cambiato prima dell'inizio dell'importazione.",
   "processedFolder.reason.error":
     "L'importazione non è riuscita a causa di un errore.",
+  "processedFolder.reason.failed": "L'importazione non è riuscita.",
+  "processedFolder.reason.fileNotFound": "File non trovato.",
   "processedFolder.reason.interrupted": "L'importazione è stata interrotta.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "La copia nella libreria va controllata a mano prima che Scryer possa continuare.",
   "processedFolder.reason.noVideoFiles": "Nessun file video trovato.",
   "processedFolder.reason.notAVideo": "Non è un file video.",
   "processedFolder.reason.outsideLibrary":
@@ -3686,6 +3691,13 @@ const it: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Una regola post-download ha bloccato questo file.",
   "processedFolder.reason.rejected": "L'importazione ha rifiutato questo file.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "In attesa dei sottotitoli scene della release.",
+  "processedFolder.reason.skipped": "L'importazione ha saltato questo file.",
+  "processedFolder.reason.sourceChanged":
+    "Il file è cambiato mentre Scryer lo controllava. Verrà ritentato.",
+  "processedFolder.reason.sourceUnavailable":
+    "Al momento non è stato possibile leggere il file. Verrà ritentato.",
   "processedFolder.reason.symlinkDir":
     "Le cartelle collegate non vengono seguite.",
   "processedFolder.reason.symlinkEscapesRoot":

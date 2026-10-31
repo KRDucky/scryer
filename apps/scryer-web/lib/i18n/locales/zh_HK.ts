@@ -5487,6 +5487,7 @@ const zh_HK: LocaleDictionary = {
   "processedFolder.reason.archiveExtractionPluginRequired":
     "解壓縮此壓縮檔需要插件。",
   "processedFolder.reason.archiveExtractionTimedOut": "解壓縮壓縮檔耗時過長。",
+  "processedFolder.reason.cancelled": "匯入已取消。",
   "processedFolder.reason.conflict": "匯入發現衝突，需要你做決定。",
   "processedFolder.reason.diskFull": "媒體庫磁碟已滿。",
   "processedFolder.reason.downloadInProgress": "檔案仍在寫入中。",
@@ -5494,7 +5495,11 @@ const zh_HK: LocaleDictionary = {
   "processedFolder.reason.empty": "檔案是空的。",
   "processedFolder.reason.entryChanged": "匯入開始前檔案已變更。",
   "processedFolder.reason.error": "匯入因錯誤而失敗。",
+  "processedFolder.reason.failed": "匯入失敗。",
+  "processedFolder.reason.fileNotFound": "找不到該檔案。",
   "processedFolder.reason.interrupted": "匯入已中斷。",
+  "processedFolder.reason.manualReconciliationRequired":
+    "媒體庫中的副本需要人手檢查，Scryer 才能繼續。",
   "processedFolder.reason.noVideoFiles": "找不到影片檔案。",
   "processedFolder.reason.notAVideo": "不是影片檔案。",
   "processedFolder.reason.outsideLibrary": "相符的標題位於另一個媒體庫。",
@@ -5503,6 +5508,13 @@ const zh_HK: LocaleDictionary = {
   "processedFolder.reason.policyMismatch": "檔案不符合該標題的品質設定。",
   "processedFolder.reason.postDownloadRuleBlocked": "下載後規則封鎖了此檔案。",
   "processedFolder.reason.rejected": "匯入拒絕了此檔案。",
+  "processedFolder.reason.sceneSubtitlePending":
+    "正在等候該發佈的 Scene 字幕。",
+  "processedFolder.reason.skipped": "匯入略過了此檔案。",
+  "processedFolder.reason.sourceChanged":
+    "Scryer 檢查期間檔案有所改變。稍後會重試。",
+  "processedFolder.reason.sourceUnavailable":
+    "暫時無法讀取該檔案。稍後會重試。",
   "processedFolder.reason.symlinkDir": "不會進入連結的資料夾。",
   "processedFolder.reason.symlinkEscapesRoot": "符號連結指向此資料夾之外。",
   "processedFolder.reason.unmatched": "找不到相符的標題。",

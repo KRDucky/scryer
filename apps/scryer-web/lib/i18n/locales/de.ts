@@ -3650,6 +3650,7 @@ const de: LocaleDictionary = {
     "Zum Entpacken dieses Archivs wird ein Plugin benötigt.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "Das Entpacken des Archivs hat zu lange gedauert.",
+  "processedFolder.reason.cancelled": "Der Import wurde abgebrochen.",
   "processedFolder.reason.conflict":
     "Der Import hat einen Konflikt gefunden und braucht eine Entscheidung.",
   "processedFolder.reason.diskFull": "Der Bibliotheksdatenträger ist voll.",
@@ -3662,7 +3663,11 @@ const de: LocaleDictionary = {
     "Die Datei hat sich vor dem Import geändert.",
   "processedFolder.reason.error":
     "Der Import ist mit einem Fehler fehlgeschlagen.",
+  "processedFolder.reason.failed": "Der Import ist fehlgeschlagen.",
+  "processedFolder.reason.fileNotFound": "Die Datei wurde nicht gefunden.",
   "processedFolder.reason.interrupted": "Der Import wurde unterbrochen.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "Die Kopie in der Bibliothek muss manuell geprüft werden, bevor Scryer weitermachen kann.",
   "processedFolder.reason.noVideoFiles": "Keine Videodateien gefunden.",
   "processedFolder.reason.notAVideo": "Keine Videodatei.",
   "processedFolder.reason.outsideLibrary":
@@ -3675,6 +3680,13 @@ const de: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Eine Regel nach dem Download hat diese Datei blockiert.",
   "processedFolder.reason.rejected": "Der Import hat diese Datei abgelehnt.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Warte auf die Szene-Untertitel des Releases.",
+  "processedFolder.reason.skipped": "Der Import hat diese Datei übersprungen.",
+  "processedFolder.reason.sourceChanged":
+    "Die Datei hat sich geändert, während Scryer sie geprüft hat. Es wird erneut versucht.",
+  "processedFolder.reason.sourceUnavailable":
+    "Die Datei konnte gerade nicht gelesen werden. Es wird erneut versucht.",
   "processedFolder.reason.symlinkDir":
     "Verknüpften Ordnern wird nicht gefolgt.",
   "processedFolder.reason.symlinkEscapesRoot":

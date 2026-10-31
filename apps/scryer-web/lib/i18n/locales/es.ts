@@ -3672,6 +3672,7 @@ const es: LocaleDictionary = {
     "Extraer este archivo comprimido necesita un complemento.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "La extracción del archivo comprimido tardó demasiado.",
+  "processedFolder.reason.cancelled": "La importación se canceló.",
   "processedFolder.reason.conflict":
     "La importación encontró un conflicto y necesita una decisión.",
   "processedFolder.reason.diskFull": "El disco de la biblioteca está lleno.",
@@ -3683,7 +3684,11 @@ const es: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "El archivo cambió antes de empezar la importación.",
   "processedFolder.reason.error": "La importación falló con un error.",
+  "processedFolder.reason.failed": "La importación falló.",
+  "processedFolder.reason.fileNotFound": "No se encontró el archivo.",
   "processedFolder.reason.interrupted": "La importación se interrumpió.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "La copia de la biblioteca necesita una revisión manual antes de que Scryer pueda continuar.",
   "processedFolder.reason.noVideoFiles": "No se encontraron archivos de vídeo.",
   "processedFolder.reason.notAVideo": "No es un archivo de vídeo.",
   "processedFolder.reason.outsideLibrary":
@@ -3696,6 +3701,13 @@ const es: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Una regla posterior a la descarga bloqueó este archivo.",
   "processedFolder.reason.rejected": "La importación rechazó este archivo.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Esperando los subtítulos de la scene del lanzamiento.",
+  "processedFolder.reason.skipped": "La importación omitió este archivo.",
+  "processedFolder.reason.sourceChanged":
+    "El archivo cambió mientras Scryer lo revisaba. Se volverá a intentar.",
+  "processedFolder.reason.sourceUnavailable":
+    "No se pudo leer el archivo ahora mismo. Se volverá a intentar.",
   "processedFolder.reason.symlinkDir": "No se siguen las carpetas enlazadas.",
   "processedFolder.reason.symlinkEscapesRoot":
     "Un enlace simbólico apunta fuera de esta carpeta.",

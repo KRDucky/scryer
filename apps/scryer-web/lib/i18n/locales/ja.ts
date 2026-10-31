@@ -3587,6 +3587,7 @@ const ja: LocaleDictionary = {
     "このアーカイブの展開にはプラグインが必要です。",
   "processedFolder.reason.archiveExtractionTimedOut":
     "アーカイブの展開に時間がかかりすぎました。",
+  "processedFolder.reason.cancelled": "インポートはキャンセルされました。",
   "processedFolder.reason.conflict":
     "インポートで競合が見つかり、判断が必要です。",
   "processedFolder.reason.diskFull": "ライブラリのディスクがいっぱいです。",
@@ -3597,7 +3598,11 @@ const ja: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "インポート開始前にファイルが変更されました。",
   "processedFolder.reason.error": "インポートがエラーで失敗しました。",
+  "processedFolder.reason.failed": "インポートに失敗しました。",
+  "processedFolder.reason.fileNotFound": "ファイルが見つかりませんでした。",
   "processedFolder.reason.interrupted": "インポートが中断されました。",
+  "processedFolder.reason.manualReconciliationRequired":
+    "Scryer が続行する前に、ライブラリのコピーを手動で確認する必要があります。",
   "processedFolder.reason.noVideoFiles": "動画ファイルが見つかりません。",
   "processedFolder.reason.notAVideo": "動画ファイルではありません。",
   "processedFolder.reason.outsideLibrary":
@@ -3610,6 +3615,14 @@ const ja: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "ダウンロード後のルールがこのファイルをブロックしました。",
   "processedFolder.reason.rejected": "インポートがこのファイルを拒否しました。",
+  "processedFolder.reason.sceneSubtitlePending":
+    "リリースのシーン字幕を待っています。",
+  "processedFolder.reason.skipped":
+    "インポートはこのファイルをスキップしました。",
+  "processedFolder.reason.sourceChanged":
+    "Scryer の確認中にファイルが変更されました。もう一度試します。",
+  "processedFolder.reason.sourceUnavailable":
+    "今はファイルを読み取れませんでした。もう一度試します。",
   "processedFolder.reason.symlinkDir": "リンクされたフォルダーはたどりません。",
   "processedFolder.reason.symlinkEscapesRoot":
     "シンボリックリンクがこのフォルダーの外を指しています。",

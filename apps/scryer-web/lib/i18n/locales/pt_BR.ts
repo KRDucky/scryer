@@ -3641,6 +3641,7 @@ const pt_BR: LocaleDictionary = {
     "Extrair este arquivo compactado requer um plugin.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "A extração do arquivo compactado demorou demais.",
+  "processedFolder.reason.cancelled": "A importação foi cancelada.",
   "processedFolder.reason.conflict":
     "A importação encontrou um conflito e precisa de uma decisão.",
   "processedFolder.reason.diskFull": "O disco da biblioteca está cheio.",
@@ -3652,7 +3653,11 @@ const pt_BR: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "O arquivo mudou antes de a importação começar.",
   "processedFolder.reason.error": "A importação falhou com um erro.",
+  "processedFolder.reason.failed": "A importação falhou.",
+  "processedFolder.reason.fileNotFound": "O arquivo não foi encontrado.",
   "processedFolder.reason.interrupted": "A importação foi interrompida.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "A cópia na biblioteca precisa de uma verificação manual antes que o Scryer possa continuar.",
   "processedFolder.reason.noVideoFiles": "Nenhum arquivo de vídeo encontrado.",
   "processedFolder.reason.notAVideo": "Não é um arquivo de vídeo.",
   "processedFolder.reason.outsideLibrary":
@@ -3665,6 +3670,13 @@ const pt_BR: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Uma regra pós-download bloqueou este arquivo.",
   "processedFolder.reason.rejected": "A importação rejeitou este arquivo.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Aguardando as legendas scene do lançamento.",
+  "processedFolder.reason.skipped": "A importação ignorou este arquivo.",
+  "processedFolder.reason.sourceChanged":
+    "O arquivo mudou enquanto o Scryer o verificava. Será tentado de novo.",
+  "processedFolder.reason.sourceUnavailable":
+    "Não foi possível ler o arquivo agora. Será tentado de novo.",
   "processedFolder.reason.symlinkDir": "Pastas vinculadas não são seguidas.",
   "processedFolder.reason.symlinkEscapesRoot":
     "Um link simbólico aponta para fora desta pasta.",

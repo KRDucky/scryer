@@ -14,6 +14,7 @@ import ru from "./locales/ru.ts";
 import zh_CN from "./locales/zh_CN.ts";
 import zh_HK from "./locales/zh_HK.ts";
 import zh_TW from "./locales/zh_TW.ts";
+import { PROCESSED_FOLDER_REASON_KEYS } from "../utils/processed-folder-error-message.ts";
 
 const PREFIXES = [
   "settings.processedFolders.",
@@ -105,3 +106,12 @@ for (const [locale, dictionary] of Object.entries(TRANSLATIONS)) {
     );
   });
 }
+
+test("every reason the UI can label has text in all 14 locales", () => {
+  for (const [locale, dictionary] of Object.entries({ en, ...TRANSLATIONS })) {
+    const missing = Object.entries(PROCESSED_FOLDER_REASON_KEYS)
+      .filter(([, key]) => !dictionary[key]?.trim())
+      .map(([code, key]) => `${code} (${key})`);
+    assert.deepEqual(missing, [], `${locale} lacks reason labels`);
+  }
+});

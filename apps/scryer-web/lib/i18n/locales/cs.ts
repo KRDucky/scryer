@@ -7049,6 +7049,7 @@ const cs: LocaleDictionary = {
     "Rozbalení tohoto archivu vyžaduje plugin.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "Rozbalování archivu trvalo příliš dlouho.",
+  "processedFolder.reason.cancelled": "Import byl zrušen.",
   "processedFolder.reason.conflict":
     "Import narazil na konflikt a čeká na rozhodnutí.",
   "processedFolder.reason.diskFull": "Disk knihovny je plný.",
@@ -7059,7 +7060,11 @@ const cs: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "Soubor se změnil před zahájením importu.",
   "processedFolder.reason.error": "Import selhal s chybou.",
+  "processedFolder.reason.failed": "Import selhal.",
+  "processedFolder.reason.fileNotFound": "Soubor nebyl nalezen.",
   "processedFolder.reason.interrupted": "Import byl přerušen.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "Kopie v knihovně vyžaduje ruční kontrolu, než bude Scryer pokračovat.",
   "processedFolder.reason.noVideoFiles": "Nebyly nalezeny žádné videosoubory.",
   "processedFolder.reason.notAVideo": "Nejde o videosoubor.",
   "processedFolder.reason.outsideLibrary":
@@ -7071,6 +7076,13 @@ const cs: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Pravidlo po stažení tento soubor zablokovalo.",
   "processedFolder.reason.rejected": "Import tento soubor odmítl.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Čeká se na scénové titulky k vydání.",
+  "processedFolder.reason.skipped": "Import tento soubor přeskočil.",
+  "processedFolder.reason.sourceChanged":
+    "Soubor se změnil, zatímco ho Scryer kontroloval. Zkusí se to znovu.",
+  "processedFolder.reason.sourceUnavailable":
+    "Soubor teď nebylo možné přečíst. Zkusí se to znovu.",
   "processedFolder.reason.symlinkDir": "Propojené složky se neprocházejí.",
   "processedFolder.reason.symlinkEscapesRoot":
     "Symbolický odkaz vede mimo tuto složku.",

@@ -6884,6 +6884,7 @@ const ru: LocaleDictionary = {
     "Для распаковки этого архива нужен плагин.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "Распаковка архива заняла слишком много времени.",
+  "processedFolder.reason.cancelled": "Импорт отменён.",
   "processedFolder.reason.conflict":
     "При импорте возник конфликт, нужно решение.",
   "processedFolder.reason.diskFull": "Диск библиотеки заполнен.",
@@ -6893,7 +6894,11 @@ const ru: LocaleDictionary = {
   "processedFolder.reason.empty": "Файл пуст.",
   "processedFolder.reason.entryChanged": "Файл изменился до начала импорта.",
   "processedFolder.reason.error": "Импорт завершился с ошибкой.",
+  "processedFolder.reason.failed": "Импорт не удался.",
+  "processedFolder.reason.fileNotFound": "Файл не найден.",
   "processedFolder.reason.interrupted": "Импорт был прерван.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "Копию в библиотеке нужно проверить вручную, прежде чем Scryer сможет продолжить.",
   "processedFolder.reason.noVideoFiles": "Видеофайлы не найдены.",
   "processedFolder.reason.notAVideo": "Это не видеофайл.",
   "processedFolder.reason.outsideLibrary":
@@ -6905,6 +6910,13 @@ const ru: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Правило после загрузки заблокировало этот файл.",
   "processedFolder.reason.rejected": "Импорт отклонил этот файл.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Ожидаются scene-субтитры релиза.",
+  "processedFolder.reason.skipped": "Импорт пропустил этот файл.",
+  "processedFolder.reason.sourceChanged":
+    "Файл изменился, пока Scryer его проверял. Попытка будет повторена.",
+  "processedFolder.reason.sourceUnavailable":
+    "Сейчас не удалось прочитать файл. Попытка будет повторена.",
   "processedFolder.reason.symlinkDir": "Связанные папки не обходятся.",
   "processedFolder.reason.symlinkEscapesRoot":
     "Символическая ссылка ведёт за пределы этой папки.",

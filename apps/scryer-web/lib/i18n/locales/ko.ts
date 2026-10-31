@@ -3515,6 +3515,7 @@ const ko: LocaleDictionary = {
     "이 압축 파일을 풀려면 플러그인이 필요합니다.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "압축 해제에 너무 오래 걸렸습니다.",
+  "processedFolder.reason.cancelled": "가져오기가 취소되었습니다.",
   "processedFolder.reason.conflict":
     "가져오기에서 충돌이 발견되어 결정이 필요합니다.",
   "processedFolder.reason.diskFull": "라이브러리 디스크가 가득 찼습니다.",
@@ -3525,7 +3526,11 @@ const ko: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "가져오기가 시작되기 전에 파일이 변경되었습니다.",
   "processedFolder.reason.error": "가져오기가 오류로 실패했습니다.",
+  "processedFolder.reason.failed": "가져오기에 실패했습니다.",
+  "processedFolder.reason.fileNotFound": "파일을 찾을 수 없습니다.",
   "processedFolder.reason.interrupted": "가져오기가 중단되었습니다.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "Scryer가 계속하려면 먼저 라이브러리 사본을 직접 확인해야 합니다.",
   "processedFolder.reason.noVideoFiles": "동영상 파일을 찾지 못했습니다.",
   "processedFolder.reason.notAVideo": "동영상 파일이 아닙니다.",
   "processedFolder.reason.outsideLibrary":
@@ -3538,6 +3543,13 @@ const ko: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "다운로드 후 규칙이 이 파일을 차단했습니다.",
   "processedFolder.reason.rejected": "가져오기에서 이 파일을 거부했습니다.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "릴리스의 신(scene) 자막을 기다리는 중입니다.",
+  "processedFolder.reason.skipped": "가져오기가 이 파일을 건너뛰었습니다.",
+  "processedFolder.reason.sourceChanged":
+    "Scryer가 확인하는 동안 파일이 바뀌었습니다. 다시 시도합니다.",
+  "processedFolder.reason.sourceUnavailable":
+    "지금은 파일을 읽을 수 없습니다. 다시 시도합니다.",
   "processedFolder.reason.symlinkDir": "연결된 폴더는 따라가지 않습니다.",
   "processedFolder.reason.symlinkEscapesRoot":
     "심볼릭 링크가 이 폴더 밖을 가리킵니다.",

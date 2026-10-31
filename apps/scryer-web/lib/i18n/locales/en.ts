@@ -11342,6 +11342,7 @@ const en: LocaleDictionary = {
     "Extracting this archive needs a plugin.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "Extracting the archive took too long.",
+  "processedFolder.reason.cancelled": "The import was cancelled.",
   "processedFolder.reason.conflict":
     "The import found a conflict and needs a decision.",
   "processedFolder.reason.diskFull": "The library disk is full.",
@@ -11353,7 +11354,11 @@ const en: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "The file changed before the import started.",
   "processedFolder.reason.error": "The import failed with an error.",
+  "processedFolder.reason.failed": "The import failed.",
+  "processedFolder.reason.fileNotFound": "The file was not found.",
   "processedFolder.reason.interrupted": "The import was interrupted.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "The library copy needs a manual check before Scryer can continue.",
   "processedFolder.reason.noVideoFiles": "No video files were found.",
   "processedFolder.reason.notAVideo": "Not a video file.",
   "processedFolder.reason.outsideLibrary":
@@ -11365,6 +11370,13 @@ const en: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "A post-download rule blocked this file.",
   "processedFolder.reason.rejected": "The import rejected this file.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Waiting for the release's scene subtitles.",
+  "processedFolder.reason.skipped": "The import skipped this file.",
+  "processedFolder.reason.sourceChanged":
+    "The file changed while Scryer was checking it. It will be tried again.",
+  "processedFolder.reason.sourceUnavailable":
+    "The file could not be read just now. It will be tried again.",
   "processedFolder.reason.symlinkDir": "Linked folders are not followed.",
   "processedFolder.reason.symlinkEscapesRoot":
     "A symbolic link points outside this folder.",

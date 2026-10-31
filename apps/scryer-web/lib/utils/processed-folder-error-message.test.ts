@@ -213,6 +213,87 @@ test("a known reason code is translated and an unknown one shows as sent", () =>
   assert.equal(processedFolderReasonLabel(null, t), null);
 });
 
+// Every reason the ledger writes itself: contract section 2 (scan rules),
+// V0.2.7 (import results) and 2.4 (restart recovery).
+const CONTRACT_LEDGER_REASON_CODES = [
+  "unmatched",
+  "ambiguous",
+  "outside_library",
+  "conflict",
+  "symlink_escapes_root",
+  "symlink_dir",
+  "not_a_video",
+  "empty",
+  "entry_changed",
+  "already_imported",
+  "rejected",
+  "skipped",
+  "failed",
+  "error",
+  "interrupted",
+  "cancelled",
+  "manual_reconciliation_required",
+  "disk_full",
+  "permission_denied",
+  "file_not_found",
+  "download_in_progress",
+  "unresolved_identity",
+  "unparseable_episode",
+  "source_changed",
+  "source_unavailable",
+] as const;
+
+const RUST_DOMAIN = new URL("crates/scryer-domain/src/lib.rs", REPO_ROOT);
+
+/** The strings `ImportSkipReason::as_str` returns, read from the domain crate. */
+function importSkipReasonCodes(source: string): string[] {
+  const start = source.indexOf("impl ImportSkipReason {");
+  assert.ok(start >= 0, "impl ImportSkipReason not found");
+  const body = source.slice(start, source.indexOf("\n}\n", start));
+  return [...body.matchAll(/Self::\w+ => "([a-z_]+)"/g)].map(
+    (match) => match[1],
+  );
+}
+
+test("every ledger reason in the contract has a label", () => {
+  const missing = CONTRACT_LEDGER_REASON_CODES.filter(
+    (code) => !Object.hasOwn(PROCESSED_FOLDER_REASON_KEYS, code),
+  );
+  assert.deepEqual(missing, []);
+});
+
+test("every ImportSkipReason::as_str value has a label", () => {
+  const codes = importSkipReasonCodes(readFileSync(RUST_DOMAIN, "utf8"));
+  for (const code of [
+    "source_changed",
+    "source_unavailable",
+    "scene_subtitle_pending",
+    "already_imported",
+  ]) {
+    assert.ok(codes.includes(code), `parser found ${code}`);
+  }
+  const missing = codes.filter(
+    (code) => !Object.hasOwn(PROCESSED_FOLDER_REASON_KEYS, code),
+  );
+  assert.deepEqual(missing, []);
+});
+
+test("every labelled reason shows translated text, not its code", () => {
+  for (const code of Object.keys(PROCESSED_FOLDER_REASON_KEYS)) {
+    const label = processedFolderReasonLabel(code, t);
+    assert.ok(label && label !== code, `${code} shows ${label}`);
+    assert.equal(label, en[PROCESSED_FOLDER_REASON_KEYS[code]]);
+  }
+});
+
+test("an unknown reason code, including an Object.prototype name, shows as sent", () => {
+  for (const code of ["toString", "__proto__", "constructor", "future_code"]) {
+    assert.equal(processedFolderReasonLabel(code, t), code);
+  }
+  assert.equal(processedFolderReasonLabel("", t), null);
+  assert.equal(processedFolderReasonLabel(undefined, t), null);
+});
+
 // The PR1 contract's SDL (section 4), used to check the documents until the
 // API schema in this checkout carries the processed-folder types.
 const CONTRACT_SDL = `

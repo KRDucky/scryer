@@ -3737,6 +3737,7 @@ const fr: LocaleDictionary = {
     "L'extraction de cette archive nécessite un plugin.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "L'extraction de l'archive a pris trop de temps.",
+  "processedFolder.reason.cancelled": "L'import a été annulé.",
   "processedFolder.reason.conflict":
     "L'importation a rencontré un conflit et attend une décision.",
   "processedFolder.reason.diskFull": "Le disque de la bibliothèque est plein.",
@@ -3748,7 +3749,11 @@ const fr: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "Le fichier a changé avant le début de l'importation.",
   "processedFolder.reason.error": "L'importation a échoué avec une erreur.",
+  "processedFolder.reason.failed": "L'import a échoué.",
+  "processedFolder.reason.fileNotFound": "Le fichier est introuvable.",
   "processedFolder.reason.interrupted": "L'importation a été interrompue.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "La copie dans la bibliothèque doit être vérifiée à la main avant que Scryer puisse continuer.",
   "processedFolder.reason.noVideoFiles": "Aucun fichier vidéo trouvé.",
   "processedFolder.reason.notAVideo": "Ce n'est pas un fichier vidéo.",
   "processedFolder.reason.outsideLibrary":
@@ -3761,6 +3766,13 @@ const fr: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Une règle post-téléchargement a bloqué ce fichier.",
   "processedFolder.reason.rejected": "L'importation a refusé ce fichier.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "En attente des sous-titres scene de la release.",
+  "processedFolder.reason.skipped": "L'import a ignoré ce fichier.",
+  "processedFolder.reason.sourceChanged":
+    "Le fichier a changé pendant que Scryer le vérifiait. Une nouvelle tentative aura lieu.",
+  "processedFolder.reason.sourceUnavailable":
+    "Le fichier n'a pas pu être lu pour l'instant. Une nouvelle tentative aura lieu.",
   "processedFolder.reason.symlinkDir": "Les dossiers liés ne sont pas suivis.",
   "processedFolder.reason.symlinkEscapesRoot":
     "Un lien symbolique pointe hors de ce dossier.",

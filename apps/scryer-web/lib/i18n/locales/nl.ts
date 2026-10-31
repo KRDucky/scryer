@@ -4362,6 +4362,7 @@ const nl: LocaleDictionary = {
     "Voor het uitpakken van dit archief is een plug-in nodig.",
   "processedFolder.reason.archiveExtractionTimedOut":
     "Het uitpakken van het archief duurde te lang.",
+  "processedFolder.reason.cancelled": "De import is geannuleerd.",
   "processedFolder.reason.conflict":
     "De import vond een conflict en heeft een beslissing nodig.",
   "processedFolder.reason.diskFull": "De schijf van de bibliotheek is vol.",
@@ -4373,7 +4374,11 @@ const nl: LocaleDictionary = {
   "processedFolder.reason.entryChanged":
     "Het bestand is gewijzigd voordat de import begon.",
   "processedFolder.reason.error": "De import is mislukt met een fout.",
+  "processedFolder.reason.failed": "De import is mislukt.",
+  "processedFolder.reason.fileNotFound": "Het bestand is niet gevonden.",
   "processedFolder.reason.interrupted": "De import is onderbroken.",
+  "processedFolder.reason.manualReconciliationRequired":
+    "De kopie in de bibliotheek moet handmatig worden gecontroleerd voordat Scryer verder kan.",
   "processedFolder.reason.noVideoFiles": "Geen videobestanden gevonden.",
   "processedFolder.reason.notAVideo": "Geen videobestand.",
   "processedFolder.reason.outsideLibrary":
@@ -4386,6 +4391,13 @@ const nl: LocaleDictionary = {
   "processedFolder.reason.postDownloadRuleBlocked":
     "Een regel na het downloaden heeft dit bestand geblokkeerd.",
   "processedFolder.reason.rejected": "De import heeft dit bestand afgewezen.",
+  "processedFolder.reason.sceneSubtitlePending":
+    "Wachten op de scene-ondertitels van de release.",
+  "processedFolder.reason.skipped": "De import heeft dit bestand overgeslagen.",
+  "processedFolder.reason.sourceChanged":
+    "Het bestand veranderde terwijl Scryer het controleerde. Het wordt opnieuw geprobeerd.",
+  "processedFolder.reason.sourceUnavailable":
+    "Het bestand kon nu niet worden gelezen. Het wordt opnieuw geprobeerd.",
   "processedFolder.reason.symlinkDir": "Gekoppelde mappen worden niet gevolgd.",
   "processedFolder.reason.symlinkEscapesRoot":
     "Een symbolische koppeling wijst buiten deze map.",

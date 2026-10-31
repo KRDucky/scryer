@@ -120,7 +120,7 @@ export const PROCESSED_FOLDER_ACTION_KEYS: Readonly<
 
 /**
  * The fixed `reasonCode` strings a ledger entry can carry: the folder's own
- * (contract section 2) and `ImportSkipReason::as_str` from a skipped import.
+ * (contract section 2, V0.2.7 and 2.4) and every `ImportSkipReason::as_str`.
  */
 export const PROCESSED_FOLDER_REASON_KEYS: Readonly<Record<string, string>> = {
   unmatched: "processedFolder.reason.unmatched",
@@ -151,6 +151,16 @@ export const PROCESSED_FOLDER_REASON_KEYS: Readonly<Record<string, string>> = {
     "processedFolder.reason.archiveExtractionPluginRequired",
   archive_extraction_timed_out:
     "processedFolder.reason.archiveExtractionTimedOut",
+  source_changed: "processedFolder.reason.sourceChanged",
+  source_unavailable: "processedFolder.reason.sourceUnavailable",
+  scene_subtitle_pending: "processedFolder.reason.sceneSubtitlePending",
+  // Ledger-only reasons (contract V0.2.7 and the restart recovery in 2.4).
+  skipped: "processedFolder.reason.skipped",
+  failed: "processedFolder.reason.failed",
+  cancelled: "processedFolder.reason.cancelled",
+  file_not_found: "processedFolder.reason.fileNotFound",
+  manual_reconciliation_required:
+    "processedFolder.reason.manualReconciliationRequired",
 };
 
 /** The entry's reason in the viewer's language; an unknown code shows as sent. */

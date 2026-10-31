@@ -3309,6 +3309,7 @@ const zh_CN: LocaleDictionary = {
   "processedFolder.reason.archiveExtractionPluginRequired":
     "解压此压缩包需要插件。",
   "processedFolder.reason.archiveExtractionTimedOut": "解压压缩包耗时过长。",
+  "processedFolder.reason.cancelled": "导入已取消。",
   "processedFolder.reason.conflict": "导入发现冲突，需要你做决定。",
   "processedFolder.reason.diskFull": "媒体库磁盘已满。",
   "processedFolder.reason.downloadInProgress": "文件仍在写入中。",
@@ -3316,7 +3317,11 @@ const zh_CN: LocaleDictionary = {
   "processedFolder.reason.empty": "文件为空。",
   "processedFolder.reason.entryChanged": "导入开始前文件已更改。",
   "processedFolder.reason.error": "导入因错误而失败。",
+  "processedFolder.reason.failed": "导入失败。",
+  "processedFolder.reason.fileNotFound": "找不到该文件。",
   "processedFolder.reason.interrupted": "导入被中断。",
+  "processedFolder.reason.manualReconciliationRequired":
+    "媒体库中的副本需要人工检查，Scryer 才能继续。",
   "processedFolder.reason.noVideoFiles": "未找到视频文件。",
   "processedFolder.reason.notAVideo": "不是视频文件。",
   "processedFolder.reason.outsideLibrary": "匹配的标题在另一个媒体库中。",
@@ -3325,6 +3330,13 @@ const zh_CN: LocaleDictionary = {
   "processedFolder.reason.policyMismatch": "文件不符合该标题的质量设置。",
   "processedFolder.reason.postDownloadRuleBlocked": "下载后规则阻止了此文件。",
   "processedFolder.reason.rejected": "导入拒绝了此文件。",
+  "processedFolder.reason.sceneSubtitlePending":
+    "正在等待该发布的 Scene 字幕。",
+  "processedFolder.reason.skipped": "导入跳过了此文件。",
+  "processedFolder.reason.sourceChanged":
+    "Scryer 检查期间文件发生了变化。稍后会重试。",
+  "processedFolder.reason.sourceUnavailable":
+    "暂时无法读取该文件。稍后会重试。",
   "processedFolder.reason.symlinkDir": "不会进入链接的文件夹。",
   "processedFolder.reason.symlinkEscapesRoot": "符号链接指向此文件夹之外。",
   "processedFolder.reason.unmatched": "未找到匹配的标题。",
