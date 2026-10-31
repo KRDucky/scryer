@@ -98,6 +98,9 @@ pub(crate) async fn delete_burned_download_data(
     completed_local: &scryer_domain::CompletedDownload,
     rejected_sources: &[PathBuf],
 ) -> BurnedDataCleanupOutcome {
+    if completed_local.is_processed_folder_source() {
+        return BurnedDataCleanupOutcome::Skipped("processed_folder_source");
+    }
     let job_dir = stored_path_to_path_buf(&completed_local.dest_dir);
     let libraries = match app.services.catalog.libraries.list(None).await {
         Ok(libraries) => libraries,
@@ -513,5 +516,27 @@ mod burned_source_tests {
             BurnedDataCleanupOutcome::DeletedFiles(vec![video.clone()])
         );
         assert!(!video.exists());
+    }
+
+    #[tokio::test]
+    async fn processed_folder_source_is_not_burned() {
+        let temp_dir = tempfile::tempdir().expect("tempdir");
+        let video = temp_dir.path().join("episode.mkv");
+        std::fs::write(&video, b"video").expect("write video");
+        let app = crate::import::seeding_gate::app_for_copy_only_tests(std::sync::Arc::new(
+            crate::NullSettingsRepository,
+        ));
+        let completed = crate::import::seeding_gate::processed_folder_completed(
+            &video.display().to_string(),
+        );
+
+        let outcome =
+            delete_burned_download_data(&app, &completed, std::slice::from_ref(&video)).await;
+
+        assert_eq!(
+            outcome,
+            BurnedDataCleanupOutcome::Skipped("processed_folder_source")
+        );
+        assert_eq!(std::fs::read(&video).expect("source bytes"), b"video");
     }
 }

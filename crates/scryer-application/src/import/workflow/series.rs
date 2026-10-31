@@ -2819,7 +2819,7 @@ pub(crate) fn is_sample_file(path: &Path) -> bool {
 /// fuzzy index, so a romanized or natively-scripted name reaches its title,
 /// while an in-memory comparison over `Vec<Title>` only ever sees the names
 /// the rows happen to carry.
-async fn resolve_title_from_release_candidate_via_port(
+pub(crate) async fn resolve_title_from_release_candidate_via_port(
     titles: &Arc<dyn crate::ports::TitleRepository>,
     candidate: &ParsedReleaseMetadata,
     facet_hint: Option<&str>,

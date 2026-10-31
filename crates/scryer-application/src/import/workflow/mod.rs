@@ -245,7 +245,8 @@ pub(crate) async fn import_file_with_record_progress(
     .with_active_import_stream(active_stream.clone())
     .with_archive_workspace_source(crate::archive_extractor::is_archive_workspace_output(
         source, dest,
-    ));
+    ))
+    .with_copy_only(completed.is_some_and(CompletedDownload::is_processed_folder_source));
     // FR-045: the depth is resolved *at import time*, not at process start, so
     // a preference change takes effect on the next import rather than the next
     // restart.
@@ -287,6 +288,16 @@ pub(crate) async fn import_file_with_record_progress(
     active_stream.finish().await;
 
     let result = result?;
+    if execution_context.copy_only()
+        && (result.strategy != scryer_domain::ImportStrategy::Copy
+            || result.source_cleanup.is_some())
+    {
+        return Err(AppError::ManualReconciliationRequired(format!(
+            "processed-folder import of {} into {} must be a copy with no source cleanup",
+            source.display(),
+            dest.display()
+        )));
+    }
     let finalization_permit = app
         .runtime
         .imports
@@ -473,6 +484,12 @@ impl std::ops::Deref for CoordinatedImportFileResult {
         &self.result
     }
 }
+
+// Declared here so this branch does not edit api-owned `import/mod.rs`.
+// Move this `mod` line into `import/processed_folders/mod.rs` when that
+// module exists on pf/pr1-base; the file is already at its future path.
+#[path = "../processed_folders/stability.rs"]
+pub(crate) mod processed_folder_stability;
 
 // This facade keeps the previous module scope while the former junk drawer is
 // mechanically split into functional source files.

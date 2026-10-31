@@ -815,6 +815,9 @@ pub(crate) async fn resolve_seeding_safe_import_mode(
     completed: Option<&CompletedDownload>,
 ) -> AppResult<ImportMode> {
     let configured = app.resolve_import_mode(library_id, facet).await?;
+    if completed.is_some_and(CompletedDownload::is_processed_folder_source) {
+        return Ok(ImportMode::HardlinkOrCopy);
+    }
     if configured != ImportMode::Move {
         return Ok(configured);
     }
@@ -835,6 +838,207 @@ pub(crate) async fn resolve_seeding_safe_import_mode(
         );
     }
     Ok(effective)
+}
+
+#[cfg(test)]
+pub(crate) fn processed_folder_completed(dest_dir: &str) -> CompletedDownload {
+    CompletedDownload {
+        client_type: scryer_domain::PROCESSED_FOLDER_CLIENT_TYPE.to_string(),
+        client_id: "folder-1".to_string(),
+        download_client_item_id: "pf1:abc".to_string(),
+        download_id: None,
+        name: "Show".to_string(),
+        release_name: Some("Show".to_string()),
+        dest_dir: dest_dir.to_string(),
+        category: None,
+        size_bytes: Some(4),
+        completed_at: None,
+        parameters: Vec::new(),
+        posted_file_names: Vec::new(),
+        subtitle_paths: Vec::new(),
+    }
+}
+
+#[cfg(test)]
+pub(crate) fn synthetic_cleanup_guard(
+    source: &std::path::Path,
+    dest: &std::path::Path,
+) -> scryer_domain::ImportSourceCleanupGuard {
+    scryer_domain::ImportSourceCleanupGuard {
+        source_path: source.to_path_buf(),
+        dest_path: dest.to_path_buf(),
+        size_bytes: 4,
+        source_identity: scryer_domain::ImportSourceIdentity {
+            file: scryer_domain::ImportFileIdentity {
+                len: 4,
+                modified: None,
+                #[cfg(unix)]
+                dev: 1,
+                #[cfg(unix)]
+                ino: 1,
+            },
+            kind: scryer_domain::ImportSourceIdentityKind::Regular,
+        },
+        source_proof: scryer_domain::ImportContentProof {
+            size_bytes: 4,
+            sample_bytes: 4,
+            sample_blake3: "abcd".to_string(),
+        },
+        dest_proof: scryer_domain::ImportContentProof {
+            size_bytes: 4,
+            sample_bytes: 4,
+            sample_blake3: "abcd".to_string(),
+        },
+    }
+}
+
+#[cfg(test)]
+struct MoveImportModeSettings;
+
+#[cfg(test)]
+#[async_trait::async_trait]
+impl crate::SettingsRepository for MoveImportModeSettings {
+    async fn get_setting_json(
+        &self,
+        _: &str,
+        key_name: &str,
+        _: Option<String>,
+    ) -> AppResult<Option<String>> {
+        if key_name == crate::settings::keys::IMPORT_MODE_KEY {
+            Ok(Some("\"move\"".to_string()))
+        } else {
+            Ok(None)
+        }
+    }
+
+    async fn upsert_setting_json(
+        &self,
+        _: &str,
+        _: &str,
+        _: Option<String>,
+        _: String,
+        _: &str,
+        _: Option<String>,
+    ) -> AppResult<()> {
+        Ok(())
+    }
+
+    async fn delete_setting_value(&self, _: &str, _: &str, _: Option<String>) -> AppResult<()> {
+        Ok(())
+    }
+
+    async fn delete_values_for_scope_id(&self, _: &str) -> AppResult<u32> {
+        Ok(0)
+    }
+}
+
+#[cfg(test)]
+struct EmptyIndexerConfigRepository;
+
+#[cfg(test)]
+#[async_trait::async_trait]
+impl crate::IndexerConfigRepository for EmptyIndexerConfigRepository {
+    async fn list(&self, _: Option<String>) -> AppResult<Vec<scryer_domain::IndexerConfig>> {
+        Ok(Vec::new())
+    }
+
+    async fn get_by_id(&self, _: &str) -> AppResult<Option<scryer_domain::IndexerConfig>> {
+        Ok(None)
+    }
+
+    async fn create(
+        &self,
+        config: scryer_domain::IndexerConfig,
+    ) -> AppResult<scryer_domain::IndexerConfig> {
+        Ok(config)
+    }
+
+    async fn touch_last_error(&self, _: &str) -> AppResult<()> {
+        Ok(())
+    }
+
+    async fn update(
+        &self,
+        _: crate::IndexerConfigUpdate,
+    ) -> AppResult<scryer_domain::IndexerConfig> {
+        Err(crate::AppError::Repository("not configured".to_string()))
+    }
+
+    async fn delete(&self, _: &str) -> AppResult<()> {
+        Ok(())
+    }
+}
+
+/// Deletes the guard's source. A processed-folder belt that calls removal fails
+/// the "file still exists" assertion.
+#[cfg(test)]
+pub(crate) struct SourceDeletingFileImporter;
+
+#[cfg(test)]
+#[async_trait::async_trait]
+impl crate::FileImporter for SourceDeletingFileImporter {
+    async fn snapshot_import_source(
+        &self,
+        _: &std::path::Path,
+    ) -> AppResult<scryer_domain::ImportSourceSnapshot> {
+        Err(crate::AppError::Repository("unused".to_string()))
+    }
+
+    async fn import_file(
+        &self,
+        _: &std::path::Path,
+        _: &std::path::Path,
+        _: scryer_domain::ImportMode,
+        _: Option<&scryer_domain::ImportSourceSnapshot>,
+    ) -> AppResult<scryer_domain::ImportFileResult> {
+        Err(crate::AppError::Repository("unused".to_string()))
+    }
+
+    async fn remove_import_source_after_verified_import(
+        &self,
+        guard: scryer_domain::ImportSourceCleanupGuard,
+        _: &std::path::Path,
+    ) -> AppResult<()> {
+        std::fs::remove_file(&guard.source_path).map_err(|error| {
+            crate::AppError::Repository(format!("test importer removed source: {error}"))
+        })
+    }
+}
+
+#[cfg(test)]
+pub(crate) fn app_for_copy_only_tests(
+    settings: std::sync::Arc<dyn crate::SettingsRepository>,
+) -> AppUseCase {
+    use crate::null_repositories::test_nulls::{
+        NullDownloadClient, NullDownloadClientConfigRepository, NullIndexerClient,
+        NullQualityProfileRepository, NullReleaseAttemptRepository, NullShowRepository,
+        NullTitleRepository, NullUserRepository,
+    };
+    use std::sync::Arc;
+
+    let assembly = crate::AppServices::builder(
+        Arc::new(NullTitleRepository),
+        Arc::new(NullShowRepository),
+        Arc::new(NullUserRepository),
+        Arc::new(EmptyIndexerConfigRepository),
+        Arc::new(NullIndexerClient),
+        Arc::new(NullDownloadClient),
+        Arc::new(NullDownloadClientConfigRepository),
+        Arc::new(NullReleaseAttemptRepository),
+        settings,
+        Arc::new(NullQualityProfileRepository),
+        String::new(),
+    )
+    .with_file_importer(Arc::new(SourceDeletingFileImporter))
+    .build_partial_for_tests();
+    AppUseCase::new(
+        assembly,
+        crate::JwtAuthConfig {
+            issuer: "test".to_string(),
+            jwt_signing_salt: "test-salt".to_string(),
+        },
+        std::sync::Arc::new(crate::FacetRegistry::new()),
+    )
 }
 
 #[cfg(test)]
@@ -867,6 +1071,24 @@ mod tests {
             observation: Some(observation),
             ..SeedingGateInput::default()
         }
+    }
+
+    #[tokio::test]
+    async fn processed_folder_configured_move_stays_hardlink_or_copy() {
+        let app =
+            super::app_for_copy_only_tests(std::sync::Arc::new(super::MoveImportModeSettings));
+        let completed = super::processed_folder_completed("/processed/Show.mkv");
+
+        let untouched = resolve_seeding_safe_import_mode(&app, None, &MediaFacet::Movie, None)
+            .await
+            .expect("configured mode");
+        assert_eq!(untouched, ImportMode::Move);
+
+        let forced =
+            resolve_seeding_safe_import_mode(&app, None, &MediaFacet::Movie, Some(&completed))
+                .await
+                .expect("processed-folder mode");
+        assert_eq!(forced, ImportMode::HardlinkOrCopy);
     }
 
     #[test]

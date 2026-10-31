@@ -2892,13 +2892,21 @@ async fn complete_deferred_import_source_cleanup(
     Ok(())
 }
 
-async fn finalize_import_source_cleanup(
+pub(crate) async fn finalize_import_source_cleanup(
     app: &AppUseCase,
     import_mode: scryer_domain::ImportMode,
     file_result: &scryer_domain::ImportFileResult,
     final_dest_path: &Path,
     completed: Option<&scryer_domain::CompletedDownload>,
 ) -> AppResult<scryer_domain::ImportStrategy> {
+    if completed.is_some_and(CompletedDownload::is_processed_folder_source)
+        && file_result.source_cleanup.is_some()
+    {
+        return Err(AppError::ManualReconciliationRequired(format!(
+            "processed-folder import refuses to delete source {}",
+            file_result.source_path.display()
+        )));
+    }
     if import_mode != scryer_domain::ImportMode::Move {
         return Ok(file_result.strategy);
     }
@@ -2939,12 +2947,20 @@ async fn finalize_import_source_cleanup(
     Ok(scryer_domain::ImportStrategy::Move)
 }
 
-async fn finalize_deferred_import_source_cleanup(
+pub(crate) async fn finalize_deferred_import_source_cleanup(
     app: &AppUseCase,
     source_cleanup: Option<scryer_domain::ImportSourceCleanupGuard>,
     final_dest_path: &Path,
     completed: Option<&scryer_domain::CompletedDownload>,
 ) -> AppResult<()> {
+    if let Some(guard) = source_cleanup.as_ref()
+        && completed.is_some_and(CompletedDownload::is_processed_folder_source)
+    {
+        return Err(AppError::ManualReconciliationRequired(format!(
+            "processed-folder import refuses to delete source {}",
+            guard.source_path.display()
+        )));
+    }
     let Some(guard) = source_cleanup else {
         return Ok(());
     };
@@ -3241,5 +3257,82 @@ mod move_import_source_cleanup_gate_tests {
             Some(guard()),
         ))
         .expect_err("a rename never builds a guard, so this result is inconsistent");
+    }
+}
+
+#[cfg(test)]
+mod processed_folder_source_cleanup_tests {
+    use super::{finalize_deferred_import_source_cleanup, finalize_import_source_cleanup};
+    use crate::import::seeding_gate::{
+        app_for_copy_only_tests, processed_folder_completed, synthetic_cleanup_guard,
+    };
+    use crate::{AppError, NullSettingsRepository};
+    use scryer_domain::{
+        ImportDestinationDisposition, ImportFileResult, ImportMode, ImportSourceDisposition,
+        ImportStrategy,
+    };
+    use std::path::Path;
+    use std::sync::Arc;
+
+    fn file_result(source: &Path, dest: &Path) -> ImportFileResult {
+        ImportFileResult {
+            strategy: ImportStrategy::Copy,
+            source_path: source.to_path_buf(),
+            dest_path: dest.to_path_buf(),
+            size_bytes: 4,
+            destination_disposition: ImportDestinationDisposition::Created,
+            source_disposition: ImportSourceDisposition::Retained,
+            source_cleanup: Some(synthetic_cleanup_guard(source, dest)),
+            verification: None,
+        }
+    }
+
+    #[tokio::test]
+    async fn processed_folder_import_cleanup_deletes_nothing() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library.mkv");
+        std::fs::write(&source, b"keep").expect("write source");
+        std::fs::write(&dest, b"keep").expect("write dest");
+        let app = app_for_copy_only_tests(Arc::new(NullSettingsRepository));
+        let completed = processed_folder_completed(&source.display().to_string());
+
+        let error = finalize_import_source_cleanup(
+            &app,
+            ImportMode::Move,
+            &file_result(&source, &dest),
+            &dest,
+            Some(&completed),
+        )
+        .await
+        .expect_err("processed-folder cleanup is refused");
+
+        assert!(matches!(error, AppError::ManualReconciliationRequired(_)));
+        assert_eq!(std::fs::read(&source).expect("source"), b"keep");
+        assert_eq!(std::fs::read(&dest).expect("dest"), b"keep");
+    }
+
+    #[tokio::test]
+    async fn processed_folder_deferred_cleanup_deletes_nothing() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library.mkv");
+        std::fs::write(&source, b"keep").expect("write source");
+        std::fs::write(&dest, b"keep").expect("write dest");
+        let app = app_for_copy_only_tests(Arc::new(NullSettingsRepository));
+        let completed = processed_folder_completed(&source.display().to_string());
+
+        let error = finalize_deferred_import_source_cleanup(
+            &app,
+            Some(synthetic_cleanup_guard(&source, &dest)),
+            &dest,
+            Some(&completed),
+        )
+        .await
+        .expect_err("processed-folder deferred cleanup is refused");
+
+        assert!(matches!(error, AppError::ManualReconciliationRequired(_)));
+        assert_eq!(std::fs::read(&source).expect("source"), b"keep");
+        assert_eq!(std::fs::read(&dest).expect("dest"), b"keep");
     }
 }

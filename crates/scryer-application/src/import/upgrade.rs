@@ -276,6 +276,14 @@ pub async fn finalize_upgrade_source_cleanup(
     outcome: &UpgradeOutcome,
     completed: Option<&scryer_domain::CompletedDownload>,
 ) -> AppResult<()> {
+    if let Some(guard) = outcome.source_cleanup.as_deref()
+        && completed.is_some_and(scryer_domain::CompletedDownload::is_processed_folder_source)
+    {
+        return Err(AppError::ManualReconciliationRequired(format!(
+            "processed-folder import refuses to delete source {}",
+            guard.source_path.display()
+        )));
+    }
     let Some(guard) = outcome.source_cleanup.as_deref().cloned() else {
         return Ok(());
     };
@@ -2087,5 +2095,47 @@ mod long_name_tests {
             staged_len <= 255,
             "staging name is {staged_len} bytes; filesystems allow 255"
         );
+    }
+}
+
+#[cfg(test)]
+mod processed_folder_upgrade_cleanup_tests {
+    use super::UpgradeOutcome;
+    use super::finalize_upgrade_source_cleanup;
+    use crate::import::seeding_gate::{
+        app_for_copy_only_tests, processed_folder_completed, synthetic_cleanup_guard,
+    };
+    use crate::{AppError, NullSettingsRepository};
+    use std::sync::Arc;
+
+    #[tokio::test]
+    async fn processed_folder_upgrade_cleanup_deletes_nothing() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let source = temp.path().join("source.mkv");
+        let dest = temp.path().join("library.mkv");
+        std::fs::write(&source, b"keep").expect("write source");
+        std::fs::write(&dest, b"keep").expect("write dest");
+        let app = app_for_copy_only_tests(Arc::new(NullSettingsRepository));
+        let completed = processed_folder_completed(&source.display().to_string());
+        let permit = Arc::new(tokio::sync::Mutex::new(()));
+        let outcome = UpgradeOutcome {
+            old_score: 1,
+            new_score: 2,
+            new_file_id: "file-1".to_string(),
+            new_size_bytes: 4,
+            recycle_entry_committed: false,
+            source_cleanup: Some(Box::new(synthetic_cleanup_guard(&source, &dest))),
+            final_path_string: dest.display().to_string(),
+            previous_path: None,
+            destination_permit: Arc::new(permit.lock_owned().await),
+        };
+
+        let error = finalize_upgrade_source_cleanup(&app, &outcome, Some(&completed))
+            .await
+            .expect_err("processed-folder upgrade cleanup is refused");
+
+        assert!(matches!(error, AppError::ManualReconciliationRequired(_)));
+        assert_eq!(std::fs::read(&source).expect("source"), b"keep");
+        assert_eq!(std::fs::read(&dest).expect("dest"), b"keep");
     }
 }
