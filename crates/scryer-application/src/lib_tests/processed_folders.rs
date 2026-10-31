@@ -557,10 +557,19 @@ pub(super) mod fixtures {
         result_row("ErrOther", "-", "failed", "import_io_else_error", 0, true),
     ];
 
-    /// Contract decision 2 fingerprint: `"pf1:" + hex(blake3(folder_id \0
-    /// rel_path \0 size \0 mtime_ns))`. The contract does not say how size and
-    /// mtime are encoded; this assumes decimal ASCII. A skeleton compares it with
-    /// the base implementation and fails loudly if the encodings differ.
+    /// V1.1 pinned vector. The literal was recomputed outside this crate.
+    pub(crate) const PINNED_FINGERPRINT_FOLDER_ID: &str = "00000000-0000-4000-8000-000000000001";
+    pub(crate) const PINNED_FINGERPRINT_RELATIVE_PATH: &str =
+        "Show Name/Season 01/Show.Name.S01E01.mkv";
+    pub(crate) const PINNED_FINGERPRINT_SIZE: u64 = 1_048_576;
+    pub(crate) const PINNED_FINGERPRINT_MTIME_NS: i64 = 1_700_000_000_123_456_789;
+    pub(crate) const PINNED_FINGERPRINT: &str =
+        "pf1:17e9fcbc1991d88d78207c38cf5d0f33839aa2b0f81aef554dcd57dff420ada6";
+
+    /// V1.1 fingerprint: `"pf1:" + lowercase hex(blake3(input))`, 68 ASCII
+    /// characters. `input` is the UTF-8 of `folder_id`, `relative_path`, the
+    /// decimal `size_bytes`, and the decimal `mtime_ns`, joined by one NUL and
+    /// with no trailing NUL. This crate already depends on `blake3`.
     pub(crate) fn expected_fingerprint(
         folder_id: &str,
         relative_path: &str,
@@ -576,6 +585,17 @@ pub(super) mod fixtures {
         hasher.update(b"\0");
         hasher.update(mtime_ns.to_string().as_bytes());
         format!("pf1:{}", hasher.finalize().to_hex())
+    }
+
+    /// V1.1 helper for a signed `mtime_ns`. Size and mtime are decimal ASCII
+    /// with no leading zeros; a negative mtime keeps the `-` prefix.
+    pub(crate) fn fingerprint_v1(
+        folder_id: &str,
+        relative_path: &str,
+        size_bytes: u64,
+        mtime_ns: i64,
+    ) -> String {
+        expected_fingerprint(folder_id, relative_path, size_bytes, i128::from(mtime_ns))
     }
 
     /// The synthetic `CompletedDownload` contract decision 2 describes for one
@@ -1975,6 +1995,48 @@ mod fixture_self_tests {
             assert_ne!(other, base);
         }
         assert_eq!(base, expected_fingerprint("folder-1", "a/b.mkv", 10, 20));
+    }
+
+    #[test]
+    fn the_pinned_fingerprint_matches_the_v1_1_vector() {
+        let value = fingerprint_v1(
+            PINNED_FINGERPRINT_FOLDER_ID,
+            PINNED_FINGERPRINT_RELATIVE_PATH,
+            PINNED_FINGERPRINT_SIZE,
+            PINNED_FINGERPRINT_MTIME_NS,
+        );
+        assert_eq!(value, PINNED_FINGERPRINT);
+        assert_eq!(value.len(), 68);
+        let hex = value.strip_prefix("pf1:").expect("pf1 prefix");
+        assert_eq!(hex.len(), 64);
+        assert!(
+            hex.chars()
+                .all(|c| c.is_ascii_hexdigit() && !c.is_ascii_uppercase())
+        );
+
+        let size = PINNED_FINGERPRINT_SIZE.to_string();
+        let mtime = PINNED_FINGERPRINT_MTIME_NS.to_string();
+        let parts = [
+            PINNED_FINGERPRINT_FOLDER_ID,
+            PINNED_FINGERPRINT_RELATIVE_PATH,
+            size.as_str(),
+            mtime.as_str(),
+        ];
+        let mut input = Vec::new();
+        for (index, part) in parts.iter().enumerate() {
+            if index > 0 {
+                input.push(0);
+            }
+            input.extend(part.as_bytes());
+        }
+        assert_eq!(input.iter().filter(|byte| **byte == 0).count(), 3);
+        assert_ne!(input.last().copied(), Some(0), "no trailing NUL");
+        let mut hasher = blake3::Hasher::new();
+        hasher.update(&input);
+        assert_eq!(
+            format!("pf1:{}", hasher.finalize().to_hex()),
+            PINNED_FINGERPRINT
+        );
     }
 
     #[test]
@@ -3921,10 +3983,10 @@ mod contract_and_hygiene {
     #[ignore = "pending pf/pr1-core: fingerprint in scan.rs"]
     fn the_fingerprint_encoding_matches_the_fixture() {
         todo!(
-            "Compare core's fingerprint fn for (folder_id, rel, size, mtime_ns) with \
-             expected_fingerprint. If they differ, the contract never said how size and mtime \
-             are encoded (decimal ASCII assumed here); record the chosen encoding in the \
-             contract and update expected_fingerprint, never the other way silently."
+            "Compare core's fingerprint fn with fingerprint_v1 for the pinned vector \
+             (PINNED_FINGERPRINT_FOLDER_ID, PINNED_FINGERPRINT_RELATIVE_PATH, \
+             PINNED_FINGERPRINT_SIZE, PINNED_FINGERPRINT_MTIME_NS). It must equal \
+             PINNED_FINGERPRINT. Encoding is decimal ASCII, one NUL between fields, no trailing NUL."
         )
     }
 
