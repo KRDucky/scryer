@@ -430,8 +430,8 @@ function FolderFormDialog({
                 aria-invalid={rootPathUntrimmed}
                 aria-describedby={
                   rootPathUntrimmed
-                    ? "settings-processed-folder-path-error"
-                    : undefined
+                    ? "settings-processed-folder-path-error settings-processed-folder-path-help"
+                    : "settings-processed-folder-path-help"
                 }
                 onChange={(event) => setRootPath(event.target.value)}
               />
@@ -464,7 +464,10 @@ function FolderFormDialog({
                 {notTrimmedMessage}
               </p>
             ) : null}
-            <p className="text-xs text-muted-foreground">
+            <p
+              id="settings-processed-folder-path-help"
+              className="text-xs text-muted-foreground"
+            >
               {t("settings.processedFolders.rootPathHelp")}
             </p>
           </div>
@@ -480,6 +483,7 @@ function FolderFormDialog({
               <SelectTrigger
                 id="settings-processed-folder-library"
                 className="w-full"
+                aria-describedby="settings-processed-folder-library-help"
               >
                 <SelectValue
                   placeholder={t(
@@ -495,7 +499,10 @@ function FolderFormDialog({
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
+            <p
+              id="settings-processed-folder-library-help"
+              className="text-xs text-muted-foreground"
+            >
               {t("settings.processedFolders.libraryHelp")}
             </p>
           </div>
@@ -514,9 +521,11 @@ function FolderFormDialog({
                 value={stableScansDraft}
                 disabled={saving}
                 aria-invalid={stableScans === null}
+                aria-describedby="settings-processed-folder-min-stable-scans-help"
                 onChange={(event) => setStableScansDraft(event.target.value)}
               />
               <p
+                id="settings-processed-folder-min-stable-scans-help"
                 className={`text-xs ${stableScans === null ? "text-[var(--scry-danger-text)]" : "text-muted-foreground"}`}
               >
                 {t("settings.processedFolders.minStableScansHelp", {
@@ -539,9 +548,11 @@ function FolderFormDialog({
                 value={minAgeDraft}
                 disabled={saving}
                 aria-invalid={minAge === null}
+                aria-describedby="settings-processed-folder-min-age-help"
                 onChange={(event) => setMinAgeDraft(event.target.value)}
               />
               <p
+                id="settings-processed-folder-min-age-help"
                 className={`text-xs ${minAge === null ? "text-[var(--scry-danger-text)]" : "text-muted-foreground"}`}
               >
                 {t("settings.processedFolders.minAgeSecondsHelp", {
@@ -566,6 +577,7 @@ function FolderFormDialog({
                 <SelectTrigger
                   id="settings-processed-folder-marker-mode"
                   className="w-full"
+                  aria-describedby="settings-processed-folder-marker-help"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -600,10 +612,18 @@ function FolderFormDialog({
                     markerMode === "SIBLING_SUFFIX" ? ".done" : ".processed"
                   }
                   aria-invalid={!markerValid || markerUntrimmed}
+                  aria-describedby={
+                    markerUntrimmed
+                      ? "settings-processed-folder-marker-error settings-processed-folder-marker-help"
+                      : "settings-processed-folder-marker-help"
+                  }
                   onChange={(event) => setMarkerValue(event.target.value)}
                 />
                 {markerUntrimmed ? (
-                  <p className="text-xs text-[var(--scry-danger-text)]">
+                  <p
+                    id="settings-processed-folder-marker-error"
+                    className="text-xs text-[var(--scry-danger-text)]"
+                  >
                     {notTrimmedMessage}
                   </p>
                 ) : null}
@@ -611,6 +631,7 @@ function FolderFormDialog({
             ) : null}
           </div>
           <p
+            id="settings-processed-folder-marker-help"
             className={`text-xs ${markerValid ? "text-muted-foreground" : "text-[var(--scry-danger-text)]"}`}
           >
             {markerMode === "SIBLING_SUFFIX"
