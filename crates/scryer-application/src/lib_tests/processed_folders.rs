@@ -366,6 +366,197 @@ pub(super) mod fixtures {
         ),
     ];
 
+    /// One row of the V0.2.7 result mapping.
+    ///
+    /// `skip_reason` is `*` for any skip reason, `-` when the skip reason is
+    /// absent, or `ImportSkipReason::as_str`. An empty `reason_code` means the
+    /// ledger stores none. `error_else_failed` and `import_io_else_error` are
+    /// sentinels the mapping skeleton spells out. `attempt_cap` 3 means
+    /// `attempts >= 3` stores `failed` with the same reason.
+    #[derive(Clone, Copy, Debug)]
+    pub(crate) struct ResultMapping {
+        pub decision: &'static str,
+        pub skip_reason: &'static str,
+        pub ledger_status: &'static str,
+        pub reason_code: &'static str,
+        pub attempt_cap: u8,
+        pub executor_proposed: bool,
+    }
+
+    const fn result_row(
+        decision: &'static str,
+        skip_reason: &'static str,
+        ledger_status: &'static str,
+        reason_code: &'static str,
+        attempt_cap: u8,
+        executor_proposed: bool,
+    ) -> ResultMapping {
+        ResultMapping {
+            decision,
+            skip_reason,
+            ledger_status,
+            reason_code,
+            attempt_cap,
+            executor_proposed,
+        }
+    }
+
+    pub(crate) const RESULT_MAPPINGS: &[ResultMapping] = &[
+        result_row("Imported", "*", "imported", "", 0, false),
+        result_row(
+            "Imported",
+            "scene_subtitle_pending",
+            "imported",
+            "",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "already_imported",
+            "imported",
+            "already_imported",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "duplicate_file",
+            "skipped",
+            "duplicate_file",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "post_download_rule_blocked",
+            "skipped",
+            "post_download_rule_blocked",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "policy_mismatch",
+            "skipped",
+            "policy_mismatch",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "unresolved_identity",
+            "needs_review",
+            "unresolved_identity",
+            0,
+            true,
+        ),
+        result_row(
+            "Skipped",
+            "unparseable_episode",
+            "needs_review",
+            "unparseable_episode",
+            0,
+            true,
+        ),
+        result_row(
+            "Skipped",
+            "no_video_files",
+            "skipped",
+            "no_video_files",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "unwanted_executables",
+            "skipped",
+            "unwanted_executables",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "download_in_progress",
+            "stable",
+            "download_in_progress",
+            3,
+            true,
+        ),
+        result_row(
+            "Skipped",
+            "source_changed",
+            "stable",
+            "source_changed",
+            3,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "source_unavailable",
+            "stable",
+            "source_unavailable",
+            3,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "scene_subtitle_pending",
+            "skipped",
+            "scene_subtitle_pending",
+            0,
+            false,
+        ),
+        result_row("Skipped", "disk_full", "failed", "disk_full", 0, false),
+        result_row(
+            "Skipped",
+            "permission_denied",
+            "failed",
+            "permission_denied",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "password_required",
+            "skipped",
+            "password_required",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "archive_extraction_plugin_required",
+            "skipped",
+            "archive_extraction_plugin_required",
+            0,
+            false,
+        ),
+        result_row(
+            "Skipped",
+            "archive_extraction_timed_out",
+            "skipped",
+            "archive_extraction_timed_out",
+            0,
+            false,
+        ),
+        result_row("Skipped", "-", "skipped", "skipped", 0, false),
+        result_row("Rejected", "*", "skipped", "rejected", 0, false),
+        result_row("Conflict", "*", "needs_review", "conflict", 0, false),
+        result_row("Unmatched", "*", "needs_review", "unmatched", 0, false),
+        result_row("Failed", "*", "failed", "error_else_failed", 0, false),
+        result_row("ErrCanceled", "-", "stable", "cancelled", 3, true),
+        result_row(
+            "ErrManualReconciliationRequired",
+            "-",
+            "failed",
+            "manual_reconciliation_required",
+            0,
+            false,
+        ),
+        result_row("ErrOther", "-", "failed", "import_io_else_error", 0, true),
+    ];
+
     /// Contract decision 2 fingerprint: `"pf1:" + hex(blake3(folder_id \0
     /// rel_path \0 size \0 mtime_ns))`. The contract does not say how size and
     /// mtime are encoded; this assumes decimal ASCII. A skeleton compares it with
@@ -2132,6 +2323,145 @@ mod fixture_self_tests {
         assert!(crate_source("src/lib.rs").is_some());
         assert!(crate_source("src/no/such/file.rs").is_none());
     }
+
+    #[test]
+    fn the_result_mapping_covers_every_import_decision_and_skip_reason() {
+        use scryer_domain::{ImportDecision, ImportSkipReason};
+
+        fn skip_label(reason: ImportSkipReason) -> &'static str {
+            match reason {
+                ImportSkipReason::AlreadyImported
+                | ImportSkipReason::DuplicateFile
+                | ImportSkipReason::PostDownloadRuleBlocked
+                | ImportSkipReason::PolicyMismatch
+                | ImportSkipReason::UnresolvedIdentity
+                | ImportSkipReason::UnparseableEpisode
+                | ImportSkipReason::NoVideoFiles
+                | ImportSkipReason::UnwantedExecutables
+                | ImportSkipReason::DownloadInProgress
+                | ImportSkipReason::SourceChanged
+                | ImportSkipReason::SourceUnavailable
+                | ImportSkipReason::SceneSubtitlePending
+                | ImportSkipReason::DiskFull
+                | ImportSkipReason::PermissionDenied
+                | ImportSkipReason::PasswordRequired
+                | ImportSkipReason::ArchiveExtractionPluginRequired
+                | ImportSkipReason::ArchiveExtractionTimedOut => reason.as_str(),
+            }
+        }
+
+        fn decision_label(decision: ImportDecision) -> &'static str {
+            match decision {
+                ImportDecision::Imported => "Imported",
+                ImportDecision::Rejected => "Rejected",
+                ImportDecision::Skipped => "Skipped",
+                ImportDecision::Conflict => "Conflict",
+                ImportDecision::Unmatched => "Unmatched",
+                ImportDecision::Failed => "Failed",
+            }
+        }
+
+        assert_eq!(RESULT_MAPPINGS.len(), 27);
+        let mut pairs = HashSet::new();
+        for row in RESULT_MAPPINGS {
+            assert!(
+                pairs.insert((row.decision, row.skip_reason)),
+                "duplicate {} {}",
+                row.decision,
+                row.skip_reason
+            );
+            assert!(
+                STATUSES.contains(&row.ledger_status),
+                "{}",
+                row.ledger_status
+            );
+            assert!(
+                row.attempt_cap == 0 || row.attempt_cap == 3,
+                "{}",
+                row.decision
+            );
+        }
+
+        for decision in [
+            ImportDecision::Imported,
+            ImportDecision::Rejected,
+            ImportDecision::Skipped,
+            ImportDecision::Conflict,
+            ImportDecision::Unmatched,
+            ImportDecision::Failed,
+        ] {
+            let label = decision_label(decision);
+            assert!(
+                RESULT_MAPPINGS.iter().any(|row| row.decision == label),
+                "{label}"
+            );
+        }
+        for reason in [
+            ImportSkipReason::AlreadyImported,
+            ImportSkipReason::DuplicateFile,
+            ImportSkipReason::PostDownloadRuleBlocked,
+            ImportSkipReason::PolicyMismatch,
+            ImportSkipReason::UnresolvedIdentity,
+            ImportSkipReason::UnparseableEpisode,
+            ImportSkipReason::NoVideoFiles,
+            ImportSkipReason::UnwantedExecutables,
+            ImportSkipReason::DownloadInProgress,
+            ImportSkipReason::SourceChanged,
+            ImportSkipReason::SourceUnavailable,
+            ImportSkipReason::SceneSubtitlePending,
+            ImportSkipReason::DiskFull,
+            ImportSkipReason::PermissionDenied,
+            ImportSkipReason::PasswordRequired,
+            ImportSkipReason::ArchiveExtractionPluginRequired,
+            ImportSkipReason::ArchiveExtractionTimedOut,
+        ] {
+            let label = skip_label(reason);
+            assert!(
+                RESULT_MAPPINGS
+                    .iter()
+                    .any(|row| { row.decision == "Skipped" && row.skip_reason == label }),
+                "{label}"
+            );
+        }
+
+        let imported_pending = RESULT_MAPPINGS
+            .iter()
+            .find(|row| row.decision == "Imported" && row.skip_reason == "scene_subtitle_pending");
+        let imported_pending = imported_pending.expect("Imported + SceneSubtitlePending");
+        assert_eq!(imported_pending.ledger_status, "imported");
+        assert_eq!(imported_pending.reason_code, "");
+
+        for reason in [
+            "source_changed",
+            "source_unavailable",
+            "download_in_progress",
+        ] {
+            let row = RESULT_MAPPINGS
+                .iter()
+                .find(|row| row.decision == "Skipped" && row.skip_reason == reason)
+                .unwrap_or_else(|| panic!("{reason}"));
+            assert_eq!(row.ledger_status, "stable", "{reason}");
+            assert_eq!(row.attempt_cap, 3, "{reason}");
+        }
+        let cancelled = RESULT_MAPPINGS
+            .iter()
+            .find(|row| row.decision == "ErrCanceled")
+            .expect("cancelled");
+        assert_eq!(cancelled.ledger_status, "stable");
+        assert_eq!(cancelled.reason_code, "cancelled");
+        assert_eq!(cancelled.attempt_cap, 3);
+        assert!(cancelled.executor_proposed);
+        assert!(
+            RESULT_MAPPINGS
+                .iter()
+                .any(|row| { row.executor_proposed && row.skip_reason == "unresolved_identity" })
+        );
+        assert!(
+            RESULT_MAPPINGS
+                .iter()
+                .any(|row| { row.executor_proposed && row.skip_reason == "unparseable_episode" })
+        );
+    }
 }
 
 // Skeletons. Each body lists the exact steps and assertions to make real once
@@ -2237,9 +2567,8 @@ mod copy_only {
         todo!(
             "SETUP(HardlinkOrCopy, ScriptedImporter::new([SourceChangedMidCopy])); RUN. Assert entry \
              failed (contract Q4e) with last_error naming the source; no media file; no library \
-             file. Next scan: old row superseded is NOT expected for a failed row (2.2 has no \
-             failed->superseded row); assert a new observing row for the grown version. Report \
-             if core chooses superseded instead: contract gap."
+             file. Next scan, V0.2.3: the failed row becomes superseded and a new observing row \
+             exists for the grown version, in one transaction. Source bytes stay the grown file."
         )
     }
 
@@ -2380,10 +2709,9 @@ mod state_machine {
         row_02_unimportable_new_file_is_rejected,
         2,
         "pending pf/pr1-core: scan",
-        "cases: escaping symlink (symlink_escapes_root), symlinked dir (symlink_dir), .nfo \
-         (not_a_video), zero-byte .mkv (empty); each its own rejected row with that reason_code. \
-         Contract conflict: section 7.5 says non-video and zero-byte are ignored (no row); \
-         assert whichever the lead rules and record the ruling here"
+        "V0.2.1: a non-video file (not_a_video) and a zero-byte file (empty) each get a rejected \
+         row. A name starting with '.' or '~$', a temp suffix, a marker file, and anything under \
+         a hidden directory get no row. An escaping symlink and a symlinked directory stay rejected"
     );
     row_test!(
         row_03_unchanged_ineligible_file_stays_observing_and_counts_up,
@@ -2402,8 +2730,10 @@ mod state_machine {
         row_05_a_changed_version_supersedes_and_inserts_a_new_observing_row,
         5,
         "pending pf/pr1-core: scan",
-        "from observing and from stable: tree.grow(rel); scan; old row superseded, new row \
-         observing count 1 with the new size and mtime, in one transaction (both visible together)"
+        "from observing, stable, failed, skipped, needs_review, ignored, and rejected: \
+         tree.grow(rel); scan; old row superseded, new observing row count 1 with the new size \
+         and mtime, both visible in one transaction. The four non-observing/stable sources are \
+         the V0.2.3 [X] rows"
     );
     row_test!(
         row_06_an_absent_path_goes_gone_from_every_listed_state,
@@ -2460,15 +2790,17 @@ mod state_machine {
         row_13_rejected_or_other_skips_go_to_skipped,
         13,
         "pending pf/pr1-core: importer",
-        "Rejected -> skipped/rejected; Skipped(QualityNotBetter or any non-excluded reason) -> \
-         skipped with reason ImportSkipReason::as_str"
+        "Rejected -> skipped/rejected. Other Skipped reasons follow RESULT_MAPPINGS, including \
+         the [X] rows, not a single skipped bucket"
     );
     row_test!(
         row_14_failures_and_environmental_skips_go_to_failed,
         14,
         "pending pf/pr1-core: importer",
-        "ScriptedImporter PermanentFailure -> failed/error with last_error; Skipped+DiskFull and \
-         Skipped+PermissionDenied -> failed"
+        "ScriptedImporter PermanentFailure -> failed with last_error and reason failed or error, \
+         per RESULT_MAPPINGS. Skipped+DiskFull -> failed/disk_full. Skipped+PermissionDenied -> \
+         failed/permission_denied. SourceChanged, SourceUnavailable, DownloadInProgress, and \
+         Err(Canceled) return to stable unless attempts >= 3, then failed with the same reason"
     );
     row_test!(
         row_15_an_orphaned_claim_is_recovered,
@@ -2488,8 +2820,8 @@ mod state_machine {
         row_17_retry_moves_failed_and_ignored_to_stable,
         17,
         "pending pf/pr1-core: actions",
-        "for failed and ignored: retry; status stable, reason_code None, last_error None; with \
-         the folder enabled the mutation queues the import immediately"
+        "for failed and ignored: retry; status stable, reason_code None, last_error None, and \
+         attempts reset to 0 (V0.2.8 [X]). With the folder enabled the mutation queues the import"
     );
     row_test!(
         row_18_ignore_moves_the_listed_states_to_ignored,
@@ -2580,6 +2912,98 @@ mod state_machine {
             "Gate a ScriptedImporter-like double on a tokio Notify so the import stays in flight; \
              advance the TestClock by 24h; scan. Assert entry still importing, payload \
              recovered == 0; release the gate; entry imported with attempts 1."
+        )
+    }
+
+    /// V0.2.7, every decision and skip reason, including the [X] rows.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: exhaustive result mapping V0.2.7"]
+    async fn every_import_result_maps_without_a_catchall_arm() {
+        let rows = RESULT_MAPPINGS.len();
+        todo!(
+            "Drive the ledger mapper for each of the {rows} RESULT_MAPPINGS rows. A specific \
+             skip_reason wins over '*'. '-' means the skip reason is absent. An empty reason_code \
+             stores null. error_else_failed: Failed uses the mapped error reason, else reason_code \
+             failed. import_io_else_error: Err(other) maps AppError::reason() equal to \
+             error_reasons::import::DISK_FULL, PERMISSION_DENIED, or FILE_NOT_FOUND (values \
+             IMPORT_DISK_FULL, IMPORT_PERMISSION_DENIED, IMPORT_FILE_NOT_FOUND) to disk_full, \
+             permission_denied, or file_not_found; anything else is error; last_error is the \
+             message. Never match message text. attempt_cap 3: attempts >= 3 stores failed with \
+             the same reason, otherwise ledger_status. executor_proposed rows are the [X] rows \
+             and are still asserted. The match has no '_' arm. Imported plus SceneSubtitlePending \
+             is imported."
+        )
+    }
+
+    /// V0.2.1 named beside row 2.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: scan qualification"]
+    async fn v0_2_1_non_video_and_empty_are_rejected_and_hidden_names_have_no_row() {
+        todo!(
+            "Rejected rows: .nfo -> rejected/not_a_video, zero-byte .mkv -> rejected/empty. No \
+             row: '.hidden.mkv', '~$lock.mkv', 'file.mkv.part' and the other IGNORED_SUFFIXES, \
+             the marker file, and 'subdir/.secret/clip.mkv'. Counts do not include the no-row paths."
+        )
+    }
+
+    /// V0.2.3 [X]: the same size or mtime change supersedes terminal rows too.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: scan version rows"]
+    async fn v0_2_3_terminal_rows_supersede_when_size_or_mtime_changes() {
+        todo!(
+            "For each of failed, skipped, needs_review, ignored, and rejected: seed that status \
+             at rel, change size or mtime, scan. Old row superseded, new observing row for the \
+             new version, same transaction. imported and superseded and gone do not follow this \
+             rule (row 6 controls which statuses can go gone)."
+        )
+    }
+
+    /// V0.2.9 [X].
+    #[cfg(unix)]
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: scan"]
+    async fn v0_2_9_a_non_utf8_file_name_leaves_no_row() {
+        todo!(
+            "Create a directory entry whose name is not UTF-8 (a byte 0xFF in the name) inside \
+             the processed root. Scan. No ledger row, a warning log carries the lossy path, and \
+             discovered, rejected, and gone stay unchanged for that name. The file is untouched."
+        )
+    }
+
+    /// V0.2.10 [X]: copy-only refuses a symlink at the destination.
+    #[cfg(unix)]
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: C3 existing-destination rule"]
+    async fn v0_2_10_copy_only_refuses_a_symlink_destination() {
+        todo!(
+            "Copy-only import whose destination is an existing symlink to a regular file, and a \
+             second case whose destination is the same inode as the source. Both refuse with \
+             ManualReconciliationRequired. The symlink is not replaced, the source is untouched, \
+             and no media-file row is written."
+        )
+    }
+
+    /// V2.1: the claim statement requires the folder to be enabled.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: claim SQL"]
+    async fn v2_1_a_disabled_folder_blocks_the_claim() {
+        todo!(
+            "Stable row, then disable the folder before the worker claims. The claim UPDATE \
+             (status stable AND folder enabled) changes 0 rows. The worker reports \
+             PROCESSED_FOLDER_DISABLED. The row stays stable with attempts unchanged. Re-enable \
+             and the same row can be claimed."
+        )
+    }
+
+    /// V2.4 [U]: record what an in-flight import does when its library disappears.
+    #[tokio::test]
+    #[ignore = "pending pf/pr1-core: library delete during import"]
+    async fn v2_4_library_delete_while_importing_is_an_observation() {
+        todo!(
+            "One entry importing, gated on a Notify. Delete the library. The FK cascade removes \
+             the folder and its ledger (risk 15) and is not blocked. Release the import. Record \
+             the in-flight outcome (error, destination, source). Do not assert a specific ledger \
+             status: the row is already gone. This is an observation, not a pass/fail contract."
         )
     }
 }
@@ -2720,12 +3144,11 @@ mod stability {
     #[ignore = "pending pf/pr1-core: stability.rs and scan"]
     async fn a_marker_makes_a_file_stable_on_the_first_scan() {
         todo!(
-            "For ProcessorLayout::Unmanic (SiblingSuffix '.done') and CustomFfmpeg \
+            "V0.2.2: for ProcessorLayout::Unmanic (SiblingSuffix '.done') and CustomFfmpeg \
              (DirectoryFile '_DONE'): materialize with mtime = now, configure the layout marker, \
-             scan once. Every Expected::Importable file is stable with marker_seen true; marker \
-             files have no row; InProgressVideo files stay observing. Contract gap: 2.2 has no \
-             (none) -> stable row; assert one scan gives stable either via a direct insert or \
-             observing->stable inside the same scan."
+             scan once. Every Expected::Importable file goes (none) -> stable directly, \
+             marker_seen = 1, stable_scan_count = 1. Marker files have no row. InProgressVideo \
+             files stay observing."
         )
     }
 
@@ -2742,10 +3165,10 @@ mod stability {
     #[ignore = "pending pf/pr1-core: scan"]
     async fn every_processor_layout_ignores_temp_hidden_and_marker_files() {
         todo!(
-            "For each ALL_LAYOUTS: materialize, scan twice past min_age. Rows exist only for \
-             Importable, InProgressVideo (and NotVideo/Empty if the lead rules they are \
-             rejected rows). IgnoredSuffix, IgnoredHidden and Marker paths never get a row; \
-             tree snapshot unchanged."
+            "V0.2.1: for each ALL_LAYOUTS, materialize and scan twice past min_age. NotVideo rows \
+             are rejected/not_a_video and Empty rows are rejected/empty. Importable and \
+             InProgressVideo have rows. A name starting with '.' or '~$', a temp suffix, a marker \
+             file, and anything under a hidden directory have no row. Tree snapshot unchanged."
         )
     }
 
@@ -3278,8 +3701,10 @@ mod disabled {
     #[ignore = "pending pf/pr1-core: scan and importer"]
     async fn disabling_does_not_cancel_or_steal_an_import_in_flight() {
         todo!(
-            "Gate an import on a Notify; disable the folder; release. Entry imported (or the \
-             outcome core documents); record it."
+            "V2.2: gate an import on a Notify so the entry is importing, then disable the folder. \
+             Disabling is allowed. Release the gate: the in-flight import finishes and writes its \
+             result. A new claim after disable changes 0 rows (V2.1). Scan, import-as, and retry \
+             return PROCESSED_FOLDER_DISABLED; preview and ignore still work."
         )
     }
 }
@@ -3343,10 +3768,11 @@ mod delete_folder {
     #[ignore = "pending pf/pr1-core: importer in_flight set"]
     async fn delete_is_refused_while_an_entry_is_in_flight() {
         todo!(
-            "Gate an import on a Notify so the entry is importing and in in_flight. delete -> \
-             PROCESSED_FOLDER_IMPORTS_IN_FLIGHT; folder still there. Release; wait for imported; \
-             delete succeeds. Contract question: an orphaned importing row (not in flight) does \
-             not block delete; assert that too."
+            "V2.3: under the scan lock, delete runs orphan recovery first. An entry still importing \
+             after recovery refuses with PROCESSED_FOLDER_IMPORTS_IN_FLIGHT and the folder stays. \
+             Release, wait for imported, delete again: one transaction runs DELETE FROM \
+             processed_folder_entries WHERE folder_id = ? and then deletes the folder. Entries are \
+             gone even when SQLite foreign_keys is off. Nothing on disk is touched."
         )
     }
 }

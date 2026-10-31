@@ -530,6 +530,47 @@ async fn every_operation_refuses_an_actor_without_manage_system_settings() {
     }
 }
 
+/// V3: `TestContext::new` already completed initial authentication
+/// (`common/mod.rs`). With form login enabled, that actor's login token has
+/// no fresh MFA step-up, so a ManageSystemSettings mutation is refused. The
+/// probe is an existing config mutation; processed-folder fields repeat the
+/// same token in the skeleton below.
+#[tokio::test]
+async fn a_manage_system_settings_actor_without_mfa_step_up_is_refused_when_form_login_is_enabled()
+{
+    let ctx = TestContext::new().await;
+    let (_admin, token, _totp_code) =
+        enable_form_login_with_config_step_up(&ctx, "admin", "admin-pass1").await;
+    let body = gql_with_token(
+        &ctx,
+        r#"
+            mutation {
+              startApplicationUpgrade(input: { expectedTag: "v999.0.0", expectedVersion: "999.0.0" }) {
+                jobRun { id }
+              }
+            }
+        "#,
+        json!({}),
+        &token,
+    )
+    .await;
+    assert_mfa_step_up_required(&body);
+}
+
+/// V3 for the processed-folder operations, once those fields exist.
+#[tokio::test]
+#[ignore = "pending pf/pr1-base: section 4 resolvers and the V3 step-up gate"]
+async fn processed_folder_operations_require_mfa_step_up_when_form_login_is_enabled() {
+    todo!(
+        "Same fixture as a_manage_system_settings_actor_without_mfa_step_up_is_refused_when_form_login_is_enabled: \
+         TestContext::new (initial-authentication-setup already complete in common/mod.rs) and \
+         enable_form_login_with_config_step_up. For every OPERATIONS document, gql_with_token with \
+         that login token and no fresh step-up returns MFA_STEP_UP_REQUIRED, not a \
+         PROCESSED_FOLDER_ reason, and writes nothing. One call with mfa_step_up_verified_until in \
+         the future gets past the gate and fails only with a processed-folder refusal."
+    )
+}
+
 /// Section 4 auth: a ManageSystemSettings actor gets past the gate; the
 /// synthetic ids then fail only with a processed-folder refusal.
 #[tokio::test]
@@ -679,9 +720,11 @@ async fn a_concurrent_scan_is_refused() {
 #[ignore = "pending pf/pr1-base: deleteProcessedFolder"]
 async fn delete_keeps_files_and_is_refused_while_importing() {
     todo!(
-        "folder with entries; one entry importing and in flight -> deleteProcessedFolder reason \
-         PROCESSED_FOLDER_IMPORTS_IN_FLIGHT; finish import; delete succeeds; processedFolder(id) is null, \
-         entries gone, source tree assert_unchanged, imported library file still present"
+        "V2.3: under the scan lock, deleteProcessedFolder runs orphan recovery, then refuses with \
+         PROCESSED_FOLDER_IMPORTS_IN_FLIGHT while an entry is still importing. After the import \
+         finishes, delete runs DELETE FROM processed_folder_entries WHERE folder_id = ? and then \
+         deletes the folder. processedFolder(id) is null, entries are gone on SQLite even if \
+         foreign_keys is off, source assert_unchanged, imported library file still present"
     )
 }
 
