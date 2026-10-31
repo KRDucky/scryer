@@ -3298,6 +3298,17 @@ pub struct CompletedDownload {
     pub subtitle_paths: Vec<String>,
 }
 
+/// Client type stamped on a synthetic completed download for one file in a
+/// processed-media folder. It is not a download client.
+pub const PROCESSED_FOLDER_CLIENT_TYPE: &str = "processed_folder";
+
+impl CompletedDownload {
+    /// True when this download is a synthetic processed-folder source.
+    pub fn is_processed_folder_source(&self) -> bool {
+        self.client_type == PROCESSED_FOLDER_CLIENT_TYPE
+    }
+}
+
 /// A downloaded file's name on disk and the name it was posted with.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PostedFileName {

@@ -7942,6 +7942,7 @@ pub struct ImportFileExecutionContext {
     client_lane_key: String,
     active_import_stream: Option<crate::ActiveImportStreamHandle>,
     archive_workspace_source: bool,
+    copy_only: bool,
 }
 
 impl ImportFileExecutionContext {
@@ -7956,6 +7957,7 @@ impl ImportFileExecutionContext {
             client_lane_key,
             active_import_stream: None,
             archive_workspace_source: false,
+            copy_only: false,
         }
     }
 
@@ -7973,6 +7975,18 @@ impl ImportFileExecutionContext {
 
     pub fn archive_workspace_source(&self) -> bool {
         self.archive_workspace_source
+    }
+
+    /// The source belongs to someone else (a processed folder): place by
+    /// verified copy only. Never hard link, symlink or rename it, and never
+    /// build a source-cleanup guard.
+    pub fn with_copy_only(mut self, copy_only: bool) -> Self {
+        self.copy_only = copy_only;
+        self
+    }
+
+    pub fn copy_only(&self) -> bool {
+        self.copy_only
     }
 
     pub fn with_active_import_stream(
